@@ -1,0 +1,13 @@
+:local .header {
+  width: calc(100vw - 10px);
+  height: 32px;
+  background: linear-gradient(black, rgba(0, 0, 0, 0.8));
+  text-align: center;
+  line-height: 32px;
+  font-weight: 100;
+  padding-left: 10px;
+}
+:local .header h1 {
+  font-size: 16px;
+  color: white;
+}

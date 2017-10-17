@@ -1,0 +1,8 @@
+:local .sidebar {
+  width: 25vw;
+  height: calc(100vh - 64px);
+  padding: 16px;
+  background: #343436;
+  overflow-x: hidden;
+  overflow-y: auto;
+}

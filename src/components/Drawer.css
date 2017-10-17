@@ -1,0 +1,35 @@
+:local .drawer {
+  position: absolute;
+  background: linear-gradient(black, #343436);
+  top: calc(100vh - 268px);
+  left: calc(25vw + 32px);
+  width: calc(75vw - 32px);
+  height: 268px;
+}
+:local(.drawer) .tabs {
+  height: 32px;
+  margin-left: 16px;
+  margin-right: 16px;
+}
+:local(.drawer) .tab {
+  border: 0;
+  border-radius: 5px;
+  background: #9a1a1a;
+  opacity: 0.5;
+  font-family: 'Roboto', sans-serif;
+  font-size: 14px;
+  color: white;
+  cursor: pointer;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+:local(.drawer) .tab:hover, :local(.drawer) .tab[disabled] {
+  opacity: 1;
+}
+:local(.drawer) .tab[disabled] {
+  cursor: auto;
+}
+:local(.drawer) .content {
+  color: white;
+  margin: 10px;
+}

@@ -1,0 +1,26 @@
+:local .card {
+  display: inline-block;
+  background-color: white;
+  border: 1px solid black;
+  box-shadow: 6px 6px 6px rgba(0, 0, 0, 0.5);
+  padding: 10px;
+}
+:local(.card) .image {
+  width: 150px;
+  height: 150px;
+  background: linear-gradient(to top, black, rgba(0, 0, 0, 0.8));
+  margin-bottom: 10px;
+}
+:local(.card) .name {
+  width: 150px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  display: block;
+}
+:local(.card) .name input {
+  border: 0;
+  background: transparent;
+  font-size: 16px;
+  color: black;
+}

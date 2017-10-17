@@ -1,0 +1,7 @@
+:local(.renderer) {
+    top: 32px;
+    left: calc(25vw + 32px);
+    position: absolute;
+    width: calc(75vw - 32px);
+    height: calc(100vh - 32px - 268px);
+}
