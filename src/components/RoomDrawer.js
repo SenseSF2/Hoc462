@@ -4,6 +4,7 @@ import Card from './Card'
 import uniqueId from '../uniqueId'
 import startCreatingObject from '../actions/startCreatingObject'
 import addObject from '../actions/addObject'
+import removeObject from '../actions/removeObject'
 export default () => {
   const root = document.createElement('div')
   root.innerHTML = `
@@ -32,8 +33,14 @@ export default () => {
     const objectCard = Card()
     objectsElement.appendChild(objectCard)
     objectCard.dispatchEvent(new window.Event('start-renaming'))
-    objectCard.addEventListener('name-changed', ({ detail: { name } }) => {
-      EventBus.dispatchEvent(addObject(name, uniqueId(), type))
+    const id = uniqueId()
+    const nameChangedHandler = ({ detail: { name } }) => {
+      EventBus.dispatchEvent(addObject(name, id, type))
+      objectCard.removeEventListener(nameChangedHandler)
+    }
+    objectCard.addEventListener('name-changed', nameChangedHandler)
+    objectCard.addEventListener('deleted', () => {
+      EventBus.dispatchEvent(removeObject(id))
     })
   })
   return root

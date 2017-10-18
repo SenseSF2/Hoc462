@@ -36,7 +36,8 @@ export default () => {
     renderer.render(scene, camera)
     window.requestAnimationFrame(animate)
   }
-  EventBus.addEventListener('object-added', ({ detail: { type } }) => {
+  const objects = new Map()
+  EventBus.addEventListener('object-added', ({ detail: { type, id } }) => {
     /*
     const geometries = {
       plane: THREE.PlaneGeometry,
@@ -55,8 +56,13 @@ export default () => {
       new THREE.BoxGeometry(1, 1, 1),
       new THREE.MeshBasicMaterial({ color: 0xffff00 })
     )
+    objects.set(id, mesh)
     scene.add(mesh)
     transformControls.attach(mesh)
+  })
+  EventBus.addEventListener('object-removed', ({ detail: { id } }) => {
+    const object3d = objects.get(id)
+    scene.remove(object3d)
   })
   animate()
   return root
