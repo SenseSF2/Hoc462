@@ -17,16 +17,23 @@ export default name => {
     const input = root.querySelector('input')
     input.value = oldName
     window.requestAnimationFrame(() => input.select())
+    let submitted = false
     form.addEventListener('submit', event => {
       event.preventDefault()
-      root.dispatchEvent(new window.CustomEvent('renamed', {
-        detail: { name: input.value }
-      }))
+      if (input.value !== '') {
+        submitted = true
+        root.dispatchEvent(new window.CustomEvent('renamed', {
+          detail: { name: input.value }
+        }))
+      }
     })
     input.addEventListener('focusout', () => {
-      root.dispatchEvent(new window.CustomEvent('renamed', {
-        detail: { name: input.value }
-      }))
+      if (!submitted) {
+        root.dispatchEvent(new window.CustomEvent('renamed', {
+          detail: { name: input.value }
+        }))
+      }
+      submitted = false
     })
   })
   root.addEventListener('renamed', ({ detail: { name } }) => {

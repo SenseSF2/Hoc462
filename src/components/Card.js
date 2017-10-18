@@ -26,12 +26,17 @@ export default () => {
   renameButton.addEventListener('click', () => {
     renamable.dispatchEvent(new window.Event('start-renaming'))
   })
+  root.addEventListener('start-renaming', () => {
+    renamable.dispatchEvent(new window.Event('start-renaming'))
+  })
   root.addEventListener('image-changed', ({ details: { domElement } }) => {
     imageEl.innerHTML = ''
     imageEl.appendChild(domElement)
   })
-  root.addEventListener('name-changed', ({ details: { name } }) => {
-    nameEl.textContent = name
+  renamable.addEventListener('renamed', ({ detail: { name } }) => {
+    root.dispatchEvent(new window.CustomEvent('name-changed', {
+      detail: { name }
+    }))
   })
   return root
 }

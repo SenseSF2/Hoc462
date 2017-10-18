@@ -32,4 +32,6 @@
 :local(.drawer) .content {
   color: white;
   margin: 10px;
+  height: 200px;
+  overflow: auto;
 }

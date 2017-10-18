@@ -1,9 +1,13 @@
 import EventBus from '../EventBus'
-import * as THREE from 'three'
+import { button } from './Button.css'
+import Card from './Card'
+import uniqueId from '../uniqueId'
+import startCreatingObject from '../actions/startCreatingObject'
+import addObject from '../actions/addObject'
 export default () => {
   const root = document.createElement('div')
   root.innerHTML = `
-    <select class="add-object">
+    <select class="add-object ${button}">
       <option disabled selected>Add object</option>
       <option value="plane">Plane</option>
       <option value="box">Box</option>
@@ -16,23 +20,21 @@ export default () => {
       <option value="lathe">Lathe</option>
       <option value="sprite">Sprite</option>
     </select>
+    <div class="objects"></div>
   `
   const addObjectElement = root.querySelector('.add-object')
   addObjectElement.addEventListener('change', ({ target }) => {
-    const geometries = {
-      plane: THREE.PlaneGeometry,
-      box: THREE.BoxGeometry,
-      circle: THREE.CircleGeometry,
-      cylinder: THREE.CylinderGeometry,
-      sphere: THREE.SphereGeometry,
-      icosahedron: THREE.IcosahedronGeometry,
-      torus: THREE.TorusGeometry,
-      torusknot: THREE.TorusKnotGeometry,
-      lathe: THREE.LatheGeometry,
-      sprite: new Error("No, this object doesn't")
-    }
-    console.log(geometries[target.value])
+    EventBus.dispatchEvent(startCreatingObject(target.value))
     target.selectedIndex = 0
+  })
+  EventBus.addEventListener('start-creating-object', ({ detail: { type } }) => {
+    const objectsElement = root.querySelector('.objects')
+    const objectCard = Card()
+    objectsElement.appendChild(objectCard)
+    objectCard.dispatchEvent(new window.Event('start-renaming'))
+    objectCard.addEventListener('name-changed', ({ detail: { name } }) => {
+      EventBus.dispatchEvent(addObject(name, uniqueId(), type))
+    })
   })
   return root
 }

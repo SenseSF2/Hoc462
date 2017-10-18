@@ -4,6 +4,7 @@
   border: 1px solid black;
   box-shadow: 6px 6px 6px rgba(0, 0, 0, 0.5);
   padding: 10px;
+  color: black;
 }
 :local(.card) .image {
   width: 150px;
@@ -22,5 +23,4 @@
   border: 0;
   background: transparent;
   font-size: 16px;
-  color: black;
 }
