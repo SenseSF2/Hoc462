@@ -59,10 +59,12 @@ export default () => {
     objects.set(id, mesh)
     scene.add(mesh)
     transformControls.attach(mesh)
+    scene.add(transformControls)
   })
   EventBus.addEventListener('object-removed', ({ detail: { id } }) => {
     const object3d = objects.get(id)
     scene.remove(object3d)
+    scene.remove(transformControls)
   })
   animate()
   return root
