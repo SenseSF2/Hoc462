@@ -28,10 +28,12 @@ export default name => {
       }
     })
     input.addEventListener('focusout', () => {
-      if (!submitted) {
+      if (!submitted && input.value !== '') {
         root.dispatchEvent(new window.CustomEvent('renamed', {
           detail: { name: input.value }
         }))
+      } else {
+        input.focus()
       }
       submitted = false
     })
