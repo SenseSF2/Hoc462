@@ -4,6 +4,7 @@ import Card from './Card'
 import uniqueId from '../uniqueId'
 import startCreatingObject from '../actions/startCreatingObject'
 import addObject from '../actions/addObject'
+import renameObject from '../actions/renameObject'
 import removeObject from '../actions/removeObject'
 export default () => {
   const root = document.createElement('div')
@@ -36,7 +37,10 @@ export default () => {
     const id = uniqueId()
     const nameChangedHandler = ({ detail: { name } }) => {
       EventBus.dispatchEvent(addObject(name, id, type))
-      objectCard.removeEventListener(nameChangedHandler)
+      objectCard.removeEventListener('name-changed', nameChangedHandler)
+      objectCard.addEventListener('name-changed', ({ detail: { name } }) => {
+        EventBus.dispatchEvent(renameObject(name, id))
+      })
     }
     objectCard.addEventListener('name-changed', nameChangedHandler)
     objectCard.addEventListener('deleted', () => {

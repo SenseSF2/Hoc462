@@ -1,4 +1,5 @@
 import slides from './slides'
+import objects from './objects'
 import selectedDrawerTab from './selectedDrawerTab'
 let store = {
   slides: [],
@@ -14,5 +15,6 @@ const setState = x => {
   store = x
 }
 slides({ getState, setState })
+objects({ getState, setState })
 selectedDrawerTab({ getState, setState })
 export default getState

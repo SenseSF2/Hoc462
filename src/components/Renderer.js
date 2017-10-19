@@ -12,7 +12,6 @@ export default () => {
     75, window.innerWidth / window.innerHeight, 0.1, 1000
   )
   const transformControls = new THREE.TransformControls(camera, renderer.domElement)
-  console.log(transformControls)
   scene.add(transformControls)
   camera.position.z = 5
   const box = new THREE.Mesh(
