@@ -5,6 +5,7 @@ import uniqueId from '../uniqueId'
 import startCreatingObject from '../actions/startCreatingObject'
 import addObject from '../actions/addObject'
 import renameObject from '../actions/renameObject'
+import selectObject from '../actions/selectObject'
 import removeObject from '../actions/removeObject'
 export default () => {
   const root = document.createElement('div')
@@ -35,17 +36,28 @@ export default () => {
     objectsElement.appendChild(objectCard)
     objectCard.dispatchEvent(new window.Event('start-renaming'))
     const id = uniqueId()
-    const nameChangedHandler = ({ detail: { name } }) => {
+    const objectCreatedHandler = ({ detail: { name } }) => {
       EventBus.dispatchEvent(addObject(name, id, type))
-      objectCard.removeEventListener('name-changed', nameChangedHandler)
+      objectCard.removeEventListener('name-changed', objectCreatedHandler)
       objectCard.addEventListener('name-changed', ({ detail: { name } }) => {
         EventBus.dispatchEvent(renameObject(name, id))
       })
+      objectCard.addEventListener('deleted', () => {
+        EventBus.dispatchEvent(removeObject(id))
+      })
+      objectCard.addEventListener('selected', () => {
+        EventBus.dispatchEvent(selectObject(id))
+      })
+      EventBus.addEventListener('object-selected', ({ detail }) => {
+        if (id === detail.id) {
+          objectCard.dispatchEvent(new window.Event('highlighted'))
+        } else {
+          objectCard.dispatchEvent(new window.Event('unhighlighted'))
+        }
+      })
+      EventBus.dispatchEvent(selectObject(id))
     }
-    objectCard.addEventListener('name-changed', nameChangedHandler)
-    objectCard.addEventListener('deleted', () => {
-      EventBus.dispatchEvent(removeObject(id))
-    })
+    objectCard.addEventListener('name-changed', objectCreatedHandler)
   })
   return root
 }

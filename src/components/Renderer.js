@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import EventBus from '../EventBus'
 import styles from './Renderer.css'
+import getState from '../store'
 require('../vendor/TransformControls')
 export default () => {
   const renderer = new THREE.WebGLRenderer({ antialias: true })
@@ -37,33 +38,23 @@ export default () => {
   }
   const objects = new Map()
   EventBus.addEventListener('object-added', ({ detail: { type, id } }) => {
-    /*
-    const geometries = {
-      plane: THREE.PlaneGeometry,
-      box: THREE.BoxGeometry,
-      circle: THREE.CircleGeometry,
-      cylinder: THREE.CylinderGeometry,
-      sphere: THREE.SphereGeometry,
-      icosahedron: THREE.IcosahedronGeometry,
-      torus: THREE.TorusGeometry,
-      torusknot: THREE.TorusKnotGeometry,
-      lathe: THREE.LatheGeometry,
-      sprite: new Error("No, this object doesn't")
-    }
-    */
-    const mesh = new THREE.Mesh(
+    const object3d = new THREE.Mesh(
       new THREE.BoxGeometry(1, 1, 1),
       new THREE.MeshBasicMaterial({ color: 0xffff00 })
     )
-    objects.set(id, mesh)
-    scene.add(mesh)
-    transformControls.attach(mesh)
+    objects.set(id, object3d)
+    scene.add(object3d)
+  })
+  EventBus.addEventListener('object-selected', ({ detail: { id } }) => {
     scene.add(transformControls)
+    transformControls.attach(objects.get(id))
   })
   EventBus.addEventListener('object-removed', ({ detail: { id } }) => {
     const object3d = objects.get(id)
     scene.remove(object3d)
-    scene.remove(transformControls)
+    if (getState().selectedObject === id) {
+      scene.remove(transformControls)
+    }
   })
   animate()
   return root

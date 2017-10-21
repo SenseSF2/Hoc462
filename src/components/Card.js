@@ -26,12 +26,23 @@ export default () => {
   renameButton.addEventListener('click', () => {
     renamable.dispatchEvent(new window.Event('start-renaming'))
   })
+  root.addEventListener('click', ({ target }) => {
+    if (![deleteButton, renameButton].includes(target)) {
+      root.dispatchEvent(new window.Event('selected'))
+    }
+  })
   root.addEventListener('start-renaming', () => {
     renamable.dispatchEvent(new window.Event('start-renaming'))
   })
   root.addEventListener('image-changed', ({ details: { domElement } }) => {
     imageEl.innerHTML = ''
     imageEl.appendChild(domElement)
+  })
+  root.addEventListener('highlighted', () => {
+    root.classList.add('highlighted')
+  })
+  root.addEventListener('unhighlighted', () => {
+    root.classList.remove('highlighted')
   })
   renamable.addEventListener('renamed', ({ detail: { name } }) => {
     root.dispatchEvent(new window.CustomEvent('name-changed', {

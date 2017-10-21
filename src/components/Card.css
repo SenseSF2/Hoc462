@@ -19,6 +19,9 @@
   text-overflow: ellipsis;
   display: block;
 }
+:local(.card).highlighted {
+  border: 2px solid orange;
+}
 :local(.card) .name input {
   border: 0;
   background: transparent;
