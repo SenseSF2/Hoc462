@@ -12,6 +12,9 @@ export default () => {
   const camera = new THREE.PerspectiveCamera(
     75, window.innerWidth / window.innerHeight, 0.1, 1000
   )
+  const pointLight = new THREE.PointLight(0xffffff)
+  pointLight.position.set(1, 1, 2)
+  camera.add(pointLight)
   const transformControls = new THREE.TransformControls(camera, renderer.domElement)
   scene.add(transformControls)
   camera.position.z = 5
@@ -35,7 +38,7 @@ export default () => {
   EventBus.addEventListener('object-added', ({ detail: { type, id } }) => {
     const object3d = new THREE.Mesh(
       new THREE.BoxGeometry(1, 1, 1),
-      new THREE.MeshBasicMaterial({ color: 0xffff00 })
+      new THREE.MeshPhongMaterial({ color: 0xffff00 })
     )
     objects.set(id, object3d)
     scene.add(object3d)
