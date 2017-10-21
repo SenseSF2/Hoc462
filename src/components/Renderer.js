@@ -15,11 +15,6 @@ export default () => {
   const transformControls = new THREE.TransformControls(camera, renderer.domElement)
   scene.add(transformControls)
   camera.position.z = 5
-  const box = new THREE.Mesh(
-    new THREE.BoxGeometry(1, 1, 1),
-    new THREE.MeshBasicMaterial({ color: 0x00ff00 })
-  )
-  scene.add(box)
   scene.add(camera)
   let oldWidth = 0
   let oldHeight = 0
