@@ -37,7 +37,14 @@ export default () => {
   const objects = new Map()
   EventBus.addEventListener('object-added', ({ detail: { type, id } }) => {
     const object3d = new THREE.Mesh(
-      new THREE.BoxGeometry(1, 1, 1),
+      {
+        box: new THREE.BoxGeometry(1, 1, 1),
+        circle: new THREE.CircleGeometry(1, 32),
+        cylinder: new THREE.CylinderGeometry(1, 1, 3, 32),
+        sphere: new THREE.SphereGeometry(1, 32, 32),
+        icosahedron: new THREE.IcosahedronGeometry(1, 0),
+        torus: new THREE.TorusGeometry(1, 0.5, 16, 100)
+      }[type],
       new THREE.MeshPhongMaterial({ color: 0xffff00 })
     )
     objects.set(id, object3d)

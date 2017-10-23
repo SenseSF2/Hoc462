@@ -12,16 +12,12 @@ export default () => {
   root.innerHTML = `
     <select class="add-object ${button}">
       <option disabled selected>Add object</option>
-      <option value="plane">Plane</option>
       <option value="box">Box</option>
       <option value="circle">Circle</option>
       <option value="cylinder">Cylinder</option>
       <option value="sphere">Sphere</option>
       <option value="icosahedron">Icosahedron</option>
       <option value="torus">Torus</option>
-      <option value="torusknot">TorusKnot</option>
-      <option value="lathe">Lathe</option>
-      <option value="sprite">Sprite</option>
     </select>
     <div class="objects"></div>
   `
