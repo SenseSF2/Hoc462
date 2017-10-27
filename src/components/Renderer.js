@@ -2,7 +2,7 @@ import * as THREE from 'three'
 import EventBus from '../EventBus'
 import styles from './Renderer.css'
 import getState from '../store'
-require('../vendor/TransformControls')
+import '../vendor/TransformControls'
 export default () => {
   const renderer = new THREE.WebGLRenderer({ antialias: true })
   const root = document.createElement('div')
@@ -35,21 +35,24 @@ export default () => {
     window.requestAnimationFrame(animate)
   }
   const objects = new Map()
-  EventBus.addEventListener('object-added', ({ detail: { type, id } }) => {
-    const object3d = new THREE.Mesh(
-      {
-        box: new THREE.BoxGeometry(1, 1, 1),
-        circle: new THREE.CircleGeometry(1, 32),
-        cylinder: new THREE.CylinderGeometry(1, 1, 3, 32),
-        sphere: new THREE.SphereGeometry(1, 32, 32),
-        icosahedron: new THREE.IcosahedronGeometry(1, 0),
-        torus: new THREE.TorusGeometry(1, 0.5, 16, 100)
-      }[type],
-      new THREE.MeshPhongMaterial({ color: 0xffff00 })
-    )
-    objects.set(id, object3d)
-    scene.add(object3d)
-  })
+  EventBus.addEventListener(
+    'object-added', ({ detail: { type, id, color } }) => {
+      const decimalColor = parseInt(color.match(/.(.*)/)[1], 16)
+      const object3d = new THREE.Mesh(
+        {
+          box: new THREE.BoxGeometry(1, 1, 1),
+          circle: new THREE.CircleGeometry(1, 32),
+          cylinder: new THREE.CylinderGeometry(1, 1, 3, 32),
+          sphere: new THREE.SphereGeometry(1, 32, 32),
+          icosahedron: new THREE.IcosahedronGeometry(1, 0),
+          torus: new THREE.TorusGeometry(1, 0.5, 16, 100)
+        }[type],
+        new THREE.MeshPhongMaterial({ color: decimalColor })
+      )
+      objects.set(id, object3d)
+      scene.add(object3d)
+    }
+  )
   EventBus.addEventListener('object-selected', ({ detail: { id } }) => {
     scene.add(transformControls)
     transformControls.attach(objects.get(id))
