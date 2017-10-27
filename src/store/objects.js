@@ -2,11 +2,11 @@ import EventBus from '../EventBus'
 export default ({ getState, setState }) => {
   EventBus.addEventListener(
     'object-added',
-    ({ detail: { id, name, type } }) => {
+    ({ detail: { id, name, type, position, rotation, color } }) => {
       setState({
         ...getState(),
         objects: [...getState().objects, {
-          id, name, type, position: [0, 0, 0], rotation: [0, 0, 0]
+          id, name, type, position, rotation, color
         }]
       })
     }
