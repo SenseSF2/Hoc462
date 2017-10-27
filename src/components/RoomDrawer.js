@@ -1,6 +1,6 @@
 import EventBus from '../EventBus'
 import { button } from './Button.css'
-import Card from './Card'
+import ObjectCard from './Object'
 import uniqueId from '../uniqueId'
 import startCreatingObject from '../actions/startCreatingObject'
 import addObject from '../actions/addObject'
@@ -28,13 +28,22 @@ export default () => {
   })
   EventBus.addEventListener('start-creating-object', ({ detail: { type } }) => {
     const objectsElement = root.querySelector('.objects')
-    const objectCard = Card()
+    const objectCard = ObjectCard()
     objectsElement.appendChild(objectCard)
     objectCard.dispatchEvent(new window.Event('start-renaming'))
     const id = uniqueId()
-    const objectCreatedHandler = ({ detail: { name } }) => {
+    const nameChangedHandler = ({ detail: { name } }) => {
       EventBus.dispatchEvent(addObject(name, id, type))
-      objectCard.removeEventListener('name-changed', objectCreatedHandler)
+      objectCard.removeEventListener('name-changed', nameChangedHandler)
+    }
+    const objectCreatedHandler = ({ detail: { color } }) => {
+      EventBus.removeEventListener('object-added', objectCreatedHandler)
+      objectCard.addEventListener('color-changed', ({ detail: { color } }) => {
+        //
+      })
+      objectCard.dispatchEvent(new window.CustomEvent('color-changed', {
+        detail: { color }
+      }))
       objectCard.addEventListener('name-changed', ({ detail: { name } }) => {
         EventBus.dispatchEvent(renameObject(name, id))
       })
@@ -53,7 +62,8 @@ export default () => {
       })
       EventBus.dispatchEvent(selectObject(id))
     }
-    objectCard.addEventListener('name-changed', objectCreatedHandler)
+    objectCard.addEventListener('name-changed', nameChangedHandler)
+    EventBus.addEventListener('object-added', objectCreatedHandler)
   })
   return root
 }

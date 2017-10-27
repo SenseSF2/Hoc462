@@ -25,6 +25,8 @@ export default name => {
         }))
         form.removeEventListener('submit', submitHandler)
         input.removeEventListener('focusout', submitHandler)
+      } else {
+        root.dispatchEvent(new window.Event('rename-canceled'))
       }
     }
     form.addEventListener('submit', submitHandler)
