@@ -16,6 +16,7 @@ export default () => {
   pointLight.position.set(1, 1, 2)
   camera.add(pointLight)
   const transformControls = new THREE.TransformControls(camera, renderer.domElement)
+  transformControls.setSpace('world')
   scene.add(transformControls)
   camera.position.z = 5
   scene.add(camera)
