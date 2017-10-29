@@ -39,6 +39,7 @@ export default () => {
     window.requestAnimationFrame(animate)
   }
   const objects = new Map()
+  // For example: string "#ffffff" is converted to number 0xffffff = 16777215
   const hexColorToDecimal = color => parseInt(color.match(/.(.*)/)[1], 16)
   EventBus.addEventListener(
     'object-added', ({ detail: { type, id, color } }) => {
