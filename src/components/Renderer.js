@@ -64,6 +64,11 @@ export default () => {
       object3d.material.color.set(hexColorToDecimal(color))
     }
   )
+  EventBus.addEventListener(
+    'transform-controls-mode-changed', ({ detail: { mode } }) => {
+      transformControls.setMode(mode)
+    }
+  )
   EventBus.addEventListener('object-removed', ({ detail: { id } }) => {
     const object3d = objects.get(id)
     scene.remove(object3d)
