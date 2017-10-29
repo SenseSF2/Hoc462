@@ -2,6 +2,7 @@ import * as THREE from 'three'
 import EventBus from '../EventBus'
 import styles from './Renderer.css'
 import getState from '../store'
+import '../vendor/OrbitControls'
 import '../vendor/TransformControls'
 export default () => {
   const renderer = new THREE.WebGLRenderer({ antialias: true })
@@ -15,6 +16,7 @@ export default () => {
   const pointLight = new THREE.PointLight(0xffffff)
   pointLight.position.set(1, 1, 2)
   camera.add(pointLight)
+  const orbitControls = new THREE.OrbitControls(camera, renderer.domElement)
   const transformControls = new THREE.TransformControls(camera, renderer.domElement)
   transformControls.setSpace('world')
   scene.add(transformControls)
@@ -32,6 +34,7 @@ export default () => {
       renderer.setSize(root.clientWidth, root.clientHeight)
     }
     transformControls.update()
+    orbitControls.update()
     renderer.render(scene, camera)
     window.requestAnimationFrame(animate)
   }
