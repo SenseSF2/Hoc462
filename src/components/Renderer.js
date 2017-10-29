@@ -35,9 +35,10 @@ export default () => {
     window.requestAnimationFrame(animate)
   }
   const objects = new Map()
+  const hexColorToDecimal = color => parseInt(color.match(/.(.*)/)[1], 16)
   EventBus.addEventListener(
     'object-added', ({ detail: { type, id, color } }) => {
-      const decimalColor = parseInt(color.match(/.(.*)/)[1], 16)
+      const decimalColor = hexColorToDecimal(color)
       const object3d = new THREE.Mesh(
         {
           box: new THREE.BoxGeometry(1, 1, 1),
@@ -57,6 +58,12 @@ export default () => {
     scene.add(transformControls)
     transformControls.attach(objects.get(id))
   })
+  EventBus.addEventListener(
+    'object-color-changed', ({ detail: { id, color } }) => {
+      const object3d = objects.get(id)
+      object3d.material.color.set(hexColorToDecimal(color))
+    }
+  )
   EventBus.addEventListener('object-removed', ({ detail: { id } }) => {
     const object3d = objects.get(id)
     scene.remove(object3d)

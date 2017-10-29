@@ -27,4 +27,12 @@ export default ({ getState, setState }) => {
       )
     })
   })
+  EventBus.addEventListener('object-color-changed', ({ detail: { id, color } }) => {
+    setState({
+      ...getState(),
+      objects: getState().objects.map(
+        object => object.id === id ? { ...object, color } : object
+      )
+    })
+  })
 }

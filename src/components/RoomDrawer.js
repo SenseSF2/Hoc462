@@ -6,6 +6,7 @@ import startCreatingObject from '../actions/startCreatingObject'
 import addObject from '../actions/addObject'
 import renameObject from '../actions/renameObject'
 import selectObject from '../actions/selectObject'
+import changeObjectColor from '../actions/changeObjectColor'
 import removeObject from '../actions/removeObject'
 export default () => {
   const root = document.createElement('div')
@@ -38,20 +39,20 @@ export default () => {
     }
     const objectCreatedHandler = ({ detail: { color } }) => {
       EventBus.removeEventListener('object-added', objectCreatedHandler)
-      objectCard.addEventListener('color-changed', ({ detail: { color } }) => {
-        //
-      })
       objectCard.dispatchEvent(new window.CustomEvent('color-changed', {
         detail: { color }
       }))
       objectCard.addEventListener('name-changed', ({ detail: { name } }) => {
         EventBus.dispatchEvent(renameObject(name, id))
       })
-      objectCard.addEventListener('deleted', () => {
-        EventBus.dispatchEvent(removeObject(id))
-      })
       objectCard.addEventListener('selected', () => {
         EventBus.dispatchEvent(selectObject(id))
+      })
+      objectCard.addEventListener('color-changed', ({ detail: { color } }) => {
+        EventBus.dispatchEvent(changeObjectColor(id, color))
+      })
+      objectCard.addEventListener('deleted', () => {
+        EventBus.dispatchEvent(removeObject(id))
       })
       EventBus.addEventListener('object-selected', ({ detail }) => {
         if (id === detail.id) {
