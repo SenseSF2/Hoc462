@@ -16,6 +16,8 @@ export default () => {
   const pointLight = new THREE.PointLight(0xffffff)
   pointLight.position.set(1, 1, 2)
   camera.add(pointLight)
+  const gridHelper = new THREE.GridHelper(40, 80)
+  scene.add(gridHelper)
   const orbitControls = new THREE.OrbitControls(camera, renderer.domElement)
   const transformControls = new THREE.TransformControls(camera, renderer.domElement)
   transformControls.setSpace('world')
