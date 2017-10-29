@@ -4,6 +4,7 @@ import styles from './Renderer.css'
 import getState from '../store'
 import '../vendor/OrbitControls'
 import '../vendor/TransformControls'
+import selectObject from '../actions/selectObject'
 export default () => {
   const renderer = new THREE.WebGLRenderer({ antialias: true })
   const root = document.createElement('div')
@@ -41,6 +42,7 @@ export default () => {
     window.requestAnimationFrame(animate)
   }
   const objects = new Map()
+  const objectIds = new Map()
   // For example: string "#ffffff" is converted to number 0xffffff = 16777215
   const hexColorToDecimal = color => parseInt(color.match(/.(.*)/)[1], 16)
   EventBus.addEventListener(
@@ -58,12 +60,35 @@ export default () => {
         new THREE.MeshPhongMaterial({ color: decimalColor })
       )
       objects.set(id, object3d)
+      objectIds.set(object3d, id)
       scene.add(object3d)
     }
   )
   EventBus.addEventListener('object-selected', ({ detail: { id } }) => {
     scene.add(transformControls)
     transformControls.attach(objects.get(id))
+  })
+  const mousePosition = (element, event) => {
+    const rect = element.getBoundingClientRect()
+    const normal = {
+      x: (event.clientX - rect.left) / rect.width * element.width,
+      y: (event.clientY - rect.top) / rect.height * element.height
+    }
+    const webgl = {
+      x: (normal.x / rect.width) * 2 - 1,
+      y: -(normal.y / rect.height) * 2 + 1
+    }
+    return { normal, webgl }
+  }
+  renderer.domElement.addEventListener('click', event => {
+    const { webgl: { x, y } } = mousePosition(renderer.domElement, event)
+    const raycaster = new THREE.Raycaster()
+    const mouse = new THREE.Vector2(x, y)
+    raycaster.setFromCamera(mouse, camera)
+    const intersects = raycaster.intersectObjects([...objects.values()])
+    if (intersects.length > 0) {
+      EventBus.dispatchEvent(selectObject(objectIds.get(intersects[0].object)))
+    }
   })
   EventBus.addEventListener(
     'object-color-changed', ({ detail: { id, color } }) => {
@@ -78,6 +103,8 @@ export default () => {
   )
   EventBus.addEventListener('object-removed', ({ detail: { id } }) => {
     const object3d = objects.get(id)
+    objects.delete(id)
+    objectIds.delete(object3d)
     scene.remove(object3d)
     if (getState().selectedObject === id) {
       scene.remove(transformControls)
