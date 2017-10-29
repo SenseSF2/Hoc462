@@ -10,7 +10,7 @@ export default name => {
     const oldName = root.textContent
     root.innerHTML = `
       <form>
-        <input type='text' />
+        <input type='text' placeholder='Type name here' />
       </form>
     `
     const form = root.querySelector('form')
