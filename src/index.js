@@ -10,3 +10,4 @@ root.appendChild(Header())
 root.appendChild(Sidebar())
 root.appendChild(Drawer())
 root.appendChild(Renderer())
+// Todo: Clone, add sprites, animations
