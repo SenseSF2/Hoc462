@@ -13,6 +13,7 @@ export default () => {
     </div>
   `
   let newlyCreated = true
+  let isRenaming = false
   const nameEl = root.querySelector('.name')
   const renamable = Renamable()
   renamable.classList.add('name')
@@ -36,6 +37,7 @@ export default () => {
     }
   })
   const startRenaming = () => {
+    isRenaming = true
     if (newlyCreated) {
       const renameCanceledHandler = () => {
         renamable.removeEventListener('rename-canceled', renameCanceledHandler)
@@ -59,13 +61,23 @@ export default () => {
   })
   root.addEventListener('deleted', () => { root.remove() })
   renamable.addEventListener('renamed', ({ detail: { name } }) => {
-    if (newlyCreated) {
-      newlyCreated = false
+    if (isRenaming) {
+      isRenaming = false
+      if (newlyCreated) {
+        newlyCreated = false
+      }
+      root.dispatchEvent(new window.CustomEvent('name-changed', {
+        detail: { name }
+      }))
+      actionsElement.style.display = ''
     }
-    root.dispatchEvent(new window.CustomEvent('name-changed', {
-      detail: { name }
-    }))
-    actionsElement.style.display = ''
+    // otherwise, renamable's name is being set by name-changed handler.
+    // this event handler will do nothing.
+  })
+  root.addEventListener('name-changed', ({ detail: { name } }) => {
+    renamable.dispatchEvent(
+      new window.CustomEvent('renamed', { detail: { name } })
+    )
   })
   return root
 }

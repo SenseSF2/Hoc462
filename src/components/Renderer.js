@@ -62,10 +62,10 @@ export default () => {
       objects.set(id, object3d)
       objectIds.set(object3d, id)
       scene.add(object3d)
+      EventBus.dispatchEvent(selectObject(id))
     }
   )
   EventBus.addEventListener('object-selected', ({ detail: { id } }) => {
-    scene.add(transformControls)
     transformControls.attach(objects.get(id))
   })
   const mousePosition = (element, event) => {
@@ -101,13 +101,23 @@ export default () => {
       transformControls.setMode(mode)
     }
   )
+  EventBus.addEventListener(
+    'object-cloned', ({ detail: { id, clonedFromId } }) => {
+      const object3d = objects.get(clonedFromId)
+      const clonedObject = object3d.clone()
+      scene.add(clonedObject)
+      objects.set(id, clonedObject)
+      objectIds.set(clonedObject, id)
+      EventBus.dispatchEvent(selectObject(id))
+    }
+  )
   EventBus.addEventListener('object-removed', ({ detail: { id } }) => {
     const object3d = objects.get(id)
     objects.delete(id)
     objectIds.delete(object3d)
     scene.remove(object3d)
     if (getState().selectedObject === id) {
-      scene.remove(transformControls)
+      transformControls.detach()
     }
   })
   animate()

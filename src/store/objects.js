@@ -11,6 +11,17 @@ export default ({ getState, setState }) => {
       })
     }
   )
+  EventBus.addEventListener(
+    'object-cloned', ({ detail: { id, clonedFromId } }) => {
+      setState({
+        ...getState(),
+        objects: [...getState().objects, {
+          ...getState().objects.find(({ id }) => id === clonedFromId),
+          id
+        }]
+      })
+    }
+  )
   EventBus.addEventListener('object-removed', ({ detail: { id } }) => {
     setState({
       ...getState(),
