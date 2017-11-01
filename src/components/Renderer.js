@@ -59,6 +59,9 @@ export default () => {
         }[type],
         new THREE.MeshPhongMaterial({ color: decimalColor })
       )
+      if (type === 'circle') {
+        object3d.material.side = THREE.DoubleSide
+      }
       objects.set(id, object3d)
       objectIds.set(object3d, id)
       scene.add(object3d)
