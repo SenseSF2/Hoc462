@@ -31,7 +31,9 @@ export default () => {
   `
   const cloneButton = root.querySelector('.clone')
   cloneButton.addEventListener('click', () => {
-    EventBus.dispatchEvent(cloneObject(uniqueId(), getState().selectedObject))
+    if (getState().selectedObject !== null) {
+      EventBus.dispatchEvent(cloneObject(uniqueId(), getState().selectedObject))
+    }
   })
   const translateButton = root.querySelector('.translate')
   const rotateButton = root.querySelector('.rotate')
