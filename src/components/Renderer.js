@@ -5,6 +5,9 @@ import getState from '../store'
 import '../vendor/OrbitControls'
 import '../vendor/TransformControls'
 import selectObject from '../actions/selectObject'
+import translateObject from '../actions/translateObject'
+import rotateObject from '../actions/rotateObject'
+import scaleObject from '../actions/scaleObject'
 export default () => {
   const renderer = new THREE.WebGLRenderer({ antialias: true })
   const root = document.createElement('div')
@@ -22,6 +25,13 @@ export default () => {
   const orbitControls = new THREE.OrbitControls(camera, renderer.domElement)
   const transformControls = new THREE.TransformControls(camera, renderer.domElement)
   transformControls.setSpace('world')
+  transformControls.addEventListener('change', () => {
+    const { object } = transformControls
+    const id = objectIds.get(object)
+    EventBus.dispatchEvent(translateObject(id, object.position.toArray()))
+    EventBus.dispatchEvent(rotateObject(id, object.rotation.toArray()))
+    EventBus.dispatchEvent(scaleObject(id, object.scale.toArray()))
+  })
   scene.add(transformControls)
   camera.position.z = 5
   scene.add(camera)

@@ -2,12 +2,42 @@ import EventBus from '../EventBus'
 export default ({ getState, setState }) => {
   EventBus.addEventListener(
     'object-added',
-    ({ detail: { id, name, type, position, rotation, color } }) => {
+    ({ detail: { id, name, type, position, rotation, scale, color } }) => {
       setState({
         ...getState(),
         objects: [...getState().objects, {
-          id, name, type, position, rotation, color
+          id, name, type, position, rotation, scale, color
         }]
+      })
+    }
+  )
+  EventBus.addEventListener(
+    'object-translated', ({ detail: { id, position } }) => {
+      setState({
+        ...getState(),
+        objects: getState().objects.map(
+          object => object.id === id ? { ...object, position } : object
+        )
+      })
+    }
+  )
+  EventBus.addEventListener(
+    'object-rotated', ({ detail: { id, rotation } }) => {
+      setState({
+        ...getState(),
+        objects: getState().objects.map(
+          object => object.id === id ? { ...object, rotation } : object
+        )
+      })
+    }
+  )
+  EventBus.addEventListener(
+    'object-scaled', ({ detail: { id, scale } }) => {
+      setState({
+        ...getState(),
+        objects: getState().objects.map(
+          object => object.id === id ? { ...object, scale } : object
+        )
       })
     }
   )
