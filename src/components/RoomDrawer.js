@@ -10,6 +10,7 @@ import renameObject from '../actions/renameObject'
 import selectObject from '../actions/selectObject'
 import cloneObject from '../actions/cloneObject'
 import changeObjectColor from '../actions/changeObjectColor'
+import changeObjectTexture from '../actions/changeObjectTexture'
 import removeObject from '../actions/removeObject'
 export default () => {
   const root = document.createElement('div')
@@ -69,6 +70,11 @@ export default () => {
     objectCard.addEventListener('color-changed', ({ detail: { color } }) => {
       EventBus.dispatchEvent(changeObjectColor(id, color))
     })
+    objectCard.addEventListener(
+      'texture-changed', ({ detail: { blobUrl } }) => {
+        EventBus.dispatchEvent(changeObjectTexture(id, blobUrl))
+      }
+    )
     objectCard.addEventListener('deleted', () => {
       EventBus.dispatchEvent(removeObject(id))
     })

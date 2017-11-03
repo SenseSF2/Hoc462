@@ -12,6 +12,16 @@ export default ({ getState, setState }) => {
     }
   )
   EventBus.addEventListener(
+    'object-texture-changed', ({ detail: { id, blobUrl } }) => {
+      setState({
+        ...getState(),
+        objects: getState().objects.map(
+          object => object.id === id ? { ...object, blobUrl } : object
+        )
+      })
+    }
+  )
+  EventBus.addEventListener(
     'object-translated', ({ detail: { id, position } }) => {
       setState({
         ...getState(),

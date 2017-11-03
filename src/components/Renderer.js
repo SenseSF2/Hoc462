@@ -106,7 +106,17 @@ export default () => {
   EventBus.addEventListener(
     'object-color-changed', ({ detail: { id, color } }) => {
       const object3d = objects.get(id)
+      object3d.material = object3d.material.clone()
       object3d.material.color.set(hexColorToDecimal(color))
+    }
+  )
+  EventBus.addEventListener(
+    'object-texture-changed', ({ detail: { id, blobUrl } }) => {
+      const object3d = objects.get(id)
+      object3d.material = new THREE.MeshBasicMaterial({
+        map: new THREE.TextureLoader().load(blobUrl),
+        side: THREE.DoubleSide
+      })
     }
   )
   EventBus.addEventListener(
