@@ -11,6 +11,9 @@ import selectObject from '../actions/selectObject'
 import cloneObject from '../actions/cloneObject'
 import changeObjectColor from '../actions/changeObjectColor'
 import changeObjectTexture from '../actions/changeObjectTexture'
+import translateObject from '../actions/translateObject'
+import rotateObject from '../actions/rotateObject'
+import scaleObject from '../actions/scaleObject'
 import removeObject from '../actions/removeObject'
 export default () => {
   const root = document.createElement('div')
@@ -54,7 +57,15 @@ export default () => {
     target.selectedIndex = 0
   })
   const connectObjectCardToEventBus = (objectCard, object) => {
-    const { id, name, color } = object
+    const { id, name, color, position, rotation, scale } = object
+    EventBus.addEventListener('object-selected', ({ detail }) => {
+      if (id === detail.id) {
+        objectCard.dispatchEvent(new window.Event('highlighted'))
+      } else {
+        objectCard.dispatchEvent(new window.Event('unhighlighted'))
+      }
+    })
+    objectCard.dispatchEvent(new window.Event('highlighted'))
     objectCard.dispatchEvent(new window.CustomEvent('color-changed', {
       detail: { color }
     }))
@@ -67,6 +78,57 @@ export default () => {
     objectCard.addEventListener('selected', () => {
       EventBus.dispatchEvent(selectObject(id))
     })
+    objectCard.addEventListener(
+      'position-changed', ({ detail: { position, fromEventBus } }) => {
+        if (!fromEventBus) {
+          EventBus.dispatchEvent(translateObject(id, position))
+        }
+      }
+    )
+    objectCard.addEventListener(
+      'rotation-changed', ({ detail: { rotation, fromEventBus } }) => {
+        if (!fromEventBus) {
+          EventBus.dispatchEvent(rotateObject(id, rotation))
+        }
+      }
+    )
+    objectCard.addEventListener(
+      'scale-changed', ({ detail: { scale, fromEventBus } }) => {
+        if (!fromEventBus) {
+          EventBus.dispatchEvent(scaleObject(id, scale))
+        }
+      }
+    )
+    EventBus.addEventListener(
+      'object-translated', ({ detail: { position } }) => {
+        objectCard.dispatchEvent(new window.CustomEvent('position-changed', {
+          detail: { position, fromEventBus: true }
+        }))
+      }
+    )
+    EventBus.addEventListener(
+      'object-rotated', ({ detail: { rotation } }) => {
+        objectCard.dispatchEvent(new window.CustomEvent('rotation-changed', {
+          detail: { rotation, fromEventBus: true }
+        }))
+      }
+    )
+    EventBus.addEventListener(
+      'object-scaled', ({ detail: { scale } }) => {
+        objectCard.dispatchEvent(new window.CustomEvent('scale-changed', {
+          detail: { scale, fromEventBus: true }
+        }))
+      }
+    )
+    objectCard.dispatchEvent(new window.CustomEvent('position-changed', {
+      detail: { position }
+    }))
+    objectCard.dispatchEvent(new window.CustomEvent('rotation-changed', {
+      detail: { rotation }
+    }))
+    objectCard.dispatchEvent(new window.CustomEvent('scale-changed', {
+      detail: { scale }
+    }))
     objectCard.addEventListener('color-changed', ({ detail: { color } }) => {
       EventBus.dispatchEvent(changeObjectColor(id, color))
     })
@@ -77,13 +139,6 @@ export default () => {
     )
     objectCard.addEventListener('deleted', () => {
       EventBus.dispatchEvent(removeObject(id))
-    })
-    EventBus.addEventListener('object-selected', ({ detail }) => {
-      if (id === detail.id) {
-        objectCard.dispatchEvent(new window.Event('highlighted'))
-      } else {
-        objectCard.dispatchEvent(new window.Event('unhighlighted'))
-      }
     })
   }
   const objectsElement = root.querySelector('.objects')

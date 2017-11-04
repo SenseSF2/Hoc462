@@ -120,6 +120,24 @@ export default () => {
     }
   )
   EventBus.addEventListener(
+    'object-translated', ({ detail: { id, position } }) => {
+      const object3d = objects.get(id)
+      object3d.position.set(...position)
+    }
+  )
+  EventBus.addEventListener(
+    'object-rotated', ({ detail: { id, rotation } }) => {
+      const object3d = objects.get(id)
+      object3d.rotation.set(...rotation)
+    }
+  )
+  EventBus.addEventListener(
+    'object-scaled', ({ detail: { id, scale } }) => {
+      const object3d = objects.get(id)
+      object3d.scale.set(...scale)
+    }
+  )
+  EventBus.addEventListener(
     'transform-controls-mode-changed', ({ detail: { mode } }) => {
       transformControls.setMode(mode)
     }

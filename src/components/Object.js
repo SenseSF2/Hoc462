@@ -13,6 +13,16 @@ export default () => {
       <input type="file" class="texture-upload-input">
       <input type="color" class="color-picker">
     </div>
+    <div class="properties">
+      ${
+        ['Position', 'Rotation', 'Scale'].map(property => `
+          <div class="${property.toLowerCase()}">
+            <label>${property}: </label>
+            ${'<input type="number" step="0.01"> '.repeat(3)}
+          </div>
+        `).join('')
+      }
+    </div>
   `
   let newlyCreated = true
   let isRenaming = false
@@ -93,6 +103,55 @@ export default () => {
     }
     // otherwise, renamable's name is being set by name-changed handler.
     // this event handler will do nothing.
+  })
+  const positionElement = root.querySelector('.position')
+  const rotationElement = root.querySelector('.rotation')
+  const scaleElement = root.querySelector('.scale')
+  const objectProperties = { position: [], rotation: [], scale: [] }
+  ;[...positionElement.querySelectorAll('input')].forEach((input, index) => {
+    input.addEventListener('input', () => {
+      const newPosition = [...objectProperties.position]
+      newPosition[index] = +input.value
+      root.dispatchEvent(new window.CustomEvent('position-changed', {
+        detail: { position: newPosition }
+      }))
+    })
+  })
+  root.addEventListener('position-changed', ({ detail: { position } }) => {
+    objectProperties.position = position
+    ;[...positionElement.querySelectorAll('input')].forEach((input, index) => {
+      input.value = position[index]
+    })
+  })
+  ;[...rotationElement.querySelectorAll('input')].forEach((input, index) => {
+    input.addEventListener('input', () => {
+      const newRotation = [...objectProperties.rotation]
+      newRotation[index] = +input.value / 180 * Math.PI
+      root.dispatchEvent(new window.CustomEvent('rotation-changed', {
+        detail: { rotation: newRotation }
+      }))
+    })
+  })
+  root.addEventListener('rotation-changed', ({ detail: { rotation } }) => {
+    objectProperties.rotation = rotation
+    ;[...rotationElement.querySelectorAll('input')].forEach((input, index) => {
+      input.value = rotation[index] / Math.PI * 180
+    })
+  })
+  ;[...scaleElement.querySelectorAll('input')].forEach((input, index) => {
+    input.addEventListener('input', () => {
+      const newScale = [...objectProperties.scale]
+      newScale[index] = +input.value
+      root.dispatchEvent(new window.CustomEvent('scale-changed', {
+        detail: { scale: newScale }
+      }))
+    })
+  })
+  root.addEventListener('scale-changed', ({ detail: { scale } }) => {
+    objectProperties.scale = scale
+    ;[...scaleElement.querySelectorAll('input')].forEach((input, index) => {
+      input.value = scale[index]
+    })
   })
   root.addEventListener('name-changed', ({ detail: { name } }) => {
     renamable.dispatchEvent(
