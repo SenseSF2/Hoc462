@@ -108,6 +108,14 @@ export default () => {
   const rotationElement = root.querySelector('.rotation')
   const scaleElement = root.querySelector('.scale')
   const objectProperties = { position: [], rotation: [], scale: [] }
+  // prevent camera from moving if user presses arrow keys
+  // while editing an input
+  ;[positionElement, rotationElement, scaleElement]
+    .map(element => element.querySelectorAll('input'))
+    .reduce((accumulator, element) => accumulator.concat([...element]), [])
+    .forEach(input => input.addEventListener(
+      'keydown', event => event.stopPropagation()
+    ))
   ;[...positionElement.querySelectorAll('input')].forEach((input, index) => {
     input.addEventListener('input', () => {
       const newPosition = [...objectProperties.position]

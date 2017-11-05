@@ -17,6 +17,9 @@ export default name => {
     const input = root.querySelector('input')
     input.value = oldName
     window.requestAnimationFrame(() => input.select())
+    // prevent camera from moving if user presses arrow keys
+    // while editing an input
+    input.addEventListener('keydown', event => event.stopPropagation())
     const submitHandler = event => {
       event.preventDefault()
       if (input.value !== '') {
