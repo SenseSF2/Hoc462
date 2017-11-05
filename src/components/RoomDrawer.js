@@ -27,18 +27,11 @@ export default () => {
       <option value="icosahedron">Icosahedron</option>
       <option value="torus">Torus</option>
     </select>
-    <button class="clone ${button}">Clone</button>
     <button class="translate ${button}">Translate</button>
     <button class="rotate ${button}">Rotate</button>
     <button class="scale ${button}">Scale</button>
     <div class="objects"></div>
   `
-  const cloneButton = root.querySelector('.clone')
-  cloneButton.addEventListener('click', () => {
-    if (getState().selectedObject !== null) {
-      EventBus.dispatchEvent(cloneObject(uniqueId(), getState().selectedObject))
-    }
-  })
   const translateButton = root.querySelector('.translate')
   const rotateButton = root.querySelector('.rotate')
   const scaleButton = root.querySelector('.scale')
@@ -77,6 +70,9 @@ export default () => {
     })
     objectCard.addEventListener('selected', () => {
       EventBus.dispatchEvent(selectObject(id))
+    })
+    objectCard.addEventListener('cloned', () => {
+      EventBus.dispatchEvent(cloneObject(uniqueId(), id))
     })
     objectCard.addEventListener(
       'position-changed', ({ detail: { position, fromEventBus } }) => {

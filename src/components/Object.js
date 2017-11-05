@@ -8,6 +8,7 @@ export default () => {
     <div class="name"></div>
     <div class="actions">
       <button class="${button} delete">Delete</button>
+      <button class="${button} clone">Clone</button>
       <button class="${button} rename">Rename</button>
       <button class="${button} texture-upload-button">Set texture</button>
       <input type="file" class="texture-upload-input">
@@ -32,12 +33,14 @@ export default () => {
   nameEl.parentNode.replaceChild(renamable, nameEl)
   const deleteButton = root.querySelector('.delete')
   const renameButton = root.querySelector('.rename')
+  const cloneButton = root.querySelector('.clone')
   const colorPicker = root.querySelector('.color-picker')
   const textureUploadButton = root.querySelector('.texture-upload-button')
   const textureUploadInput = root.querySelector('.texture-upload-input')
   const actionButtons = [
     deleteButton,
     renameButton,
+    cloneButton,
     colorPicker,
     textureUploadButton,
     textureUploadInput
@@ -50,6 +53,9 @@ export default () => {
     root.dispatchEvent(new window.CustomEvent('color-changed', {
       detail: { color: colorPicker.value }
     }))
+  })
+  cloneButton.addEventListener('click', () => {
+    root.dispatchEvent(new window.Event('cloned'))
   })
   textureUploadButton.addEventListener('click', () => {
     textureUploadInput.click()
