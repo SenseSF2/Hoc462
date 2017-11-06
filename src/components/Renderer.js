@@ -58,20 +58,30 @@ export default () => {
   EventBus.addEventListener(
     'object-added', ({ detail: { type, id, color } }) => {
       const decimalColor = hexColorToDecimal(color)
-      const object3d = new THREE.Mesh(
-        {
-          box: new THREE.BoxGeometry(1, 1, 1),
-          circle: new THREE.CircleGeometry(1, 32),
-          cylinder: new THREE.CylinderGeometry(1, 1, 3, 32),
-          sphere: new THREE.SphereGeometry(1, 32, 32),
-          icosahedron: new THREE.IcosahedronGeometry(1, 0),
-          torus: new THREE.TorusGeometry(1, 0.5, 16, 100)
-        }[type],
-        new THREE.MeshPhongMaterial({
-          color: decimalColor,
-          side: THREE.DoubleSide
-        })
-      )
+      let object3d
+      if (type === 'circle') {
+        object3d = new THREE.Mesh(
+          new THREE.CircleGeometry(1, 32),
+          new THREE.MeshBasicMaterial({
+            color: decimalColor,
+            side: THREE.DoubleSide
+          })
+        )
+      } else {
+        object3d = new THREE.Mesh(
+          {
+            box: new THREE.BoxGeometry(1, 1, 1),
+            cylinder: new THREE.CylinderGeometry(1, 1, 3, 32),
+            sphere: new THREE.SphereGeometry(1, 32, 32),
+            icosahedron: new THREE.IcosahedronGeometry(1, 0),
+            torus: new THREE.TorusGeometry(1, 0.5, 16, 100)
+          }[type],
+          new THREE.MeshPhongMaterial({
+            color: decimalColor,
+            side: THREE.DoubleSide
+          })
+        )
+      }
       objects.set(id, object3d)
       objectIds.set(object3d, id)
       scene.add(object3d)
