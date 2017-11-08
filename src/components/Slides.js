@@ -76,6 +76,7 @@ export default () => {
           }
         }
       )
+      EventBus.dispatchEvent(selectSlide(id))
       newItem.addEventListener('renamed', ({ detail: { name } }) => {
         EventBus.dispatchEvent(renameSlide(name, id))
       })
