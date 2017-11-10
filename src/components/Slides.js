@@ -50,7 +50,8 @@ export default () => {
   const root = document.createElement('div')
   root.classList.add(styles.slides)
   root.innerHTML = `
-    <span>Slides <button class="${button} create">Create new</button></span>
+    <span>Slides</span>
+    <button class="${button} create">Create new</button>
     <ul class="list"></ul>
   `
   root.querySelector('.create').addEventListener('click', () => {
