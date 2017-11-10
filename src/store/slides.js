@@ -6,8 +6,9 @@ export default ({ getState, setState }) => {
       slides: [...getState().slides, {
         name: detail.name,
         id: detail.id,
-        caption: '',
-        animations: []
+        view: detail.view,
+        caption: detail.caption,
+        animations: detail.animations
       }]
     })
   })

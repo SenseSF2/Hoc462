@@ -8,6 +8,7 @@ import selectObject from '../actions/selectObject'
 import translateObject from '../actions/translateObject'
 import rotateObject from '../actions/rotateObject'
 import scaleObject from '../actions/scaleObject'
+import changeSlideView from '../actions/changeSlideView'
 export default () => {
   const renderer = new THREE.WebGLRenderer({ antialias: true })
   const root = document.createElement('div')
@@ -170,6 +171,33 @@ export default () => {
     if (getState().selectedObject === id) {
       transformControls.detach()
     }
+  })
+  EventBus.addEventListener('slide-selected', ({ detail: { id } }) => {
+    const slide = getState().slides.find(
+      ({ id: currentId }) => currentId === id
+    )
+    const { view: { position, rotation } } = slide
+    camera.position.set(...position)
+    camera.rotation.set(...rotation)
+  })
+  EventBus.addEventListener('drawer-tab-selected', ({ detail: { name } }) => {
+    if (name === 'slide') {
+      orbitControls.enabled = false
+    } else {
+      orbitControls.enabled = true
+    }
+  })
+  orbitControls.addEventListener('change', () => {
+    EventBus.dispatchEvent(changeSlideView(getState().selectedSlide, {
+      position: camera.position,
+      rotation: camera.rotation
+    }))
+  })
+  EventBus.addEventListener('start-changing-view', () => {
+    orbitControls.enabled = true
+  })
+  EventBus.addEventListener('finished-changing-slide-view', () => {
+    orbitControls.enabled = false
   })
   animate()
   return root

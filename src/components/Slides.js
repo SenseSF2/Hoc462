@@ -8,6 +8,7 @@ import addSlide from '../actions/addSlide'
 import selectSlide from '../actions/selectSlide'
 import renameSlide from '../actions/renameSlide'
 import removeSlide from '../actions/removeSlide'
+import selectDrawerTab from '../actions/selectDrawerTab'
 const Item = name => {
   const root = document.createElement('li')
   root.innerHTML = `
@@ -86,6 +87,9 @@ export default () => {
       })
     }
     newItem.addEventListener('renamed', whenCreated)
+  })
+  EventBus.addEventListener('slide-selected', () => {
+    EventBus.dispatchEvent(selectDrawerTab('slide'))
   })
   return root
 }
