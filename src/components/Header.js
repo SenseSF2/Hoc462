@@ -1,4 +1,4 @@
-import styles from './header.css'
+import styles from './Header.css'
 export default () => {
   const root = document.createElement('div')
   root.classList.add(styles.header)
