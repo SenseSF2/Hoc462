@@ -32,6 +32,12 @@ export default () => {
     EventBus.dispatchEvent(rotateObject(id, object.rotation.toArray()))
     EventBus.dispatchEvent(scaleObject(id, object.scale.toArray()))
   })
+  transformControls.addEventListener('mouseDown', () => {
+    orbitControls.enabled = false;
+  })
+  transformControls.addEventListener('mouseUp', () => {
+    orbitControls.enabled = true;
+  })
   scene.add(transformControls)
   camera.position.z = 5
   scene.add(camera)
