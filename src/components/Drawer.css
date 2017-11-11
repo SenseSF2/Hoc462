@@ -6,6 +6,12 @@
   width: calc(75vw - 32px);
   height: 268px;
 }
+:local @media (max-aspect-ratio: 1/1) {
+  :local .drawer {
+    left: 0;
+    width: 100vw;
+  }
+}
 :local(.drawer) .tabs {
   height: 32px;
   margin-left: 16px;
