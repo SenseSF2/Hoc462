@@ -39,6 +39,13 @@ export default () => {
   finishSettingViewButton.style.display = 'none'
   setViewButton.addEventListener('click', () => {
     EventBus.dispatchEvent(startChangingView())
+    setViewButton.style.display = 'none'
+    finishSettingViewButton.style.display = ''
+  })
+  finishSettingViewButton.addEventListener('click', () => {
+    EventBus.dispatchEvent(finishChangingSlideView())
+    finishSettingViewButton.style.display = 'none'
+    setViewButton.style.display = ''
   })
   EventBus.addEventListener('start-changing-view', () => {
     setViewButton.style.display = 'none'
