@@ -9,6 +9,7 @@ import translateObject from '../actions/translateObject'
 import rotateObject from '../actions/rotateObject'
 import scaleObject from '../actions/scaleObject'
 import changeSlideView from '../actions/changeSlideView'
+import finishChangingSlideView from '../actions/finishChangingSlideView'
 export default () => {
   const renderer = new THREE.WebGLRenderer({ antialias: true })
   const root = document.createElement('div')
@@ -32,6 +33,12 @@ export default () => {
     EventBus.dispatchEvent(translateObject(id, object.position.toArray()))
     EventBus.dispatchEvent(rotateObject(id, object.rotation.toArray()))
     EventBus.dispatchEvent(scaleObject(id, object.scale.toArray()))
+  })
+  transformControls.addEventListener('mouseDown', () => {
+    orbitControls.enabled = false
+  })
+  transformControls.addEventListener('mouseUp', () => {
+    orbitControls.enabled = true
   })
   scene.add(transformControls)
   camera.position.z = 5
@@ -172,26 +179,37 @@ export default () => {
       transformControls.detach()
     }
   })
-  EventBus.addEventListener('slide-selected', ({ detail: { id } }) => {
+  const setCameraPositionAndRotation = () => {
     const slide = getState().slides.find(
-      ({ id: currentId }) => currentId === id
+      ({ id: currentId }) => currentId === getState().selectedSlide
     )
+    if (slide === undefined) {
+      return
+    }
     const { view: { position, rotation } } = slide
     camera.position.set(...position)
     camera.rotation.set(...rotation)
+  }
+  EventBus.addEventListener('slide-selected', () => {
+    EventBus.dispatchEvent(finishChangingSlideView())
+    setCameraPositionAndRotation()
   })
   EventBus.addEventListener('drawer-tab-selected', ({ detail: { name } }) => {
+    EventBus.dispatchEvent(finishChangingSlideView())
     if (name === 'slide') {
       orbitControls.enabled = false
+      setCameraPositionAndRotation()
     } else {
       orbitControls.enabled = true
     }
   })
   orbitControls.addEventListener('change', () => {
-    EventBus.dispatchEvent(changeSlideView(getState().selectedSlide, {
-      position: camera.position,
-      rotation: camera.rotation
-    }))
+    if (getState().isSlideViewChanging) {
+      EventBus.dispatchEvent(changeSlideView(getState().selectedSlide, {
+        position: camera.position.toArray(),
+        rotation: camera.rotation.toArray()
+      }))
+    }
   })
   EventBus.addEventListener('start-changing-view', () => {
     orbitControls.enabled = true
