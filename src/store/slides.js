@@ -23,6 +23,16 @@ export default ({ getState, setState }) => {
       )
     })
   })
+  EventBus.addEventListener(
+    'slide-view-changed', ({ detail: { id, view } }) => {
+      setState({
+        ...getState(),
+        slides: getState().slides.map(
+          slide => slide.id === id ? { ...slide, view } : slide
+        )
+      })
+    }
+  )
   EventBus.addEventListener('slide-removed', ({ detail }) => {
     setState({
       ...getState(),

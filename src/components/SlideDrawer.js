@@ -3,7 +3,7 @@ import getState from '../store'
 import styles from './SlideDrawer.css'
 import { button } from './Button.css'
 import startChangingView from '../actions/startChangingView'
-import changeSlideView from '../actions/changeSlideView'
+import finishChangingSlideView from '../actions/finishChangingSlideView'
 export default () => {
   const root = document.createElement('div')
   root.classList.add(styles.slideDrawer)
@@ -36,8 +36,16 @@ export default () => {
   })
   const setViewButton = root.querySelector('.set-view')
   const finishSettingViewButton = root.querySelector('.finish-setting-view')
+  finishSettingViewButton.style.display = 'none'
   setViewButton.addEventListener('click', () => {
     EventBus.dispatchEvent(startChangingView())
+    setViewButton.style.display = 'none'
+    finishSettingViewButton.style.display = ''
+  })
+  finishSettingViewButton.addEventListener('click', () => {
+    EventBus.dispatchEvent(finishChangingSlideView())
+    finishSettingViewButton.style.display = 'none'
+    setViewButton.style.display = ''
   })
   return root
 }

@@ -33,6 +33,12 @@ export default () => {
     EventBus.dispatchEvent(rotateObject(id, object.rotation.toArray()))
     EventBus.dispatchEvent(scaleObject(id, object.scale.toArray()))
   })
+  transformControls.addEventListener('mouseDown', () => {
+    orbitControls.enabled = false
+  })
+  transformControls.addEventListener('mouseUp', () => {
+    orbitControls.enabled = true
+  })
   scene.add(transformControls)
   camera.position.z = 5
   scene.add(camera)
@@ -189,8 +195,8 @@ export default () => {
   })
   orbitControls.addEventListener('change', () => {
     EventBus.dispatchEvent(changeSlideView(getState().selectedSlide, {
-      position: camera.position,
-      rotation: camera.rotation
+      position: camera.position.toArray(),
+      rotation: camera.rotation.toArray()
     }))
   })
   EventBus.addEventListener('start-changing-view', () => {
