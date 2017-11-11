@@ -5,3 +5,11 @@
     width: calc(75vw - 32px);
     height: calc(100vh - 32px - 268px);
 }
+:local @media (max-aspect-ratio: 1/1) {
+    :local .renderer {
+        top: calc(32px + 168px);
+        left: 0;
+        width: 100vw;
+        height: calc(100vh - 32px - 268px - 168px);
+    }
+}
