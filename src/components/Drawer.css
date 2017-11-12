@@ -6,7 +6,7 @@
   width: calc(75vw - 32px);
   height: 268px;
 }
-:local @media (max-aspect-ratio: 1/1) {
+:local @media (orientation: portrait) {
   :local .drawer {
     left: 0;
     width: 100vw;
