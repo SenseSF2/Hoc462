@@ -6,8 +6,9 @@ export default ({ getState, setState }) => {
       slides: [...getState().slides, {
         name: detail.name,
         id: detail.id,
-        caption: '',
-        animations: []
+        view: detail.view,
+        caption: detail.caption,
+        animations: detail.animations
       }]
     })
   })
@@ -22,6 +23,16 @@ export default ({ getState, setState }) => {
       )
     })
   })
+  EventBus.addEventListener(
+    'slide-view-changed', ({ detail: { id, view } }) => {
+      setState({
+        ...getState(),
+        slides: getState().slides.map(
+          slide => slide.id === id ? { ...slide, view } : slide
+        )
+      })
+    }
+  )
   EventBus.addEventListener('slide-removed', ({ detail }) => {
     setState({
       ...getState(),

@@ -1,0 +1,3 @@
+:local(.slideDrawer):not(.slide-selected) .slide-details {
+  display: none;
+}
