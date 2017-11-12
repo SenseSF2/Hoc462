@@ -97,7 +97,13 @@ export default () => {
   EventBus.addEventListener('object-selected', ({ detail: { id } }) => {
     transformControls.attach(objects.get(id))
   })
-  const mousePosition = (element, event) => {
+  const mousePosition = (element, rawEvent) => {
+    let event
+    if (rawEvent.touches !== undefined) {
+      event = rawEvent.touches[0]
+    } else {
+      event = rawEvent
+    }
     const rect = element.getBoundingClientRect()
     const normal = {
       x: (event.clientX - rect.left) / rect.width * element.width,
@@ -109,7 +115,7 @@ export default () => {
     }
     return { normal, webgl }
   }
-  renderer.domElement.addEventListener('click', event => {
+  const rendererClickHandler = event => {
     const { webgl: { x, y } } = mousePosition(renderer.domElement, event)
     const raycaster = new THREE.Raycaster()
     const mouse = new THREE.Vector2(x, y)
@@ -118,7 +124,9 @@ export default () => {
     if (intersects.length > 0) {
       EventBus.dispatchEvent(selectObject(objectIds.get(intersects[0].object)))
     }
-  })
+  }
+  renderer.domElement.addEventListener('mousedown', rendererClickHandler)
+  renderer.domElement.addEventListener('touchstart', rendererClickHandler)
   EventBus.addEventListener(
     'object-color-changed', ({ detail: { id, color } }) => {
       const object3d = objects.get(id)
