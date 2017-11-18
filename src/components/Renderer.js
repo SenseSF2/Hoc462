@@ -94,6 +94,16 @@ export default () => {
       objectIds.set(object3d, id)
       scene.add(object3d)
       EventBus.dispatchEvent(selectObject(id))
+      // move the object to the center of renderer by raycasting
+      const raycaster = new THREE.Raycaster()
+      const centerOfRenderer = new THREE.Vector2(0, 0)
+      raycaster.setFromCamera(centerOfRenderer, camera)
+      const intersects = raycaster.intersectObjects([gridHelper])
+      if (intersects.length > 0) {
+        EventBus.dispatchEvent(
+          translateObject(id, intersects[0].point.toArray())
+        )
+      }
     }
   )
   EventBus.addEventListener('object-selected', ({ detail: { id } }) => {

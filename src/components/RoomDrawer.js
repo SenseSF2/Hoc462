@@ -147,9 +147,11 @@ export default () => {
       objectCard.removeEventListener('name-changed', nameChangedHandler)
       EventBus.dispatchEvent(addObject(name, id, type))
     }
-    const objectCreatedHandler = ({ detail: object }) => {
+    const objectCreatedHandler = ({ detail: { id: objectId } }) => {
       EventBus.removeEventListener('object-added', objectCreatedHandler)
-      if (object.id === id) {
+      if (objectId === id) {
+        const object = getState().objects
+          .find(({ id: currentId }) => currentId === id)
         connectObjectCardToEventBus(objectCard, object)
       }
     }
