@@ -24,6 +24,7 @@ export default () => {
   camera.add(pointLight)
   const gridHelper = new THREE.GridHelper(40, 80)
   scene.add(gridHelper)
+  camera.lookAt(gridHelper.position)
   // this plane is only used to insert object at the center of the renderer
   // using raycasting
   const raycastingPlane = new THREE.Mesh(
