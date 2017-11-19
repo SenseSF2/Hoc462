@@ -27,9 +27,11 @@ export default () => {
   // this plane is only used to insert object at the center of the renderer
   // using raycasting
   const raycastingPlane = new THREE.Mesh(
-    new THREE.PlaneGeometry(40, 80),
+    new THREE.PlaneGeometry(40, 40),
     new THREE.MeshBasicMaterial({ color: 0xffff00, side: THREE.DoubleSide })
   )
+  raycastingPlane.rotation.x = Math.PI / 2
+  window.raycastingPlane = raycastingPlane
   const orbitControls = new THREE.OrbitControls(camera, renderer.domElement)
   const transformControls = new THREE.TransformControls(camera, renderer.domElement)
   transformControls.setSpace('world')
