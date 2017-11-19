@@ -24,6 +24,12 @@ export default () => {
   camera.add(pointLight)
   const gridHelper = new THREE.GridHelper(40, 80)
   scene.add(gridHelper)
+  // this plane is only used to insert object at the center of the renderer
+  // using raycasting
+  const raycastingPlane = new THREE.Mesh(
+    new THREE.PlaneGeometry(40, 80),
+    new THREE.MeshBasicMaterial({ color: 0xffff00, side: THREE.DoubleSide })
+  )
   const orbitControls = new THREE.OrbitControls(camera, renderer.domElement)
   const transformControls = new THREE.TransformControls(camera, renderer.domElement)
   transformControls.setSpace('world')
@@ -98,7 +104,7 @@ export default () => {
       const raycaster = new THREE.Raycaster()
       const centerOfRenderer = new THREE.Vector2(0, 0)
       raycaster.setFromCamera(centerOfRenderer, camera)
-      const intersects = raycaster.intersectObjects([gridHelper])
+      const intersects = raycaster.intersectObjects([raycastingPlane])
       if (intersects.length > 0) {
         EventBus.dispatchEvent(
           translateObject(id, intersects[0].point.toArray())
