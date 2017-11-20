@@ -96,24 +96,30 @@ export default () => {
       }
     )
     EventBus.addEventListener(
-      'object-translated', ({ detail: { position } }) => {
-        objectCard.dispatchEvent(new window.CustomEvent('position-changed', {
-          detail: { position, fromEventBus: true }
-        }))
+      'object-translated', ({ detail: { position, id: currentId } }) => {
+        if (id === currentId) {
+          objectCard.dispatchEvent(new window.CustomEvent('position-changed', {
+            detail: { position, fromEventBus: true }
+          }))
+        }
       }
     )
     EventBus.addEventListener(
-      'object-rotated', ({ detail: { rotation } }) => {
-        objectCard.dispatchEvent(new window.CustomEvent('rotation-changed', {
-          detail: { rotation, fromEventBus: true }
-        }))
+      'object-rotated', ({ detail: { rotation, id: currentId } }) => {
+        if (id === currentId) {
+          objectCard.dispatchEvent(new window.CustomEvent('rotation-changed', {
+            detail: { rotation, fromEventBus: true }
+          }))
+        }
       }
     )
     EventBus.addEventListener(
-      'object-scaled', ({ detail: { scale } }) => {
-        objectCard.dispatchEvent(new window.CustomEvent('scale-changed', {
-          detail: { scale, fromEventBus: true }
-        }))
+      'object-scaled', ({ detail: { scale, id: currentId } }) => {
+        if (id === currentId) {
+          objectCard.dispatchEvent(new window.CustomEvent('scale-changed', {
+            detail: { scale, fromEventBus: true }
+          }))
+        }
       }
     )
     objectCard.dispatchEvent(new window.CustomEvent('position-changed', {
