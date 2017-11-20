@@ -124,6 +124,7 @@ export default () => {
     ))
   ;[...positionElement.querySelectorAll('input')].forEach((input, index) => {
     input.addEventListener('input', () => {
+      if (input.value === '') return
       const newPosition = [...objectProperties.position]
       newPosition[index] = +input.value
       root.dispatchEvent(new window.CustomEvent('position-changed', {
@@ -139,6 +140,7 @@ export default () => {
   })
   ;[...rotationElement.querySelectorAll('input')].forEach((input, index) => {
     input.addEventListener('input', () => {
+      if (input.value === '') return
       const newRotation = [...objectProperties.rotation]
       newRotation[index] = +input.value / 180 * Math.PI
       root.dispatchEvent(new window.CustomEvent('rotation-changed', {
@@ -154,6 +156,7 @@ export default () => {
   })
   ;[...scaleElement.querySelectorAll('input')].forEach((input, index) => {
     input.addEventListener('input', () => {
+      if (input.value === '') return
       const newScale = [...objectProperties.scale]
       newScale[index] = +input.value
       root.dispatchEvent(new window.CustomEvent('scale-changed', {
