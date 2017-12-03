@@ -5,4 +5,6 @@ bus.dispatchEvent = (...args) => {
   console.log('Event stack trace: ', new Error())
   return dispatchEvent.bind(bus)(...args)
 }
+"REMOVE"
+window.bus = bus
 export default bus

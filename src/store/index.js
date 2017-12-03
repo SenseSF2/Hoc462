@@ -4,6 +4,7 @@ import selectedObject from './selectedObject'
 import selectedDrawerTab from './selectedDrawerTab'
 import transformControlsMode from './transformControlsMode'
 import isSlideViewChanging from './isSlideViewChanging'
+import isAddingAnimation from './isAddingAnimation'
 let store = {
   slides: [],
   selectedSlide: null,
@@ -26,4 +27,5 @@ selectedObject({ getState, setState })
 selectedDrawerTab({ getState, setState })
 transformControlsMode({ getState, setState })
 isSlideViewChanging({ getState, setState })
+isAddingAnimation({ getState, setState })
 export default getState

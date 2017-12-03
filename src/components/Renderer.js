@@ -10,6 +10,8 @@ import rotateObject from '../actions/rotateObject'
 import scaleObject from '../actions/scaleObject'
 import changeSlideView from '../actions/changeSlideView'
 import finishChangingSlideView from '../actions/finishChangingSlideView'
+import changeAnimationDestination from '../actions/changeAnimationDestination'
+import changeTransformControlsMode from '../actions/changeTransformControlsMode'
 export default () => {
   const renderer = new THREE.WebGLRenderer({ antialias: true })
   const root = document.createElement('div')
@@ -37,17 +39,23 @@ export default () => {
   const transformControls = new THREE.TransformControls(camera, renderer.domElement)
   transformControls.setSpace('world')
   transformControls.addEventListener('change', () => {
+    if (getState().isAddingAnimation) return
     const { object } = transformControls
     const id = objectIds.get(object)
     EventBus.dispatchEvent(translateObject(id, object.position.toArray()))
     EventBus.dispatchEvent(rotateObject(id, object.rotation.toArray()))
     EventBus.dispatchEvent(scaleObject(id, object.scale.toArray()))
   })
+  let orbitControlsOriginalEnabledState
+  let isObjectSelectionEnabled = true
   transformControls.addEventListener('mouseDown', () => {
+    orbitControlsOriginalEnabledState = orbitControls.enabled
     orbitControls.enabled = false
+    isObjectSelectionEnabled = false
   })
   transformControls.addEventListener('mouseUp', () => {
-    orbitControls.enabled = true
+    orbitControls.enabled = orbitControlsOriginalEnabledState
+    isObjectSelectionEnabled = true
   })
   scene.add(transformControls)
   camera.position.z = 5
@@ -137,6 +145,8 @@ export default () => {
     return { normal, webgl }
   }
   const rendererClickHandler = event => {
+    if (getState().isAddingAnimation) return
+    if (!isObjectSelectionEnabled) return
     const { webgl: { x, y } } = mousePosition(renderer.domElement, event)
     const raycaster = new THREE.Raycaster()
     const mouse = new THREE.Vector2(x, y)
@@ -243,6 +253,41 @@ export default () => {
   })
   EventBus.addEventListener('finished-changing-slide-view', () => {
     orbitControls.enabled = false
+  })
+  EventBus.addEventListener('started-adding-animation', () => {
+    orbitControls.enabled = true
+    const object3d = objects.get(getState().selectedObject)
+    const clone = object3d.clone()
+    clone.material = new THREE.MeshBasicMaterial(
+      { color: 0xff0000, side: THREE.DoubleSide }
+    )
+    scene.add(clone)
+    transformControls.attach(clone)
+    const transformControlsChangeHandler = () => {
+      const position = clone.position.toArray()
+      const rotation = clone.rotation.toArray()
+      const scale = clone.scale.toArray()
+      EventBus.dispatchEvent(
+        changeAnimationDestination(position, rotation, scale)
+      )
+    }
+    transformControls.addEventListener('change', transformControlsChangeHandler)
+    const finishedAddingAnimationHandler = () => {
+      EventBus.removeEventListener(
+        'finished-adding-animation', finishedAddingAnimationHandler
+      )
+      scene.remove(clone)
+      transformControls.removeEventListener(
+        'change', transformControlsChangeHandler
+      )
+      transformControls.attach(object3d)
+      orbitControls.enabled = false
+      setCameraPositionAndRotation()
+      EventBus.dispatchEvent(changeTransformControlsMode('translate'))
+    }
+    EventBus.addEventListener(
+      'finished-adding-animation', finishedAddingAnimationHandler
+    )
   })
   animate()
   return root

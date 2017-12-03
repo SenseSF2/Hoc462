@@ -1,4 +1,4 @@
-export default name => {
+export default (name, inputType = 'text', placeholder = 'Type name here') => {
   const root = document.createElement('span')
   const displayName = name => {
     root.textContent = name
@@ -15,6 +15,8 @@ export default name => {
     `
     const form = root.querySelector('form')
     const input = root.querySelector('input')
+    input.setAttribute('type', inputType)
+    input.setAttribute('placeholder', placeholder)
     input.value = oldName
     window.requestAnimationFrame(() => input.select())
     // prevent camera from moving if user presses arrow keys

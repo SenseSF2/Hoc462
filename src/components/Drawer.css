@@ -35,6 +35,9 @@
 :local(.drawer) .tab[disabled] {
   cursor: auto;
 }
+:local(.drawer).locked .tab:not([disabled]) {
+  display: none;
+}
 :local(.drawer) .content {
   color: white;
   margin: 10px;

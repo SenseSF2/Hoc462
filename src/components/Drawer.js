@@ -40,5 +40,11 @@ export default () => {
     }
   })
   EventBus.dispatchEvent(selectDrawerTab('world'))
+  EventBus.addEventListener('current-drawer-tab-locked', () => {
+    root.classList.add('locked')
+  })
+  EventBus.addEventListener('current-drawer-tab-unlocked', () => {
+    root.classList.remove('locked')
+  })
   return root
 }
