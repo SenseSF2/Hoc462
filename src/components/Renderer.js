@@ -12,6 +12,7 @@ import changeSlideView from '../actions/changeSlideView'
 import finishChangingSlideView from '../actions/finishChangingSlideView'
 import changeAnimationDestination from '../actions/changeAnimationDestination'
 import changeTransformControlsMode from '../actions/changeTransformControlsMode'
+import unselectAnimation from '../actions/unselectAnimation'
 export default () => {
   const renderer = new THREE.WebGLRenderer({ antialias: true })
   const root = document.createElement('div')
@@ -27,6 +28,7 @@ export default () => {
   const gridHelper = new THREE.GridHelper(40, 80)
   scene.add(gridHelper)
   camera.lookAt(gridHelper.position)
+  const boundingBox = new THREE.BoxHelper(undefined, 0xffffff)
   // this plane is only used to insert object at the center of the renderer
   // using raycasting
   const raycastingPlane = new THREE.Mesh(
@@ -39,7 +41,7 @@ export default () => {
   const transformControls = new THREE.TransformControls(camera, renderer.domElement)
   transformControls.setSpace('world')
   transformControls.addEventListener('change', () => {
-    if (getState().isAddingAnimation) return
+    if (getState().selectedDrawerTab !== 'world') return
     const { object } = transformControls
     const id = objectIds.get(object)
     EventBus.dispatchEvent(translateObject(id, object.position.toArray()))
@@ -73,6 +75,7 @@ export default () => {
     }
     transformControls.update()
     orbitControls.update()
+    boundingBox.update()
     renderer.render(scene, camera)
     window.requestAnimationFrame(animate)
   }
@@ -124,7 +127,12 @@ export default () => {
     }
   )
   EventBus.addEventListener('object-selected', ({ detail: { id } }) => {
-    transformControls.attach(objects.get(id))
+    const object3d = objects.get(id)
+    boundingBox.setFromObject(object3d)
+    scene.add(boundingBox)
+    if (getState().selectedDrawerTab === 'world') {
+      transformControls.attach(object3d)
+    }
   })
   const mousePosition = (element, rawEvent) => {
     let event
@@ -213,6 +221,7 @@ export default () => {
     objectIds.delete(object3d)
     scene.remove(object3d)
     if (getState().selectedObject === id) {
+      scene.remove(boundingBox)
       transformControls.detach()
     }
   })
@@ -280,7 +289,7 @@ export default () => {
       transformControls.removeEventListener(
         'change', transformControlsChangeHandler
       )
-      transformControls.attach(object3d)
+      transformControls.detach()
       orbitControls.enabled = false
       setCameraPositionAndRotation()
       EventBus.dispatchEvent(changeTransformControlsMode('translate'))
@@ -288,6 +297,53 @@ export default () => {
     EventBus.addEventListener(
       'finished-adding-animation', finishedAddingAnimationHandler
     )
+  })
+  const resetObjectStates = () => {
+    const objectStates = getState().objects
+    for (let object of objectStates) {
+      const object3d = objects.get(object.id)
+      object3d.position.set(...object.position)
+      object3d.rotation.set(...object.rotation)
+      object3d.scale.set(...object.scale)
+    }
+  }
+  const previewAnimation = (id, slideId) => {
+    resetObjectStates()
+    const slide = getState().slides.find(
+      ({ id: currentId }) => slideId === currentId
+    )
+    const animations = slide.animations
+    for (let animation of animations) {
+      const currentTarget = objects.get(animation.target)
+      currentTarget.position.set(...animation.destination.position)
+      currentTarget.rotation.set(...animation.destination.rotation)
+      currentTarget.scale.set(...animation.destination.scale)
+      if (animation.id === id) break
+    }
+  }
+  EventBus.addEventListener(
+    'animation-selected', ({ detail: { id, slideId } }) => {
+      previewAnimation(id, slideId)
+    }
+  )
+  EventBus.addEventListener(
+    'animation-removed', ({ detail: { id, slideId } }) => {
+      const isSelectedAnimationRemoved = id === getState().slides.find(
+        ({ id: currentId }) => slideId === currentId
+      ).selectedAnimation
+      if (isSelectedAnimationRemoved) {
+        resetObjectStates()
+      }
+    }
+  )
+  EventBus.addEventListener('drawer-tab-selected', ({ detail: { name } }) => {
+    if (name === 'world') {
+      EventBus.dispatchEvent(unselectAnimation(getState().selectedSlide))
+      resetObjectStates()
+    }
+    if (name === 'slide') {
+      transformControls.detach()
+    }
   })
   animate()
   return root

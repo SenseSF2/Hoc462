@@ -52,8 +52,29 @@ export default ({ getState, setState }) => {
   })
   EventBus.addEventListener(
     'animation-destination-changed',
-    ({ detail: { position, rotation, scale } }) => {
-      animation = { ...animation, destination: { position, rotation, scale } }
+    ({ detail: { position, rotation, scale, id, slideId } }) => {
+      if (id !== undefined && slideId !== undefined) {
+        setState({
+          ...getState(),
+          slides: getState().slides.map(
+            slide => slide.id === slideId ? {
+              ...slide,
+              animations: slide.animations.map(
+                animation => animation.id === id
+                  ? {
+                    ...animation,
+                    destination: {
+                      ...animation.destination, position, rotation, scale
+                    }
+                  }
+                  : animation
+              )
+            } : slide
+          )
+        })
+      } else {
+        animation = { ...animation, destination: { position, rotation, scale } }
+      }
     }
   )
   EventBus.addEventListener(

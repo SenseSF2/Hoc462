@@ -45,75 +45,93 @@ export default () => {
     selectedSlide().animations.some(
       ({ id }) => id === selectedSlide().selectedAnimation
     )
+  const createAnimationElement = (id, slideId) => {
+    const animation = () => getState()
+      .slides.find(({ id }) => id === slideId)
+      .animations.find(({ id: currentId }) => currentId === id)
+    const animationElement = Renamable(
+      animation().duration / 1000, 'number', ''
+    )
+    animationElement.classList.add('animation')
+    animationElement.style.background = randomColors[id % randomColors.length]
+    const displayDuration = () => {
+      animationElement.style.width =
+        animation().duration * displayScale + 'px'
+    }
+    displayDuration()
+    animationElement.addEventListener('click', () => {
+      EventBus.dispatchEvent(selectAnimaton(id, slideId))
+    })
+    EventBus.addEventListener(
+      'animation-duration-changed', ({ detail: { id: currentId } }) => {
+        if (id === currentId) { displayDuration() }
+      }
+    )
+    EventBus.addEventListener(
+      'started-changing-animation-duration',
+      ({ detail: { id: currentId } }) => {
+        if (id === currentId) {
+          animationElement.dispatchEvent(new window.Event('start-renaming'))
+          const input = animationElement.querySelector('input')
+          input.style.width = animation().duration * displayScale + 'px'
+          input.setAttribute('step', 0.01)
+          const renamedHandler = ({ detail: { name: seconds } }) => {
+            EventBus.dispatchEvent(
+              changeAnimationDuration(id, +seconds * 1000)
+            )
+            animationElement.removeEventListener('renamed', renamedHandler)
+          }
+          animationElement.addEventListener('renamed', renamedHandler)
+        }
+      }
+    )
+    EventBus.addEventListener(
+      'animation-moved-left', ({ detail: { id: currentId } }) => {
+        if (id === currentId) {
+          animationsElement.insertBefore(
+            animationElement, animationElement.previousElementSibling
+          )
+        }
+      }
+    )
+    EventBus.addEventListener(
+      'animation-moved-right', ({ detail: { id: currentId } }) => {
+        if (id === currentId) {
+          animationsElement.insertBefore(
+            animationElement,
+            animationElement.nextElementSibling.nextElementSibling
+          )
+        }
+      }
+    )
+    EventBus.addEventListener(
+      'animation-selected', ({ detail: { id: currentId } }) => {
+        if (id === currentId) {
+          animationElement.classList.add('highlighted')
+        } else {
+          animationElement.classList.remove('highlighted')
+        }
+      }
+    )
+    if (animation().id === selectedSlide().selectedAnimation) {
+      animationElement.classList.add('highlighted')
+    }
+    return animationElement
+  }
+  const showAnimations = () => {
+    animationsElement.innerHTML = ''
+    const slide = selectedSlide()
+    if (slide === undefined) return
+    slide.animations.forEach(({ id }) => {
+      animationsElement.appendChild(createAnimationElement(id, slide.id))
+    })
+  }
+  showAnimations()
+  EventBus.addEventListener('slide-selected', showAnimations)
   EventBus.addEventListener(
     'finished-adding-animation', ({ detail: { id, slideId } }) => {
-      const animation = () => getState()
-        .slides.find(({ id }) => id === slideId)
-        .animations.find(({ id: currentId }) => currentId === id)
-      const animationElement = Renamable(
-        animation().duration / 1000, 'number', ''
-      )
-      animationElement.classList.add('animation')
-      animationElement.style.background = randomColors[id % randomColors.length]
-      const displayDuration = () => {
-        animationElement.style.width =
-          animation().duration * displayScale + 'px'
-      }
-      displayDuration()
-      animationElement.addEventListener('click', () => {
-        EventBus.dispatchEvent(selectAnimaton(id, slideId))
-      })
-      EventBus.addEventListener(
-        'animation-duration-changed', ({ detail: { id: currentId } }) => {
-          if (id === currentId) { displayDuration() }
-        }
-      )
-      EventBus.addEventListener(
-        'started-changing-animation-duration',
-        ({ detail: { id: currentId } }) => {
-          if (id === currentId) {
-            animationElement.dispatchEvent(new window.Event('start-renaming'))
-            const input = animationElement.querySelector('input')
-            input.style.width = animation().duration * displayScale + 'px'
-            input.setAttribute('step', 0.01)
-            const renamedHandler = ({ detail: { name: seconds } }) => {
-              EventBus.dispatchEvent(
-                changeAnimationDuration(id, +seconds * 1000)
-              )
-              animationElement.removeEventListener('renamed', renamedHandler)
-            }
-            animationElement.addEventListener('renamed', renamedHandler)
-          }
-        }
-      )
-      EventBus.addEventListener(
-        'animation-moved-left', ({ detail: { id: currentId } }) => {
-          if (id === currentId) {
-            animationsElement.insertBefore(
-              animationElement, animationElement.previousElementSibling
-            )
-          }
-        }
-      )
-      EventBus.addEventListener(
-        'animation-moved-right', ({ detail: { id: currentId } }) => {
-          if (id === currentId) {
-            animationsElement.insertBefore(
-              animationElement,
-              animationElement.nextElementSibling.nextElementSibling
-            )
-          }
-        }
-      )
-      EventBus.addEventListener(
-        'animation-selected', ({ detail: { id: currentId } }) => {
-          if (id === currentId) {
-            animationElement.classList.add('highlighted')
-          } else {
-            animationElement.classList.remove('highlighted')
-          }
-        }
-      )
+      if (slideId !== getState().selectedSlide) return
+      const animationElement = createAnimationElement(id, slideId)
       if (isAnAnimationSelected()) {
         const selectedAnimationElement = animationsElement.querySelector(
           '.highlighted'
@@ -141,6 +159,7 @@ export default () => {
   EventBus.addEventListener(
     'animation-removed', showHideAnimationReorderButtons
   )
+  EventBus.addEventListener('slide-selected', showHideAnimationReorderButtons)
   const moveAnimationLeftButton = root.querySelector('.move-animation-left')
   const moveAnimationRightButton = root.querySelector('.move-animation-right')
   moveAnimationLeftButton.addEventListener('click', () => {
