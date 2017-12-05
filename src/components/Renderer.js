@@ -13,6 +13,7 @@ import finishChangingSlideView from '../actions/finishChangingSlideView'
 import changeAnimationDestination from '../actions/changeAnimationDestination'
 import changeTransformControlsMode from '../actions/changeTransformControlsMode'
 import unselectAnimation from '../actions/unselectAnimation'
+import cancelAddingAnimation from '../actions/cancelAddingAnimation'
 export default () => {
   const renderer = new THREE.WebGLRenderer({ antialias: true })
   const root = document.createElement('div')
@@ -236,9 +237,40 @@ export default () => {
     camera.position.set(...position)
     camera.rotation.set(...rotation)
   }
-  EventBus.addEventListener('slide-selected', () => {
+  const stopAllPendingTasks = () => {
+    EventBus.dispatchEvent(cancelAddingAnimation())
     EventBus.dispatchEvent(finishChangingSlideView())
+    EventBus.dispatchEvent(unselectAnimation(getState().selectedSlide))
+    resetObjectStates()
+  }
+  const previewLastAnimationOfPreviousSlide = () => {
+    const selectedSlide = getState().slides.find(
+      ({ id }) => id === getState().selectedSlide
+    )
+    const isAnAnimationSelected =
+      selectedSlide !== undefined &&
+      selectedSlide.animations.some(
+        ({ id }) => id === selectedSlide.selectedAnimation
+      )
+    if (isAnAnimationSelected) return
+    const previousSlideIndex = getState().slides.indexOf(selectedSlide) - 1
+    const previousSlide = getState().slides[previousSlideIndex]
+    if (previousSlide !== undefined) {
+      const lastAnimationIndex = previousSlide.animations.length - 1
+      const lastAnimation = previousSlide.animations[lastAnimationIndex]
+      previewAnimation(lastAnimation.id, previousSlide.id)
+    }
+  }
+  EventBus.addEventListener('slide-selected', () => {
+    stopAllPendingTasks()
     setCameraPositionAndRotation()
+    previewLastAnimationOfPreviousSlide()
+  })
+  EventBus.addEventListener('slide-removed', ({ detail: { id } }) => {
+    previewLastAnimationOfPreviousSlide()
+    if (id === getState().selectedSlide) {
+      stopAllPendingTasks()
+    }
   })
   EventBus.addEventListener('drawer-tab-selected', ({ detail: { name } }) => {
     EventBus.dispatchEvent(finishChangingSlideView())
@@ -281,10 +313,7 @@ export default () => {
       )
     }
     transformControls.addEventListener('change', transformControlsChangeHandler)
-    const finishedAddingAnimationHandler = () => {
-      EventBus.removeEventListener(
-        'finished-adding-animation', finishedAddingAnimationHandler
-      )
+    const cleanUp = () => {
       scene.remove(clone)
       transformControls.removeEventListener(
         'change', transformControlsChangeHandler
@@ -294,8 +323,23 @@ export default () => {
       setCameraPositionAndRotation()
       EventBus.dispatchEvent(changeTransformControlsMode('translate'))
     }
+    const finishedAddingAnimationHandler = () => {
+      EventBus.removeEventListener(
+        'finished-adding-animation', finishedAddingAnimationHandler
+      )
+      cleanUp()
+    }
+    const canceledAddingAnimationHandler = () => {
+      EventBus.removeEventListener(
+        'canceled-adding-animation', canceledAddingAnimationHandler
+      )
+      cleanUp()
+    }
     EventBus.addEventListener(
       'finished-adding-animation', finishedAddingAnimationHandler
+    )
+    EventBus.addEventListener(
+      'canceled-adding-animation', canceledAddingAnimationHandler
     )
   })
   const resetObjectStates = () => {
@@ -338,8 +382,9 @@ export default () => {
   )
   EventBus.addEventListener('drawer-tab-selected', ({ detail: { name } }) => {
     if (name === 'world') {
-      EventBus.dispatchEvent(unselectAnimation(getState().selectedSlide))
-      resetObjectStates()
+      EventBus.dispatchEvent(cancelAddingAnimation())
+      stopAllPendingTasks()
+      orbitControls.enabled = true
     }
     if (name === 'slide') {
       transformControls.detach()

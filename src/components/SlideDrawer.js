@@ -115,6 +115,10 @@ export default () => {
     EventBus.dispatchEvent(lockCurrentDrawerTab())
     showHideAnimationButtons()
   })
+  EventBus.addEventListener('canceled-adding-animation', () => {
+    EventBus.dispatchEvent(unlockCurrentDrawerTab())
+    showHideAnimationButtons()
+  })
   EventBus.addEventListener('finished-adding-animation', () => {
     EventBus.dispatchEvent(unlockCurrentDrawerTab())
     showHideAnimationButtons()
