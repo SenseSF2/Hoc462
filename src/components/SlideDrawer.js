@@ -8,7 +8,9 @@ import Animations from './Animations'
 import startChangingView from '../actions/startChangingView'
 import finishChangingSlideView from '../actions/finishChangingSlideView'
 import startAddingAnimation from '../actions/startAddingAnimation'
+import cancelAddingAnimation from '../actions/cancelAddingAnimation'
 import finishAddingAnimation from '../actions/finishAddingAnimation'
+import removeAnimation from '../actions/removeAnimation'
 import lockCurrentDrawerTab from '../actions/lockCurrentDrawerTab'
 import unlockCurrentDrawerTab from '../actions/unlockCurrentDrawerTab'
 export default () => {
@@ -25,7 +27,11 @@ export default () => {
       <h2>Animations: </h2>
       <div class="animations">
         <button class="${button} add-animation">Add animation</button>
+        <button class="${button} remove-animation">Remove animation</button>
         <div class="transform-controls-buttons"></div>
+        <button class="${button} cancel-adding-animation">
+          Cancel adding animation
+        </button>
         <button class="${button} finish-adding-animation">
           Finish adding animation
         </button>
@@ -78,24 +84,42 @@ export default () => {
   const isAnObjectSelected = () => getState().objects.some(
     ({ id }) => id === getState().selectedObject
   )
+  const selectedSlide =
+    () => getState().slides.find(({ id }) => id === getState().selectedSlide)
+  const isAnAnimationSelected = () =>
+    selectedSlide() !== undefined &&
+    selectedSlide().animations.some(
+      ({ id }) => id === selectedSlide().selectedAnimation
+    )
   const addAnimationButton = root.querySelector('.add-animation')
+  const removeAnimationButton = root.querySelector('.remove-animation')
+  const cancelAddingAnimationButton = root.querySelector(
+    '.cancel-adding-animation'
+  )
   const finishAddingAnimationButton = root.querySelector(
     '.finish-adding-animation'
   )
   const noObjectSelectedElement = root.querySelector('.no-object-selected')
   const showHideAnimationButtons = () => {
     transformControlsButtons.style.display = 'none'
+    cancelAddingAnimationButton.style.display = 'none'
+    finishAddingAnimationButton.style.display = 'none'
+    removeAnimationButton.style.display = 'none'
     if (isAnObjectSelected()) {
       addAnimationButton.style.display = ''
-      finishAddingAnimationButton.style.display = 'none'
       noObjectSelectedElement.style.display = 'none'
     } else {
       addAnimationButton.style.display = 'none'
-      finishAddingAnimationButton.style.display = 'none'
       noObjectSelectedElement.style.display = ''
+    }
+    if (isAnAnimationSelected()) {
+      removeAnimationButton.style.display = ''
+    } else {
+      removeAnimationButton.style.display = 'none'
     }
     if (getState().isAddingAnimation) {
       addAnimationButton.style.display = 'none'
+      cancelAddingAnimationButton.style.display = ''
       finishAddingAnimationButton.style.display = ''
       transformControlsButtons.style.display = ''
     }
@@ -103,12 +127,22 @@ export default () => {
   showHideAnimationButtons()
   EventBus.addEventListener('object-selected', showHideAnimationButtons)
   EventBus.addEventListener('object-removed', showHideAnimationButtons)
+  EventBus.addEventListener('animation-selected', showHideAnimationButtons)
+  EventBus.addEventListener('animation-removed', showHideAnimationButtons)
   addAnimationButton.addEventListener('click', () => {
     EventBus.dispatchEvent(startAddingAnimation())
+  })
+  cancelAddingAnimationButton.addEventListener('click', () => {
+    EventBus.dispatchEvent(cancelAddingAnimation())
   })
   finishAddingAnimationButton.addEventListener('click', () => {
     EventBus.dispatchEvent(finishAddingAnimation(
       uniqueId(), getState().selectedSlide
+    ))
+  })
+  removeAnimationButton.addEventListener('click', () => {
+    EventBus.dispatchEvent(removeAnimation(
+      selectedSlide().selectedAnimation, selectedSlide().id
     ))
   })
   EventBus.addEventListener('started-adding-animation', () => {

@@ -174,4 +174,16 @@ export default ({ getState, setState }) => {
   }
   animationMovedTo('left')
   animationMovedTo('right')
+  EventBus.addEventListener(
+    'animation-removed', ({ detail: { id, slideId } }) => {
+      setState({
+        ...getState(),
+        slides: getState().slides.map(slide => slide.id === slideId ? {
+          ...slide,
+          animations: slide.animations.filter(
+            ({ id: currentId }) => currentId !== id
+          )
+        } : slide)
+      })
+    })
 }

@@ -113,6 +113,13 @@ export default () => {
         }
       }
     )
+    EventBus.addEventListener(
+      'animation-removed', ({ detail: { id: currentId } }) => {
+        if (id === currentId) {
+          animationElement.remove()
+        }
+      }
+    )
     if (animation().id === selectedSlide().selectedAnimation) {
       animationElement.classList.add('highlighted')
     }
