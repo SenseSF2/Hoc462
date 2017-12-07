@@ -9,6 +9,7 @@ import startChangingAnimationDuration from
 import moveAnimationLeft from '../actions/moveAnimationLeft'
 import moveAnimationRight from '../actions/moveAnimationRight'
 import selectAnimaton from '../actions/selectAnimation'
+import playSlide from '../actions/playSlide'
 export default () => {
   const root = document.createElement('div')
   root.classList.add(styles.animations)
@@ -26,10 +27,10 @@ export default () => {
       </button>
     </div>
     <div class="animation-player">
-      <input type="range">
-      <button class="${button}">Play</button>
-      <button class="${button}">Pause</button>
-      <button class="${button}">Stop</button>
+      <h2>
+        Play animation:
+        <button class="${button} play">Play</button>
+      </h2>
     </div>
   `
   const displayScale = 50 / 1000
@@ -184,6 +185,10 @@ export default () => {
     EventBus.dispatchEvent(startChangingAnimationDuration(
       selectedSlide().selectedAnimation
     ))
+  })
+  const playButton = root.querySelector('.play')
+  playButton.addEventListener('click', () => {
+    EventBus.dispatchEvent(playSlide(selectedSlide().id))
   })
   return root
 }

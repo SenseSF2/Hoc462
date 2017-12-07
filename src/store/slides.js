@@ -185,5 +185,16 @@ export default ({ getState, setState }) => {
           )
         } : slide)
       })
-    })
+    }
+  )
+  EventBus.addEventListener(
+    'slide-caption-edited', ({ detail: { id, caption } }) => {
+      setState({
+        ...getState(),
+        slides: getState().slides.map(slide => slide.id === id
+          ? { ...slide, caption } : slide
+        )
+      })
+    }
+  )
 }

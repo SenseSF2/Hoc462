@@ -13,6 +13,7 @@ export default () => {
     </div>
     <div class="content"></div>
   `
+  const tabsElement = root.querySelector('.tabs')
   const slideButton = root.querySelector('.slide')
   const worldButton = root.querySelector('.world')
   const drawerContent = root.querySelector('.content')
@@ -45,6 +46,14 @@ export default () => {
   })
   EventBus.addEventListener('current-drawer-tab-unlocked', () => {
     root.classList.remove('locked')
+  })
+  EventBus.addEventListener('drawer-hidden', () => {
+    tabsElement.style.display = 'none'
+    drawerContent.style.display = 'none'
+  })
+  EventBus.addEventListener('drawer-shown', () => {
+    tabsElement.style.display = ''
+    drawerContent.style.display = ''
   })
   return root
 }

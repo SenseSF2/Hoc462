@@ -13,6 +13,7 @@ import finishAddingAnimation from '../actions/finishAddingAnimation'
 import removeAnimation from '../actions/removeAnimation'
 import lockCurrentDrawerTab from '../actions/lockCurrentDrawerTab'
 import unlockCurrentDrawerTab from '../actions/unlockCurrentDrawerTab'
+import editSlideCaption from '../actions/editSlideCaption'
 export default () => {
   const root = document.createElement('div')
   root.classList.add(styles.slideDrawer)
@@ -39,6 +40,8 @@ export default () => {
           Please select an object to add animation.
         </div>
       </div>
+      <h2>Slide caption: </h2>
+      <textarea class="caption" contenteditable></textarea>
     </div>
   `
   let transformControlsButtons = root.querySelector(
@@ -157,5 +160,16 @@ export default () => {
     EventBus.dispatchEvent(unlockCurrentDrawerTab())
     showHideAnimationButtons()
   })
+  const captionElement = root.querySelector('.caption')
+  captionElement.addEventListener('input', () => {
+    EventBus.dispatchEvent(
+      editSlideCaption(getState().selectedSlide, captionElement.value)
+    )
+  })
+  const updateCaptionElement = () => {
+    captionElement.value = selectedSlide().caption
+  }
+  EventBus.addEventListener('slide-selected', updateCaptionElement)
+  EventBus.addEventListener('slide-removed', updateCaptionElement)
   return root
 }

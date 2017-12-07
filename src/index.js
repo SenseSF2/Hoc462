@@ -1,3 +1,4 @@
+import 'babel-polyfill'
 import './reset.css'
 import './base.css'
 import Header from './components/Header'

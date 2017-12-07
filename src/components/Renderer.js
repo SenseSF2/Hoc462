@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import TWEEN from '@tweenjs/tween.js'
 import EventBus from '../EventBus'
 import styles from './Renderer.css'
 import getState from '../store'
@@ -14,6 +15,9 @@ import changeAnimationDestination from '../actions/changeAnimationDestination'
 import changeTransformControlsMode from '../actions/changeTransformControlsMode'
 import unselectAnimation from '../actions/unselectAnimation'
 import cancelAddingAnimation from '../actions/cancelAddingAnimation'
+import showDrawer from '../actions/showDrawer'
+import hideDrawer from '../actions/hideDrawer'
+import showCaption from '../actions/showCaption'
 export default () => {
   const renderer = new THREE.WebGLRenderer({ antialias: true })
   const root = document.createElement('div')
@@ -74,6 +78,7 @@ export default () => {
       camera.updateProjectionMatrix()
       renderer.setSize(root.clientWidth, root.clientHeight)
     }
+    TWEEN.update()
     transformControls.update()
     orbitControls.update()
     boundingBox.update()
@@ -388,6 +393,46 @@ export default () => {
     }
     if (name === 'slide') {
       transformControls.detach()
+    }
+  })
+  const playSlideAnimations = async id => {
+    resetObjectStates()
+    const slide = getState().slides.find(
+      ({ id: currentId }) => currentId === id
+    )
+    const animations = slide.animations
+    for (let animation of animations) {
+      const object3d = objects.get(animation.target)
+      const destination = object3d.clone()
+      destination.position.set(...animation.destination.position)
+      destination.rotation.set(...animation.destination.rotation)
+      destination.scale.set(...animation.destination.scale)
+      const promises = []
+      for (let attribute of ['position', 'rotation', 'scale']) {
+        let resolvePromise
+        const promise = new Promise(resolve => { resolvePromise = resolve })
+        promises.push(promise)
+        new TWEEN.Tween(object3d[attribute])
+          .to({
+            x: destination[attribute].x,
+            y: destination[attribute].y,
+            z: destination[attribute].z
+          }, animation.duration)
+          .onComplete(resolvePromise)
+          .start()
+      }
+      await Promise.all(promises)
+    }
+  }
+  EventBus.addEventListener('slide-played', async ({ detail: { id } }) => {
+    EventBus.dispatchEvent(hideDrawer())
+    await playSlideAnimations(id)
+    EventBus.dispatchEvent(showDrawer())
+  })
+  EventBus.addEventListener('all-slides-played', async () => {
+    for (let slide of getState().slides) {
+      EventBus.dispatchEvent(showCaption(slide.id))
+      await playSlideAnimations(slide.id)
     }
   })
   animate()
