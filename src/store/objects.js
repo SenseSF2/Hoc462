@@ -12,11 +12,11 @@ export default ({ getState, setState }) => {
     }
   )
   EventBus.addEventListener(
-    'object-texture-changed', ({ detail: { id, blobUrl } }) => {
+    'object-texture-changed', ({ detail: { id, url } }) => {
       setState({
         ...getState(),
         objects: getState().objects.map(
-          object => object.id === id ? { ...object, blobUrl } : object
+          object => object.id === id ? { ...object, url } : object
         )
       })
     }

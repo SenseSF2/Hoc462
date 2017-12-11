@@ -61,11 +61,15 @@ export default () => {
     textureUploadInput.click()
   })
   textureUploadInput.addEventListener('change', () => {
-    root.dispatchEvent(new window.CustomEvent('texture-changed', {
-      detail: {
-        blobUrl: window.URL.createObjectURL(textureUploadInput.files[0])
-      }
-    }))
+    const reader = new window.FileReader()
+    reader.readAsDataURL(textureUploadInput.files[0])
+    reader.addEventListener('loadend', () => {
+      root.dispatchEvent(new window.CustomEvent('texture-changed', {
+        detail: {
+          url: reader.result
+        }
+      }))
+    })
   })
   root.addEventListener('click', ({ target }) => {
     if (!actionButtons.includes(target)) {

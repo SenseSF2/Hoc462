@@ -180,10 +180,10 @@ export default () => {
     }
   )
   EventBus.addEventListener(
-    'object-texture-changed', ({ detail: { id, blobUrl } }) => {
+    'object-texture-changed', ({ detail: { id, url } }) => {
       const object3d = objects.get(id)
       object3d.material = new THREE.MeshBasicMaterial({
-        map: new THREE.TextureLoader().load(blobUrl),
+        map: new THREE.TextureLoader().load(url),
         side: THREE.DoubleSide
       })
     }
