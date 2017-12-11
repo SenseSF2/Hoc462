@@ -21,10 +21,12 @@ const Item = name => {
   const nameElement = root.querySelector('.name')
   const renamable = Renamable()
   nameElement.parentNode.replaceChild(renamable, nameElement)
-  renamable.addEventListener('renamed', ({ detail: { name } }) => {
-    root.dispatchEvent(new window.CustomEvent('renamed', {
-      detail: { name }
-    }))
+  renamable.addEventListener('renamed', ({ detail: { name, fromEventBus } }) => {
+    if (!fromEventBus) {
+      root.dispatchEvent(new window.CustomEvent('renamed', {
+        detail: { name }
+      }))
+    }
   })
   const renameButton = root.querySelector('.rename')
   const deleteButton = root.querySelector('.delete')
@@ -41,8 +43,11 @@ const Item = name => {
   root.addEventListener('unselected', () => {
     root.classList.remove('selected')
   })
-  root.addEventListener('renamed', () => {
+  root.addEventListener('renamed', ({ detail: { name } }) => {
     renameButton.style.display = ''
+    renamable.dispatchEvent(new window.CustomEvent('renamed', {
+      detail: { name, fromEventBus: true }
+    }))
   })
   root.addEventListener('deleted', () => { root.remove() })
   return root
@@ -59,34 +64,42 @@ export default () => {
     EventBus.dispatchEvent(startCreatingSlide())
   })
   EventBus.addEventListener('start-creating-slide', () => {
-    const newItem = Item()
-    root.querySelector('.list').appendChild(newItem)
-    const whenCreated = ({ detail: { name } }) => {
-      const id = uniqueId()
-      newItem.removeEventListener('renamed', whenCreated)
+    const ghost = Item()
+    root.querySelector('.list').appendChild(ghost)
+    const id = uniqueId()
+    const renamedHandler = ({ detail: { name } }) => {
+      ghost.removeEventListener('renamed', renamedHandler)
       EventBus.dispatchEvent(addSlide(name, id))
-      newItem.addEventListener('click', () => {
-        EventBus.dispatchEvent(selectSlide(id))
-      })
-      EventBus.addEventListener(
-        'slide-selected',
-        ({ detail: { id: selectedId } }) => {
-          if (selectedId === id) {
-            newItem.dispatchEvent(new window.Event('selected'))
-          } else {
-            newItem.dispatchEvent(new window.Event('unselected'))
-          }
-        }
-      )
-      EventBus.dispatchEvent(selectSlide(id))
-      newItem.addEventListener('renamed', ({ detail: { name } }) => {
-        EventBus.dispatchEvent(renameSlide(name, id))
-      })
-      newItem.addEventListener('deleted', () => {
-        EventBus.dispatchEvent(removeSlide(id))
-      })
+      ghost.dispatchEvent(new window.Event('deleted'))
     }
-    newItem.addEventListener('renamed', whenCreated)
+    ghost.addEventListener('renamed', renamedHandler)
+  })
+  EventBus.addEventListener('slide-added', ({ detail: { name, id } }) => {
+    const newItem = Item()
+    newItem.dispatchEvent(new window.CustomEvent(
+      'renamed', { detail: { name } }
+    ))
+    newItem.addEventListener('click', () => {
+      EventBus.dispatchEvent(selectSlide(id))
+    })
+    EventBus.addEventListener(
+      'slide-selected',
+      ({ detail: { id: selectedId } }) => {
+        if (selectedId === id) {
+          newItem.dispatchEvent(new window.Event('selected'))
+        } else {
+          newItem.dispatchEvent(new window.Event('unselected'))
+        }
+      }
+    )
+    EventBus.dispatchEvent(selectSlide(id))
+    newItem.addEventListener('renamed', ({ detail: { name } }) => {
+      EventBus.dispatchEvent(renameSlide(name, id))
+    })
+    newItem.addEventListener('deleted', () => {
+      EventBus.dispatchEvent(removeSlide(id))
+    })
+    root.querySelector('.list').appendChild(newItem)
   })
   EventBus.addEventListener('slide-selected', () => {
     EventBus.dispatchEvent(selectDrawerTab('slide'))
