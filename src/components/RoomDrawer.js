@@ -125,8 +125,8 @@ export default () => {
       EventBus.dispatchEvent(changeObjectColor(id, color))
     })
     objectCard.addEventListener(
-      'texture-changed', ({ detail: { blobUrl } }) => {
-        EventBus.dispatchEvent(changeObjectTexture(id, blobUrl))
+      'texture-changed', ({ detail: { url } }) => {
+        EventBus.dispatchEvent(changeObjectTexture(id, url))
       }
     )
     objectCard.addEventListener('deleted', () => {

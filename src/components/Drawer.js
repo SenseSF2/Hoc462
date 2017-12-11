@@ -1,6 +1,7 @@
 import EventBus from '../EventBus'
 import SlideDrawer from './SlideDrawer'
 import RoomDrawer from './RoomDrawer'
+import CaptionDrawer from './CaptionDrawer'
 import selectDrawerTab from '../actions/selectDrawerTab'
 import styles from './Drawer.css'
 export default () => {
@@ -10,15 +11,18 @@ export default () => {
     <div class="tabs">
       <button class="tab slide">Slide</button>
       <button class="tab world">Room</button>
+      <button class="tab caption">Caption</button>
     </div>
     <div class="content"></div>
   `
   const tabsElement = root.querySelector('.tabs')
   const slideButton = root.querySelector('.slide')
   const worldButton = root.querySelector('.world')
+  const captionButton = root.querySelector('.caption')
   const drawerContent = root.querySelector('.content')
   const slideDrawer = SlideDrawer()
   const roomDrawer = RoomDrawer()
+  const captionDrawer = CaptionDrawer()
   slideButton.addEventListener('click', () => {
     EventBus.dispatchEvent(selectDrawerTab('slide'))
   })
@@ -28,6 +32,7 @@ export default () => {
   EventBus.addEventListener('drawer-tab-selected', ({ detail: { name } }) => {
     slideButton.removeAttribute('disabled')
     worldButton.removeAttribute('disabled')
+    captionButton.removeAttribute('disabled')
     drawerContent.innerHTML = ''
     switch (name) {
       case 'slide':
@@ -38,6 +43,9 @@ export default () => {
         worldButton.setAttribute('disabled', '')
         drawerContent.appendChild(roomDrawer)
         break
+      case 'caption':
+        captionButton.setAttribute('disabled', '')
+        drawerContent.appendChild(captionDrawer)
     }
   })
   EventBus.dispatchEvent(selectDrawerTab('world'))
@@ -54,6 +62,13 @@ export default () => {
   EventBus.addEventListener('drawer-shown', () => {
     tabsElement.style.display = ''
     drawerContent.style.display = ''
+  })
+  captionButton.style.display = 'none'
+  EventBus.addEventListener('caption-hidden', () => {
+    captionButton.style.display = 'none'
+  })
+  EventBus.addEventListener('caption-shown', () => {
+    captionButton.style.display = ''
   })
   return root
 }

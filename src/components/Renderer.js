@@ -18,6 +18,10 @@ import cancelAddingAnimation from '../actions/cancelAddingAnimation'
 import showDrawer from '../actions/showDrawer'
 import hideDrawer from '../actions/hideDrawer'
 import showCaption from '../actions/showCaption'
+import hideCaption from '../actions/hideCaption'
+import selectDrawerTab from '../actions/selectDrawerTab'
+import lockCurrentDrawerTab from '../actions/lockCurrentDrawerTab'
+import unlockCurrentDrawerTab from '../actions/unlockCurrentDrawerTab'
 export default () => {
   const renderer = new THREE.WebGLRenderer({ antialias: true })
   const root = document.createElement('div')
@@ -231,9 +235,9 @@ export default () => {
       transformControls.detach()
     }
   })
-  const setCameraPositionAndRotation = () => {
+  const setCameraPositionAndRotation = (id = getState().selectedSlide) => {
     const slide = getState().slides.find(
-      ({ id: currentId }) => currentId === getState().selectedSlide
+      ({ id: currentId }) => currentId === id
     )
     if (slide === undefined) {
       return
@@ -248,9 +252,12 @@ export default () => {
     EventBus.dispatchEvent(unselectAnimation(getState().selectedSlide))
     resetObjectStates()
   }
-  const previewLastAnimationOfPreviousSlide = () => {
+  const previewLastAnimationOfPreviousSlide = (
+    id = getState().selectedSlide
+  ) => {
+    resetObjectStates()
     const selectedSlide = getState().slides.find(
-      ({ id }) => id === getState().selectedSlide
+      ({ id: currentId }) => id === currentId
     )
     const isAnAnimationSelected =
       selectedSlide !== undefined &&
@@ -263,7 +270,9 @@ export default () => {
     if (previousSlide !== undefined) {
       const lastAnimationIndex = previousSlide.animations.length - 1
       const lastAnimation = previousSlide.animations[lastAnimationIndex]
-      previewAnimation(lastAnimation.id, previousSlide.id)
+      if (lastAnimation !== undefined) {
+        previewAnimation(lastAnimation.id, previousSlide.id)
+      }
     }
   }
   EventBus.addEventListener('slide-selected', () => {
@@ -396,7 +405,7 @@ export default () => {
     }
   })
   const playSlideAnimations = async id => {
-    resetObjectStates()
+    previewLastAnimationOfPreviousSlide(id)
     const slide = getState().slides.find(
       ({ id: currentId }) => currentId === id
     )
@@ -428,12 +437,24 @@ export default () => {
     EventBus.dispatchEvent(hideDrawer())
     await playSlideAnimations(id)
     EventBus.dispatchEvent(showDrawer())
+    stopAllPendingTasks()
+    setCameraPositionAndRotation()
+    previewLastAnimationOfPreviousSlide()
   })
   EventBus.addEventListener('all-slides-played', async () => {
+    EventBus.dispatchEvent(selectDrawerTab('caption'))
+    EventBus.dispatchEvent(lockCurrentDrawerTab())
     for (let slide of getState().slides) {
+      setCameraPositionAndRotation(slide.id)
       EventBus.dispatchEvent(showCaption(slide.id))
       await playSlideAnimations(slide.id)
     }
+    EventBus.dispatchEvent(unlockCurrentDrawerTab())
+    EventBus.dispatchEvent(selectDrawerTab('slide'))
+    EventBus.dispatchEvent(hideCaption())
+    stopAllPendingTasks()
+    setCameraPositionAndRotation()
+    previewLastAnimationOfPreviousSlide()
   })
   animate()
   return root
