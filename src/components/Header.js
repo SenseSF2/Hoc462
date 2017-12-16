@@ -3,6 +3,7 @@ import getState from '../store'
 import styles from './Header.css'
 import { button } from './Button.css'
 import playAllSlides from '../actions/playAllSlides'
+import resetRoomPlanner from '../actions/resetRoomPlanner'
 import addObject from '../actions/addObject'
 import selectObject from '../actions/selectObject'
 import translateObject from '../actions/translateObject'
@@ -50,6 +51,7 @@ export default () => {
     reader.readAsText(filePickerElement.files[0])
     reader.addEventListener('loadend', () => {
       const state = JSON.parse(reader.result)
+      EventBus.dispatchEvent(resetRoomPlanner())
       const objects = state.objects
       for (let object of objects) {
         const { name, id, type, position, rotation, scale, color, url } = object

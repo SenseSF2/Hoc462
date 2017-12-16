@@ -1,5 +1,6 @@
 import slides from './slides'
 import objects from './objects'
+import resetState from './resetState'
 import selectedObject from './selectedObject'
 import selectedDrawerTab from './selectedDrawerTab'
 import transformControlsMode from './transformControlsMode'
@@ -21,6 +22,7 @@ const setState = x => {
   console.log('Next:', x)
   store = x
 }
+resetState({ getState, setState })
 slides({ getState, setState })
 objects({ getState, setState })
 selectedObject({ getState, setState })

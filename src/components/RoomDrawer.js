@@ -134,6 +134,9 @@ export default () => {
     })
   }
   const objectsElement = root.querySelector('.objects')
+  EventBus.addEventListener('room-planner-reset', () => {
+    objectsElement.innerHTML = ''
+  })
   EventBus.addEventListener('start-creating-object', ({ detail: { type } }) => {
     const objectCard = ObjectCard()
     objectsElement.appendChild(objectCard)

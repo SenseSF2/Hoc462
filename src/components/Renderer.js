@@ -456,6 +456,15 @@ export default () => {
     setCameraPositionAndRotation()
     previewLastAnimationOfPreviousSlide()
   })
+  const resetRenderer = () => {
+    for (let object of objects.values()) {
+      scene.remove(object)
+    }
+    objects.clear()
+    objectIds.clear()
+    stopAllPendingTasks()
+  }
+  EventBus.addEventListener('room-planner-reset', resetRenderer)
   animate()
   return root
 }

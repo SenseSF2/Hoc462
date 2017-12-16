@@ -60,12 +60,17 @@ export default () => {
     <button class="${button} create">Create new</button>
     <ul class="list"></ul>
   `
-  root.querySelector('.create').addEventListener('click', () => {
+  const createButton = root.querySelector('.create')
+  createButton.addEventListener('click', () => {
     EventBus.dispatchEvent(startCreatingSlide())
+  })
+  const listElement = root.querySelector('.list')
+  EventBus.addEventListener('room-planner-reset', () => {
+    listElement.innerHTML = ''
   })
   EventBus.addEventListener('start-creating-slide', () => {
     const ghost = Item()
-    root.querySelector('.list').appendChild(ghost)
+    listElement.appendChild(ghost)
     const id = uniqueId()
     const renamedHandler = ({ detail: { name } }) => {
       ghost.removeEventListener('renamed', renamedHandler)
@@ -99,7 +104,7 @@ export default () => {
     newItem.addEventListener('deleted', () => {
       EventBus.dispatchEvent(removeSlide(id))
     })
-    root.querySelector('.list').appendChild(newItem)
+    listElement.appendChild(newItem)
   })
   EventBus.addEventListener('slide-selected', () => {
     EventBus.dispatchEvent(selectDrawerTab('slide'))
