@@ -188,7 +188,9 @@ export default () => {
       const object3d = objects.get(id)
       object3d.material = new THREE.MeshBasicMaterial({
         map: new THREE.TextureLoader().load(url),
-        side: THREE.DoubleSide
+        side: THREE.DoubleSide,
+        transparent: true,
+        alphaTest: 0.5
       })
     }
   )
@@ -259,12 +261,6 @@ export default () => {
     const selectedSlide = getState().slides.find(
       ({ id: currentId }) => id === currentId
     )
-    const isAnAnimationSelected =
-      selectedSlide !== undefined &&
-      selectedSlide.animations.some(
-        ({ id }) => id === selectedSlide.selectedAnimation
-      )
-    if (isAnAnimationSelected) return
     const previousSlideIndex = getState().slides.indexOf(selectedSlide) - 1
     const previousSlide = getState().slides[previousSlideIndex]
     if (previousSlide !== undefined) {
@@ -313,9 +309,7 @@ export default () => {
     orbitControls.enabled = true
     const object3d = objects.get(getState().selectedObject)
     const clone = object3d.clone()
-    clone.material = new THREE.MeshBasicMaterial(
-      { color: 0xff0000, side: THREE.DoubleSide }
-    )
+    scene.remove(object3d)
     scene.add(clone)
     transformControls.attach(clone)
     const transformControlsChangeHandler = () => {
@@ -329,6 +323,7 @@ export default () => {
     transformControls.addEventListener('change', transformControlsChangeHandler)
     const cleanUp = () => {
       scene.remove(clone)
+      scene.add(object3d)
       transformControls.removeEventListener(
         'change', transformControlsChangeHandler
       )
