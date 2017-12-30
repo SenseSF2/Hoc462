@@ -22,6 +22,9 @@
   "dependencies": {
     "@tweenjs/tween.js": "^17.1.1",
     "babel-polyfill": "^6.26.0",
+    "babel-preset-react": "^6.24.1",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
     "three": "^0.87.1"
   }
 }
