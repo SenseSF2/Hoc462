@@ -1,1 +1,1 @@
-export default () => new window.Event('start-changing-view')
+export default () => new window.Event('started-changing-view')

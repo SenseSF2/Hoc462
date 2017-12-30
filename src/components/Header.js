@@ -24,12 +24,27 @@ export default () => {
   root.innerHTML = `
     <h1>
       Hoc462 Room Planner
-      <button class="${button} save">Save</button>
-      <button class="${button} load">Load</button>
-      <button class="${button} slide-show">Slide show</button>
-      <input type="file" class="file-picker" style="display: none">
+      <span class="buttons">
+        <button class="${button} save">Save</button>
+        <button class="${button} load">Load</button>
+        <button class="${button} slide-show">Slide show</button>
+        <input type="file" class="file-picker" style="display: none">
+      </span>
     </h1>
   `
+  const buttons = root.querySelector('.buttons')
+  EventBus.addEventListener('current-drawer-tab-locked', () => {
+    buttons.style.display = 'none'
+  })
+  EventBus.addEventListener('drawer-hidden', () => {
+    buttons.style.display = 'none'
+  })
+  EventBus.addEventListener('current-drawer-tab-unlocked', () => {
+    buttons.style.display = ''
+  })
+  EventBus.addEventListener('drawer-shown', () => {
+    buttons.style.display = ''
+  })
   const saveButton = root.querySelector('.save')
   const loadButton = root.querySelector('.load')
   saveButton.addEventListener('click', () => {

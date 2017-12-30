@@ -6,6 +6,9 @@ import selectedDrawerTab from './selectedDrawerTab'
 import transformControlsMode from './transformControlsMode'
 import isSlideViewChanging from './isSlideViewChanging'
 import isAddingAnimation from './isAddingAnimation'
+import objectGroup from './objectGroup'
+import isGroupingObjects from './isGroupingObjects'
+import id from './id'
 let store = {
   slides: [],
   selectedSlide: null,
@@ -13,7 +16,10 @@ let store = {
   selectedObject: null,
   selectedDrawerTab: null,
   transformControlsMode: 'translate',
-  isSlideViewChanging: false
+  isSlideViewChanging: false,
+  objectGroup: [],
+  isGroupingObjects: false,
+  id: 0
 }
 const getState = () => store
 const setState = x => {
@@ -30,4 +36,7 @@ selectedDrawerTab({ getState, setState })
 transformControlsMode({ getState, setState })
 isSlideViewChanging({ getState, setState })
 isAddingAnimation({ getState, setState })
+objectGroup({ getState, setState })
+isGroupingObjects({ getState, setState })
+id({ getState, setState })
 export default getState

@@ -1,6 +1,9 @@
 :local .slides {
   color: rgba(255, 255, 255, 0.9);
 }
+:local(.slides).hidden * {
+  display: none;
+}
 :local .slides > span {
   text-transform: uppercase;
   font-weight: bold;

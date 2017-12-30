@@ -1,1 +1,1 @@
-export default () => new window.Event('start-creating-slide')
+export default () => new window.Event('started-creating-slide')

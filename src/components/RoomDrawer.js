@@ -15,6 +15,14 @@ import translateObject from '../actions/translateObject'
 import rotateObject from '../actions/rotateObject'
 import scaleObject from '../actions/scaleObject'
 import removeObject from '../actions/removeObject'
+import turnObjectIntoHole from '../actions/turnObjectIntoHole'
+import turnObjectIntoSolid from '../actions/turnObjectIntoSolid'
+import startGroupingObjects from '../actions/startGroupingObjects'
+import finishGroupingObjects from '../actions/finishGroupingObjects'
+import lockCurrentDrawerTab from '../actions/lockCurrentDrawerTab'
+import unlockCurrentDrawerTab from '../actions/unlockCurrentDrawerTab'
+import addObjectToGroup from '../actions/addObjectToGroup'
+import removeObjectFromGroup from '../actions/removeObjectFromGroup'
 export default () => {
   const root = document.createElement('div')
   root.innerHTML = `
@@ -28,6 +36,16 @@ export default () => {
       <option value="torus">Torus</option>
     </select>
     <div class="transform-controls-buttons"></div>
+      <button class="${button} turn-object-into-hole">
+        Turn object into a hole
+      </button>
+      <button class="${button} turn-object-into-solid">
+        Turn object into a solid
+      </button>
+      <button class="${button} group-objects">Group objects</button>
+      <button class="${button} finish-grouping-objects">
+        Done grouping objects (<span class="number-of-objects"></span>)
+      </button>
     <div class="objects"></div>
   `
   const transformControlsButtons = root.querySelector(
@@ -112,6 +130,11 @@ export default () => {
         }
       }
     )
+    EventBus.addEventListener('finished-grouping-objects', () => {
+      if (getState().objectGroup.includes(id)) {
+        objectCard.remove()
+      }
+    })
     objectCard.dispatchEvent(new window.CustomEvent('position-changed', {
       detail: { position }
     }))
@@ -137,25 +160,25 @@ export default () => {
   EventBus.addEventListener('room-planner-reset', () => {
     objectsElement.innerHTML = ''
   })
-  EventBus.addEventListener('start-creating-object', ({ detail: { type } }) => {
+  EventBus.addEventListener('started-creating-object', ({ detail: { type } }) => {
     const objectCard = ObjectCard()
     objectsElement.appendChild(objectCard)
-    objectCard.dispatchEvent(new window.Event('start-renaming'))
+    objectCard.dispatchEvent(new window.Event('started-renaming'))
     const id = uniqueId()
     const nameChangedHandler = ({ detail: { name } }) => {
       objectCard.removeEventListener('name-changed', nameChangedHandler)
+      objectCard.remove()
       EventBus.dispatchEvent(addObject(name, id, type))
     }
-    const objectCreatedHandler = ({ detail: { id: objectId } }) => {
-      EventBus.removeEventListener('object-added', objectCreatedHandler)
-      if (objectId === id) {
-        const object = getState().objects
-          .find(({ id: currentId }) => currentId === id)
-        connectObjectCardToEventBus(objectCard, object)
-      }
-    }
     objectCard.addEventListener('name-changed', nameChangedHandler)
-    EventBus.addEventListener('object-added', objectCreatedHandler)
+  })
+  EventBus.addEventListener('object-added', ({ detail: { id } }) => {
+    const objectCard = ObjectCard()
+    const object = getState().objects.find(
+      ({ id: currentId }) => id === currentId
+    )
+    objectsElement.appendChild(objectCard)
+    connectObjectCardToEventBus(objectCard, object)
   })
   EventBus.addEventListener(
     'object-cloned', ({ detail: { id, clonedFromId } }) => {
@@ -167,5 +190,99 @@ export default () => {
       connectObjectCardToEventBus(objectCard, object)
     }
   )
+  const turnObjectIntoHoleButton = root.querySelector('.turn-object-into-hole')
+  const turnObjectIntoSolidButton = root.querySelector(
+    '.turn-object-into-solid'
+  )
+  turnObjectIntoHoleButton.addEventListener('click', () => {
+    EventBus.dispatchEvent(
+      turnObjectIntoHole(getState().selectedObject)
+    )
+  })
+  turnObjectIntoSolidButton.addEventListener('click', () => {
+    EventBus.dispatchEvent(
+      turnObjectIntoSolid(getState().selectedObject)
+    )
+  })
+  const showHideHoleSolidButtons = () => {
+    const object = getState().objects.find(
+      ({ id }) => id === getState().selectedObject
+    )
+    if (object === undefined) {
+      turnObjectIntoHoleButton.style.display = 'none'
+      turnObjectIntoSolidButton.style.display = 'none'
+      return
+    }
+    if (object.holeOrSolid === 'hole') {
+      turnObjectIntoHoleButton.style.display = 'none'
+      turnObjectIntoSolidButton.style.display = ''
+    }
+    if (object.holeOrSolid === 'solid') {
+      turnObjectIntoSolidButton.style.display = 'none'
+      turnObjectIntoHoleButton.style.display = ''
+    }
+  }
+  EventBus.addEventListener('object-selected', showHideHoleSolidButtons)
+  EventBus.addEventListener('object-removed', showHideHoleSolidButtons)
+  EventBus.addEventListener('object-turned-into-hole', showHideHoleSolidButtons)
+  EventBus.addEventListener(
+    'object-turned-into-solid', showHideHoleSolidButtons
+  )
+  showHideHoleSolidButtons()
+  const groupObjectsButton = root.querySelector('.group-objects')
+  const finishGroupingObjectsButton = root.querySelector(
+    '.finish-grouping-objects'
+  )
+  const showHideObjectGroupingButtons = () => {
+    if (getState().isGroupingObjects) {
+      groupObjectsButton.style.display = 'none'
+      finishGroupingObjectsButton.style.display = ''
+    } else {
+      groupObjectsButton.style.display = ''
+      finishGroupingObjectsButton.style.display = 'none'
+    }
+  }
+  EventBus.addEventListener(
+    'started-grouping-objects', showHideObjectGroupingButtons
+  )
+  EventBus.addEventListener(
+    'finished-grouping-objects', showHideObjectGroupingButtons
+  )
+  showHideObjectGroupingButtons()
+  groupObjectsButton.addEventListener('click', () => {
+    EventBus.dispatchEvent(startGroupingObjects())
+    EventBus.dispatchEvent(lockCurrentDrawerTab())
+  })
+  finishGroupingObjectsButton.addEventListener('click', () => {
+    EventBus.dispatchEvent(finishGroupingObjects(uniqueId()))
+    EventBus.dispatchEvent(unlockCurrentDrawerTab())
+  })
+  const numberOfObjectsElement = root.querySelector('.number-of-objects')
+  const updateObjectCount = () => {
+    numberOfObjectsElement.textContent = getState().objectGroup.length
+  }
+  EventBus.addEventListener('started-grouping-objects', () => {
+    updateObjectCount()
+    const objectSelectedHandler = ({ detail: { id } }) => {
+      if (getState().objectGroup.includes(id)) {
+        EventBus.dispatchEvent(removeObjectFromGroup(id))
+      } else {
+        EventBus.dispatchEvent(addObjectToGroup(id))
+      }
+      updateObjectCount()
+    }
+    EventBus.addEventListener('object-selected', objectSelectedHandler)
+    EventBus.addEventListener('object-removed', updateObjectCount)
+    const finishedGroupingObjectsHandler = () => {
+      EventBus.removeEventListener(
+        'finished-grouping-objects', finishedGroupingObjectsHandler
+      )
+      EventBus.removeEventListener('object-selected', objectSelectedHandler)
+      EventBus.removeEventListener('object-removed', updateObjectCount)
+    }
+    EventBus.addEventListener(
+      'finished-grouping-objects', finishedGroupingObjectsHandler
+    )
+  })
   return root
 }

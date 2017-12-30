@@ -6,7 +6,7 @@ export default (name, inputType = 'text', placeholder = 'Type name here') => {
     root.scrollTo(0, 0)
   }
   displayName(name)
-  root.addEventListener('start-renaming', () => {
+  root.addEventListener('started-renaming', () => {
     const oldName = root.textContent
     root.innerHTML = `
       <form>

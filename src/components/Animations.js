@@ -72,7 +72,7 @@ export default () => {
       'started-changing-animation-duration',
       ({ detail: { id: currentId } }) => {
         if (id === currentId) {
-          animationElement.dispatchEvent(new window.Event('start-renaming'))
+          animationElement.dispatchEvent(new window.Event('started-renaming'))
           const input = animationElement.querySelector('input')
           input.style.width = animation().duration * displayScale + 'px'
           input.setAttribute('step', 0.01)

@@ -5,7 +5,10 @@ export default () => {
   const root = document.createElement('div')
   root.classList.add(styles.object)
   root.innerHTML = `
-    <div class="name"></div>
+    <div>
+      <span class="name"></span>
+      <span class="hole-or-solid"></span>
+    </div>
     <div class="actions">
       <button class="${button} delete">Delete</button>
       <button class="${button} clone">Clone</button>
@@ -85,11 +88,11 @@ export default () => {
       }
       renamable.addEventListener('rename-canceled', renameCanceledHandler)
     }
-    renamable.dispatchEvent(new window.Event('start-renaming'))
+    renamable.dispatchEvent(new window.Event('started-renaming'))
     actionsElement.style.display = 'none'
   }
   renameButton.addEventListener('click', startRenaming)
-  root.addEventListener('start-renaming', startRenaming)
+  root.addEventListener('started-renaming', startRenaming)
   root.addEventListener('highlighted', () => {
     root.classList.add('highlighted')
   })

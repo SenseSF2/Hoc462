@@ -1,12 +1,15 @@
 import EventBus from '../EventBus'
+import addObject from '../actions/addObject'
 export default ({ getState, setState }) => {
   EventBus.addEventListener(
     'object-added',
-    ({ detail: { id, name, type, position, rotation, scale, color } }) => {
+    ({ detail: {
+      id, name, type, members, position, rotation, scale, color, holeOrSolid
+    } }) => {
       setState({
         ...getState(),
         objects: [...getState().objects, {
-          id, name, type, position, rotation, scale, color
+          id, name, type, members, position, rotation, scale, color, holeOrSolid
         }]
       })
     }
@@ -78,12 +81,54 @@ export default ({ getState, setState }) => {
       )
     })
   })
-  EventBus.addEventListener('object-color-changed', ({ detail: { id, color } }) => {
-    setState({
-      ...getState(),
-      objects: getState().objects.map(
-        object => object.id === id ? { ...object, color } : object
+  EventBus.addEventListener(
+    'object-color-changed', ({ detail: { id, color } }) => {
+      setState({
+        ...getState(),
+        objects: getState().objects.map(
+          object => object.id === id ? { ...object, color } : object
+        )
+      })
+    }
+  )
+  EventBus.addEventListener(
+    'object-turned-into-hole', ({ detail: { id } }) => {
+      setState({
+        ...getState(),
+        objects: getState().objects.map(
+          object => object.id === id ? {
+            ...object, holeOrSolid: 'hole'
+          } : object
+        )
+      })
+    }
+  )
+  EventBus.addEventListener(
+    'object-turned-into-solid', ({ detail: { id } }) => {
+      setState({
+        ...getState(),
+        objects: getState().objects.map(
+          object => object.id === id ? {
+            ...object, holeOrSolid: 'solid'
+          } : object
+        )
+      })
+    }
+  )
+  EventBus.addEventListener(
+    'finished-grouping-objects', ({ detail: { id } }) => {
+      const members = getState().objects.filter(
+        ({ id }) => getState().objectGroup.includes(id)
       )
-    })
-  })
+      setState({
+        ...getState(),
+        objects: getState().objects
+          .filter(({ id }) => !getState().objectGroup.includes(id))
+      })
+      EventBus.dispatchEvent(addObject(
+        `Group of ${members.length} objects`,
+        id, 'group', members
+      ))
+    }
+  )
 }

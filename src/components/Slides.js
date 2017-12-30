@@ -31,7 +31,7 @@ const Item = name => {
   const renameButton = root.querySelector('.rename')
   const deleteButton = root.querySelector('.delete')
   const startRenaming = () => {
-    renamable.dispatchEvent(new window.Event('start-renaming'))
+    renamable.dispatchEvent(new window.Event('started-renaming'))
     renameButton.style.display = 'none'
   }
   startRenaming()
@@ -68,7 +68,7 @@ export default () => {
   EventBus.addEventListener('room-planner-reset', () => {
     listElement.innerHTML = ''
   })
-  EventBus.addEventListener('start-creating-slide', () => {
+  EventBus.addEventListener('started-creating-slide', () => {
     const ghost = Item()
     listElement.appendChild(ghost)
     const id = uniqueId()
@@ -108,6 +108,18 @@ export default () => {
   })
   EventBus.addEventListener('slide-selected', () => {
     EventBus.dispatchEvent(selectDrawerTab('slide'))
+  })
+  EventBus.addEventListener('current-drawer-tab-locked', () => {
+    root.classList.add('hidden')
+  })
+  EventBus.addEventListener('drawer-hidden', () => {
+    root.classList.add('hidden')
+  })
+  EventBus.addEventListener('current-drawer-tab-unlocked', () => {
+    root.classList.remove('hidden')
+  })
+  EventBus.addEventListener('drawer-shown', () => {
+    root.classList.remove('hidden')
   })
   return root
 }

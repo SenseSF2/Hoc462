@@ -74,7 +74,7 @@ export default () => {
   finishSettingViewButton.addEventListener('click', () => {
     EventBus.dispatchEvent(finishChangingSlideView())
   })
-  EventBus.addEventListener('start-changing-view', () => {
+  EventBus.addEventListener('started-changing-view', () => {
     setViewButton.style.display = 'none'
     finishSettingViewButton.style.display = ''
     EventBus.dispatchEvent(lockCurrentDrawerTab())

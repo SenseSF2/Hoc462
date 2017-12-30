@@ -1,3 +1,3 @@
-export default type => new window.CustomEvent('start-creating-object', {
+export default type => new window.CustomEvent('started-creating-object', {
   detail: { type }
 })
