@@ -1,6 +1,6 @@
 import EventBus from '../EventBus'
 export default ({ getState, setState }) => {
-  EventBus.addEventListener('start-changing-view', () => {
+  EventBus.addEventListener('started-changing-view', () => {
     setState({ ...getState(), isSlideViewChanging: true })
   })
   EventBus.addEventListener('finished-changing-slide-view', () => {
