@@ -13,7 +13,7 @@ import unselectAnimation from '../../actions/unselectAnimation'
 import cancelAddingAnimation from '../../actions/cancelAddingAnimation'
 import Objects from './Objects'
 import AnimationsAndViews from './AnimationsAndViews'
-import ObjectGroup from './ObjectGroup'
+import ObjectGroups from './ObjectGroups'
 export default () => {
   const renderer = new THREE.WebGLRenderer({ antialias: true })
   const root = document.createElement('div')
@@ -118,7 +118,7 @@ export default () => {
     scene, camera, raycastingPlane, objects,
     objectIds, boundingBox, transformControls
   )
-  ObjectGroup(objects, objectIds, scene)
+  ObjectGroups(objects, objectIds, scene)
   EventBus.addEventListener(
     'transform-controls-mode-changed', ({ detail: { mode } }) => {
       transformControls.setMode(mode)

@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import ThreeBSP from '../../vendor/ThreeCSG'
 import EventBus from '../../EventBus'
 import getState from '../../store'
 import selectObject from '../../actions/selectObject'
@@ -35,16 +36,39 @@ export default (objects, objectIds, scene) => {
           )
         }
       })
-      const group = new THREE.Group()
-      getState().objectGroup.map(id => objects.get(id)).forEach(object => {
-        group.add(object)
-        objectIds.delete(object)
-        scene.remove(object)
+      const group = getState().objects
+        .find(({ id: currentId }) => currentId === id)
+      const group3d = new THREE.Group()
+      const solids = []
+      const holes = []
+      group.members.forEach(({ id, holeOrSolid }) => {
+        const object3d = objects.get(id)
+        objects.delete(id)
+        if (holeOrSolid === 'solid') {
+          solids.push(object3d)
+        } else {
+          holes.push(object3d)
+        }
+        objectIds.delete(object3d)
+        scene.remove(object3d)
       })
-      getState().objectGroup.forEach(id => objects.delete(id))
-      objects.set(id, group)
-      objectIds.set(group, id)
-      scene.add(group)
+      const convertToBSP = object3d => {
+        const geometry = object3d.geometry.clone()
+        object3d.updateMatrix()
+        geometry.applyMatrix(object3d.matrix)
+        return new ThreeBSP(geometry)
+      }
+      const holeBSPs = holes.map(convertToBSP)
+      for (let i = 0; i < solids.length; i++) {
+        // I am mutating this array.
+        let solidBSP = convertToBSP(solids[i])
+        holeBSPs.forEach(holeBSP => { solidBSP = solidBSP.subtract(holeBSP) })
+        solids[i] = solidBSP.toMesh(solids[i].material)
+        group3d.add(solids[i])
+      }
+      scene.add(group3d)
+      objects.set(id, group3d)
+      objectIds.set(group3d, id)
       EventBus.dispatchEvent(selectObject(id))
     }
   )
