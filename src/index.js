@@ -11,4 +11,3 @@ root.appendChild(Header())
 root.appendChild(Sidebar())
 root.appendChild(Drawer())
 root.appendChild(Renderer())
-window.onbeforeunload = () => 'NEEDS_CONFIRMATION'

@@ -142,16 +142,6 @@ export default (
       object3d.scale.set(...scale)
     }
   )
-  EventBus.addEventListener(
-    'object-cloned', ({ detail: { id, clonedFromId } }) => {
-      const object3d = objects.get(clonedFromId)
-      const clonedObject = object3d.clone()
-      scene.add(clonedObject)
-      objects.set(id, clonedObject)
-      objectIds.set(clonedObject, id)
-      EventBus.dispatchEvent(selectObject(id))
-    }
-  )
   EventBus.addEventListener('object-removed', ({ detail: { id } }) => {
     const object3d = objects.get(id)
     objects.delete(id)

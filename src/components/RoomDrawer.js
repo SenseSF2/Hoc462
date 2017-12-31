@@ -182,12 +182,23 @@ export default () => {
   })
   EventBus.addEventListener(
     'object-cloned', ({ detail: { id, clonedFromId } }) => {
-      const objectCard = ObjectCard()
       const object = getState().objects.find(
-        ({ id: currentId }) => id === currentId
+        ({ id: currentId }) => clonedFromId === currentId
       )
-      objectsElement.appendChild(objectCard)
-      connectObjectCardToEventBus(objectCard, object)
+      EventBus.dispatchEvent(
+        addObject(object.name, id, object.type, object.members
+      ))
+      EventBus.dispatchEvent(translateObject(id, object.position))
+      EventBus.dispatchEvent(rotateObject(id, object.rotation))
+      EventBus.dispatchEvent(scaleObject(id, object.scale))
+      EventBus.dispatchEvent({
+        hole: turnObjectIntoHole,
+        solid: turnObjectIntoSolid
+      }[object.holeOrSolid](id))
+      EventBus.dispatchEvent(changeObjectColor(id, object.color))
+      if (object.url !== undefined) {
+        EventBus.dispatchEvent(changeObjectTexture(id, object.url))
+      }
     }
   )
   const turnObjectIntoHoleButton = root.querySelector('.turn-object-into-hole')
