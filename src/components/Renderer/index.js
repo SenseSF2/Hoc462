@@ -8,6 +8,7 @@ import '../../vendor/TransformControls'
 import '../../vendor/ThreeCSG'
 import selectObject from '../../actions/selectObject'
 import finishChangingSlideView from '../../actions/finishChangingSlideView'
+import selectAnimation from '../../actions/selectAnimation'
 import unselectAnimation from '../../actions/unselectAnimation'
 import cancelAddingAnimation from '../../actions/cancelAddingAnimation'
 import Objects from './Objects'
@@ -159,6 +160,15 @@ export default () => {
     stopAllPendingTasks()
     setCameraPositionAndRotation()
     previewLastAnimationOfPreviousSlide()
+    const selectedSlide = getState().slides.find(
+      ({ id }) => id === getState().selectedSlide
+    )
+    if (selectedSlide.animations.length > 0) {
+      EventBus.dispatchEvent(selectAnimation(
+        [...selectedSlide.animations].pop().id,
+        selectedSlide.id
+      ))
+    }
   })
   EventBus.addEventListener('slide-removed', ({ detail: { id } }) => {
     previewLastAnimationOfPreviousSlide()

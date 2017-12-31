@@ -8,7 +8,7 @@ import startChangingAnimationDuration from
   '../actions/startChangingAnimationDuration'
 import moveAnimationLeft from '../actions/moveAnimationLeft'
 import moveAnimationRight from '../actions/moveAnimationRight'
-import selectAnimaton from '../actions/selectAnimation'
+import selectAnimation from '../actions/selectAnimation'
 import playSlide from '../actions/playSlide'
 export default () => {
   const root = document.createElement('div')
@@ -61,7 +61,7 @@ export default () => {
     }
     displayDuration()
     animationElement.addEventListener('click', () => {
-      EventBus.dispatchEvent(selectAnimaton(id, slideId))
+      EventBus.dispatchEvent(selectAnimation(id, slideId))
     })
     EventBus.addEventListener(
       'animation-duration-changed', ({ detail: { id: currentId } }) => {
@@ -150,6 +150,7 @@ export default () => {
       } else {
         animationsElement.appendChild(animationElement)
       }
+      EventBus.dispatchEvent(selectAnimation(id, slideId))
     }
   )
   const actionButtons = root.querySelector('.actions')

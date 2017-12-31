@@ -54,9 +54,10 @@ export default () => {
   animationsElement.appendChild(Animations())
   const notice = root.querySelector('.notice')
   EventBus.addEventListener('slide-selected', ({ detail: { id } }) => {
-    notice.textContent = 'Selected slide: ' + getState().slides.find(
-      ({ id: currentId }) => id === currentId
-    ).name
+    const selectedSlide = getState().slides.find(
+      ({ id: currentId }) => getState().selectedSlide === currentId
+    )
+    notice.textContent = 'Selected slide: ' + selectedSlide.name
     root.classList.add('slide-selected')
   })
   EventBus.addEventListener('slide-removed', ({ detail: { id } }) => {
