@@ -1,8 +1,0 @@
-:local(.animations) .animation {
-  display: inline-block;
-  background: #9a1a1a;
-  border: 1px solid black;
-}
-:local(.animations) .animation.highlighted {
-  border: 1px solid white;
-}
