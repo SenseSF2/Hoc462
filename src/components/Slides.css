@@ -1,0 +1,51 @@
+:local .slides {
+  width: 25vw;
+  height: calc(100vh - 64px);
+  padding: 16px;
+  background: #343436;
+  color: rgba(255, 255, 255, 0.9);
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+:local @media (orientation: portrait) {
+  :local .slides {
+    width: calc(100vw - 32px);
+    height: calc(168px - 32px);
+  }
+}
+:local(.slides).hidden * {
+  display: none;
+}
+:local .slides > span {
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+:local .slides ul {
+  margin-top: 8px;
+  font-size: 16px;
+  margin-left: 10px;
+  margin-bottom: 5px;
+}
+:local .slides li {
+  padding: 2px;
+  cursor: pointer;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+}
+:local(.slides) li span {
+  white-space: nowrap;
+}
+:local .slides li :global(.actions) {
+  display: inline-block;
+}
+:local .slides li input {
+  border: 0;
+  background: transparent;
+  font-size: 16px;
+  color: white;
+}
+:local .slides li:hover, :local .slides li:global(.selected) {
+  background: rgba(0, 0, 0, 0.4);
+  color: white;
+}

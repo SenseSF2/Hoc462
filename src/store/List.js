@@ -1,4 +1,5 @@
 import { observable, computed, action } from 'mobx'
+import { LEFT, RIGHT } from '../constants'
 class List {
   @observable items = []
   @observable _selected
@@ -19,6 +20,23 @@ class List {
   @action select (item) {
     if (this.items.includes(item)) {
       this._selected = item
+    }
+  }
+  @action move (item, direction, times = 1) {
+    for (let i = 0; i < times; i++) {
+      const thisIndex = this.items.indexOf(item)
+      let thatIndex
+      if (direction === LEFT) {
+        thatIndex = thisIndex - 1
+      } else if (direction === RIGHT) {
+        thatIndex = thisIndex + 1
+      }
+      const thisItem = this.items[thisIndex]
+      const thatItem = this.items[thatIndex]
+      if (thisItem !== undefined && thatItem !== undefined) {
+        this.items[thisIndex] = thatItem
+        this.items[thatIndex] = thisItem
+      }
     }
   }
 }
