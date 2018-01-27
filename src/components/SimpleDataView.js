@@ -2,7 +2,7 @@ import React from 'react'
 import { observer } from 'mobx-react'
 import store from '../store'
 import Animation from '../store/Animation'
-import Object3d from '../store/Object3d'
+import Object3D from '../store/Object3D'
 import Slide from '../store/Slide'
 export default observer(() =>
   <div>
@@ -71,5 +71,5 @@ export default observer(() =>
 )
 window.store = store
 window.Animation = Animation
-window.Object3d = Object3d
+window.Object3D = Object3D
 window.Slide = Slide
