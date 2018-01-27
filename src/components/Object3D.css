@@ -1,0 +1,32 @@
+:local .object {
+  display: inline-block;
+  background-color: white;
+  border: 1px solid black;
+  box-shadow: 6px 6px 6px rgba(0, 0, 0, 0.5);
+  padding: 10px;
+  color: black;
+}
+:local(.object) .name {
+  width: 150px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  display: block;
+}
+:local(.object).highlighted {
+  border: 2px solid orange;
+}
+:local(.object):not(.highlighted) .properties {
+  display: none;
+}
+:local(.object) .properties input {
+  width: 50px;
+}
+:local(.object) .name input {
+  border: 0;
+  background: transparent;
+  font-size: 16px;
+}
+:local(.object) .texture-upload-input {
+  display: none;
+}

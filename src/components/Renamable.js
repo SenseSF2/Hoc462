@@ -1,5 +1,5 @@
 import React from 'react'
-export default ({ isRenaming, onSubmit, value, ...props }) => {
+const Renamable = ({ isRenaming, onSubmit, value, ...props }) => {
   let input
   return (
     <form onSubmit={event => { event.preventDefault(); onSubmit(input.value) }}>
@@ -16,3 +16,4 @@ export default ({ isRenaming, onSubmit, value, ...props }) => {
     </form>
   )
 }
+export default Renamable

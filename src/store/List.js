@@ -1,5 +1,5 @@
 import { observable, computed, action } from 'mobx'
-import { LEFT, RIGHT } from '../constants'
+import { TO_PREVIOUS_INDEX, TO_NEXT_INDEX } from '../constants'
 class List {
   @observable items = []
   @observable _selected
@@ -10,6 +10,9 @@ class List {
   }
   @action add (item) {
     this.items.push(item)
+  }
+  @action addMultiple (items) {
+    items.forEach(item => this.add(item))
   }
   @action remove (item) {
     const itemIndex = this.items.indexOf(item)
@@ -26,9 +29,9 @@ class List {
     for (let i = 0; i < times; i++) {
       const thisIndex = this.items.indexOf(item)
       let thatIndex
-      if (direction === LEFT) {
+      if (direction === TO_PREVIOUS_INDEX) {
         thatIndex = thisIndex - 1
-      } else if (direction === RIGHT) {
+      } else if (direction === TO_NEXT_INDEX) {
         thatIndex = thisIndex + 1
       }
       const thisItem = this.items[thisIndex]

@@ -1,6 +1,8 @@
 import { observable, action } from 'mobx'
+import uuidv4 from 'uuid/v4'
 import { COLOR, IMAGE } from '../constants'
 class Texture {
+  id = uuidv4()
   @observable type = COLOR
   @observable color = '#ff00ff'
   @observable imageUrl = ''

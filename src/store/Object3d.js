@@ -1,7 +1,9 @@
 import { observable, action } from 'mobx'
+import uuidv4 from 'uuid/v4'
 import { BOX } from '../constants'
 import Texture from './Texture'
-class Object3d {
+class Object3D {
+  id = uuidv4()
   @observable name = 'Untitled'
   @observable type = BOX
   texture = new Texture()
@@ -17,8 +19,11 @@ class Object3d {
   @action setRotation (rotation) {
     Object.assign(this.rotation, rotation)
   }
-  @action setScale (rotation) {
+  @action setScale (scale) {
     Object.assign(this.scale, scale)
   }
+  constructor (type) {
+    this.type = type
+  }
 }
-export default Object3d
+export default Object3D
