@@ -10,9 +10,10 @@ class List {
   }
   @action add (item) {
     this.items.push(item)
+    this.select(item)
   }
   @action addMultiple (items) {
-    items.forEach(item => this.add(item))
+    items.forEach(item => this.items.push(item))
   }
   @action remove (item) {
     const itemIndex = this.items.indexOf(item)

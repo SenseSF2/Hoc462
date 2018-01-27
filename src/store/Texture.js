@@ -4,15 +4,14 @@ import { COLOR, IMAGE } from '../constants'
 class Texture {
   id = uuidv4()
   @observable type = COLOR
-  @observable color = '#ff00ff'
-  @observable imageUrl = ''
+  @observable value = '#ff00ff'
   @action setColor (color) {
     this.type = COLOR
-    this.color = color
+    this.value = color
   }
   @action setImage (imageUrl) {
     this.type = IMAGE
-    this.imageUrl = imageUrl
+    this.value = imageUrl
   }
 }
 export default Texture

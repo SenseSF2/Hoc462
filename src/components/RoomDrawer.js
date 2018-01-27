@@ -4,7 +4,7 @@ import { button } from './Button.css'
 import Object3D from './Object3D'
 import { BOX, CIRCLE, CYLINDER, SPHERE, ICOSAHEDRON, TORUS } from '../constants'
 const RoomDrawer = observer(({
-  objects, addObject, changeTransformControlsMode
+  objects, add, changeTransformControlsMode
 }) =>
   <div>
     <div>
@@ -13,7 +13,7 @@ const RoomDrawer = observer(({
           box: BOX, circle: CIRCLE, cylinder: CYLINDER, sphere: SPHERE,
           icosahedron: ICOSAHEDRON, torus: TORUS
         })[event.target.value]
-        addObject(objectType)
+        add(objectType)
       }}>
         <option disabled value='__default__'>Add object</option>
         <option value='box'>Box</option>
@@ -43,6 +43,7 @@ const RoomDrawer = observer(({
           object={item} remove={() => objects.remove(item)} key={item.id}
           select={() => objects.select(item)}
           selected={objects.selected === item}
+          clone={() => objects.add(item.clone())}
         />
       )}
     </div>

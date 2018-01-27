@@ -3,6 +3,7 @@ import { observer } from 'mobx-react'
 import Renamable from './Renamable'
 import { button } from './Button.css'
 import styles from './Object3D.css'
+import { COLOR } from '../constants'
 @observer
 export default class Object3D extends React.Component {
   state = {
@@ -22,7 +23,7 @@ export default class Object3D extends React.Component {
   }
   render () {
     const { isRenaming } = this.state
-    const { object, remove, selected, select } = this.props
+    const { object, remove, selected, select, clone } = this.props
     return (
       <div
         className={[
@@ -38,14 +39,16 @@ export default class Object3D extends React.Component {
         </div>
         <div>
           <button className={button} onClick={remove}>Delete</button>{' '}
-          <button className={button}>Clone</button>{' '}
+          <button className={button} onClick={clone}>Clone</button>{' '}
           <button className={button} onClick={() => this.startRenaming()}>
             Rename
           </button>{' '}
           <button className={button}>Set texture</button>{' '}
           <input type='file' className='texture-upload-input' />
           <input
-            type='color' value={object.texture.color}
+            type='color' value={
+              object.texture.type === COLOR ? object.texture.value : ''
+            }
             onChange={event => this.handleColorChange(event)}
           />
         </div>

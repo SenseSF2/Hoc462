@@ -26,7 +26,7 @@ const App = observer(() =>
         id: ROOM, name: 'Room',
         component: () => <RoomDrawer
           objects={store.objects}
-          addObject={type => store.objects.add(new Object3D(type))}
+          add={type => store.objects.add(new Object3D(type))}
         />
       },
       {
