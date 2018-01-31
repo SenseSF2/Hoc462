@@ -5,7 +5,6 @@ const Renamable = ({ isRenaming, onSubmit, value, ...props }) => {
     <form onSubmit={event => { event.preventDefault(); onSubmit(input.value) }}>
       {isRenaming
         ? <input {...props}
-          keydown={event => event.stopPropagation()}
           ref={element => {
             if (element !== null) element.select()
             input = element

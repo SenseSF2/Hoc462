@@ -8,12 +8,14 @@ import Header from './Header'
 import Slides from './Slides'
 import Drawer from './Drawer'
 import RoomDrawer from './RoomDrawer'
+import Renderer from './Renderer'
 const App = observer(() =>
   <div>
     <Header />
     <Slides
       slides={store.slides} create={() => store.slides.add(new Slide())}
     />
+  <Renderer objects={store.objects} />
     <Drawer
       selectedTab={store.drawerTabs.selected}
       select={tab => store.drawerTabs.select(tab)}

@@ -54,10 +54,11 @@ export default class Object3D extends React.Component {
         </div>
         <div className='properties'>
           {['Position', 'Rotation', 'Scale'].map(property =>
-            <div>
+            <div key={property}>
               <label>{property}: </label>
               {object[property.toLowerCase()].map((value, index) =>
                 <input
+                  key={index}
                   type='number' step='0.01' value={value} onChange={event => {
                     const newArray = [...object[property.toLowerCase()]]
                     newArray[index] = +event.target.value

@@ -1,7 +1,7 @@
 import React from 'react'
 import { SLIDE, ROOM, CAPTION } from '../constants'
 import styles from './Drawer.css'
-const Drawer = ({ selectedTab, select, store, children: tabs }) =>
+const Drawer = ({ selectedTab, select, children: tabs }) =>
   <div className={styles.drawer}>
     <div className='tabs'>
       {tabs.map(({ name, id }) =>
