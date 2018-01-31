@@ -8,21 +8,15 @@ const hexColorToDecimal = color => parseInt(color.match(/.(.*)/)[1], 16)
 @observer
 export default class Object3D extends React.Component {
   componentWillMount () {
-    this.instance = new THREE.Mesh(
-      new THREE.BoxGeometry(1, 1, 1),
-      new THREE.MeshBasicMaterial({ color: 0xff00ff })
-    )
+    this.instance = new THREE.Mesh()
     this.props.instance(this.instance)
+    this.setType(this.props.type)
+    this.setTexture(this.props.textureType, this.props.textureValue)
   }
   componentWillUnmount () {
     this.props.remove(this.instance)
   }
-  render () {
-    const {
-      texture, type, positionX, positionY, positionZ,
-      rotationX, rotationY, rotationZ,
-      scaleX, scaleY, scaleZ
-    } = this.props
+  setType (type) {
     if (type === CIRCLE) {
       this.instance.geometry = new THREE.CircleGeometry(1, 32)
       this.instance.material = new THREE.MeshBasicMaterial({
@@ -40,21 +34,41 @@ export default class Object3D extends React.Component {
         side: THREE.DoubleSide
       })
     }
-    if (texture.type === COLOR) {
-      this.instance.material.color.setHex(hexColorToDecimal(texture.value))
-    } else if (texture.type === IMAGE) {
+  }
+  setTexture (textureType, textureValue) {
+    if (textureType === COLOR) {
+      this.instance.material.color.setHex(hexColorToDecimal(textureValue))
+    } else if (textureType === IMAGE) {
       this.instance.material = new THREE.MeshBasicMaterial({
-        map: new THREE.TextureLoader().load(texture.value),
+        map: new THREE.TextureLoader().load(textureValue),
         side: THREE.DoubleSide,
         transparent: true,
         alphaTest: 0.5
       })
+    }
+  }
+  componentWillReceiveProps (nextProps) {
+    const {
+      textureType, textureValue, type, positionX, positionY, positionZ,
+      rotationX, rotationY, rotationZ,
+      scaleX, scaleY, scaleZ
+    } = nextProps
+    if (type !== this.props.type) {
+      this.setType(type)
+    }
+    if (
+      textureType !== this.props.textureType
+      || textureValue !== this.props.textureValue
+    ) {
+      this.setTexture(textureType, textureValue)
     }
     this.instance.position.set(positionX, positionY, positionZ)
     this.instance.rotation.set(
       ...[rotationX, rotationY, rotationZ].map(angle => angle / 180 * Math.PI)
     )
     this.instance.scale.set(scaleX, scaleY, scaleZ)
+  }
+  render () {
     return null
   }
 }

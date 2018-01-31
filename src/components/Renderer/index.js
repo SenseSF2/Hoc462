@@ -72,7 +72,8 @@ export default class Renderer extends React.Component {
         {objects.items.map(object =>
           <Object3D
             key={object.id}
-            texture={object.texture}
+            textureType={object.texture.type}
+            textureValue={object.texture.value}
             type={object.type}
             positionX={object.position[0]}
             positionY={object.position[1]}
