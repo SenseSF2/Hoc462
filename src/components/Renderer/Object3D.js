@@ -7,7 +7,8 @@ import {
 const hexColorToDecimal = color => parseInt(color.match(/.(.*)/)[1], 16)
 @observer
 export default class Object3D extends React.Component {
-  componentWillMount () {
+  constructor (props) {
+    super(props)
     this.instance = new THREE.Mesh()
     this.props.instance(this.instance)
     this.setType(this.props.type)
@@ -57,7 +58,8 @@ export default class Object3D extends React.Component {
       this.setType(type)
     }
     if (
-      textureType !== this.props.textureType
+      type !== this.props.type
+      || textureType !== this.props.textureType
       || textureValue !== this.props.textureValue
     ) {
       this.setTexture(textureType, textureValue)

@@ -21,6 +21,13 @@ export default class Object3D extends React.Component {
     const { object } = this.props
     object.texture.setColor(event.target.value)
   }
+  handleTextureUpload (event) {
+    const reader = new window.FileReader()
+    reader.readAsDataURL(this.textureUploadInput.files[0])
+    reader.addEventListener('loadend', () => {
+      this.props.object.texture.setImage(reader.result)
+    })
+  }
   render () {
     const { isRenaming } = this.state
     const { object, remove, selected, select, clone } = this.props
@@ -43,8 +50,18 @@ export default class Object3D extends React.Component {
           <button className={button} onClick={() => this.startRenaming()}>
             Rename
           </button>{' '}
-          <button className={button}>Set texture</button>{' '}
-          <input type='file' className='texture-upload-input' />
+          <button
+            className={button}
+            onClick={() => this.textureUploadInput.click()}
+          >
+            Set texture
+          </button>{' '}
+          <input
+            type='file'
+            className='texture-upload-input'
+            ref={element => { this.textureUploadInput = element }}
+            onChange={event => this.handleTextureUpload(event)}
+          />
           <input
             type='color' value={
               object.texture.type === COLOR ? object.texture.value : ''

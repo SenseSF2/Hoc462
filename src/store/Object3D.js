@@ -33,9 +33,9 @@ class Object3D {
     } else if (this.texture.type === IMAGE) {
       clone.texture.setImage(this.texture.value)
     }
-    clone.setPosition(this.position)
-    clone.setRotation(this.rotation)
-    clone.setScale(this.scale)
+    clone.setPosition(this.position.slice())
+    clone.setRotation(this.rotation.slice())
+    clone.setScale(this.scale.slice())
     return clone
   }
 }
