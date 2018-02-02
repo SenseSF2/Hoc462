@@ -18,3 +18,7 @@ export const TO_NEXT_INDEX = Symbol('to next index')
 export const SLIDE = Symbol('slide')
 export const ROOM = Symbol('room')
 export const CAPTION = Symbol('caption')
+// TransformControls modes
+export const TRANSLATE = Symbol('translate')
+export const ROTATE = Symbol('rotate')
+export const SCALE = Symbol('scale')

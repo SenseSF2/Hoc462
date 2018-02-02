@@ -10,7 +10,8 @@ import Object3D from './Object3D'
 @observer
 export default class Renderer extends React.Component {
   itsTimeToStop = false
-  componentWillMount () {
+  constructor (props) {
+    super(props)
     const renderer = new THREE.WebGLRenderer({ antialias: true })
     this.domElement = renderer.domElement
     const scene = this.scene = new THREE.Scene()
@@ -57,7 +58,8 @@ export default class Renderer extends React.Component {
     this.itsTimeToStop = true
   }
   render () {
-    const { objects } = this.props
+    const { objects, transformControlsMode } = this.props
+    const isAnObjectSelected = objects.selected !== undefined
     return (
       <React.Fragment>
         <div
@@ -66,8 +68,33 @@ export default class Renderer extends React.Component {
         <Controls
           camera={this.camera}
           domElement={this.domElement}
-          orbitControlsEnabled transformControlsEnabled
+          orbitControlsEnabled
+          transformControlsEnabled={objects.selected !== undefined}
           instance={() => {}}
+          positionX={isAnObjectSelected ? objects.selected.position[0] : 0}
+          positionY={isAnObjectSelected ? objects.selected.position[1] : 0}
+          positionZ={isAnObjectSelected ? objects.selected.position[2] : 0}
+          rotationX={isAnObjectSelected ? objects.selected.rotation[0] : 0}
+          rotationY={isAnObjectSelected ? objects.selected.rotation[1] : 0}
+          rotationZ={isAnObjectSelected ? objects.selected.rotation[2] : 0}
+          scaleX={isAnObjectSelected ? objects.selected.scale[0] : 0}
+          scaleY={isAnObjectSelected ? objects.selected.scale[1] : 0}
+          scaleZ={isAnObjectSelected ? objects.selected.scale[2] : 0}
+          instance={
+            ({ transformControls, transformControlsAttachedObject }) =>
+              this.scene.add(transformControls, transformControlsAttachedObject)
+          }
+          transformControlsChange={(
+            positionX, positionY, positionZ,
+            rotationX, rotationY, rotationZ,
+            scaleX, scaleY, scaleZ
+          ) => {
+            if (objects.selected === undefined) return
+            objects.selected.setPosition([positionX, positionY, positionZ])
+            objects.selected.setRotation([rotationX, rotationY, rotationZ])
+            objects.selected.setScale([scaleX, scaleY, scaleZ])
+          }}
+          transformControlsMode={transformControlsMode}
         />
         {objects.items.map(object =>
           <Object3D

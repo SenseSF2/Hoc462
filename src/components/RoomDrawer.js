@@ -2,7 +2,9 @@ import React from 'react'
 import { observer } from 'mobx-react'
 import { button } from './Button.css'
 import Object3D from './Object3D'
-import { BOX, CIRCLE, CYLINDER, SPHERE, ICOSAHEDRON, TORUS } from '../constants'
+import {
+  BOX, CIRCLE, CYLINDER, SPHERE, ICOSAHEDRON, TORUS, TRANSLATE, ROTATE, SCALE
+} from '../constants'
 const RoomDrawer = observer(({
   objects, add, changeTransformControlsMode
 }) =>
@@ -23,9 +25,24 @@ const RoomDrawer = observer(({
         <option value='icosahedron'>Icosahedron</option>
         <option value='torus'>Torus</option>
       </select>{' '}
-      <button className={button}>Translate</button>{' '}
-      <button className={button}>Rotate</button>{' '}
-      <button className={button}>Scale</button>
+      <button
+        className={button}
+        onClick={() => changeTransformControlsMode(TRANSLATE)}
+      >
+        Translate
+      </button>{' '}
+      <button
+        className={button}
+        onClick={() => changeTransformControlsMode(ROTATE)}
+      >
+        Rotate
+      </button>{' '}
+      <button
+        className={button}
+        onClick={() => changeTransformControlsMode(SCALE)}
+      >
+        Scale
+      </button>
     </div>
     <button className={button} onClick={() => objects.selected.turnIntoHole()}>
       Turn object into a hole

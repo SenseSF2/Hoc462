@@ -1,5 +1,5 @@
 import List from './List'
-import { SLIDE, ROOM, CAPTION } from '../constants'
+import { SLIDE, ROOM, CAPTION, TRANSLATE, ROTATE, SCALE } from '../constants'
 class RootStore {
   constructor () {
     this.objects = new List()
@@ -7,6 +7,9 @@ class RootStore {
     this.drawerTabs = new List()
     this.drawerTabs.addMultiple([SLIDE, ROOM, CAPTION])
     this.drawerTabs.select(ROOM)
+    this.transformControlsModes = new List()
+    this.transformControlsModes.addMultiple([TRANSLATE, ROTATE, SCALE])
+    this.transformControlsModes.select(TRANSLATE)
   }
 }
 const store = new RootStore()

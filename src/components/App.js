@@ -15,7 +15,10 @@ const App = observer(() =>
     <Slides
       slides={store.slides} create={() => store.slides.add(new Slide())}
     />
-  <Renderer objects={store.objects} />
+    <Renderer
+      objects={store.objects}
+      transformControlsMode={store.transformControlsModes.selected}
+    />
     <Drawer
       selectedTab={store.drawerTabs.selected}
       select={tab => store.drawerTabs.select(tab)}
@@ -29,6 +32,9 @@ const App = observer(() =>
         component: () => <RoomDrawer
           objects={store.objects}
           add={type => store.objects.add(new Object3D(type))}
+          changeTransformControlsMode={
+            mode => store.transformControlsModes.select(mode)
+          }
         />
       },
       {

@@ -9,10 +9,20 @@ const hexColorToDecimal = color => parseInt(color.match(/.(.*)/)[1], 16)
 export default class Object3D extends React.Component {
   constructor (props) {
     super(props)
+    const {
+      positionX, positionY, positionZ,
+      rotationX, rotationY, rotationZ,
+      scaleX, scaleY, scaleZ
+    } = this.props
     this.instance = new THREE.Mesh()
     this.props.instance(this.instance)
     this.setType(this.props.type)
     this.setTexture(this.props.textureType, this.props.textureValue)
+    this.setPositionRotationAndScale(
+      positionX, positionY, positionZ,
+      rotationX, rotationY, rotationZ,
+      scaleX, scaleY, scaleZ
+    )
   }
   componentWillUnmount () {
     this.props.remove(this.instance)
@@ -48,6 +58,17 @@ export default class Object3D extends React.Component {
       })
     }
   }
+  setPositionRotationAndScale (
+    positionX, positionY, positionZ,
+    rotationX, rotationY, rotationZ,
+    scaleX, scaleY, scaleZ
+  ) {
+    this.instance.position.set(positionX, positionY, positionZ)
+    this.instance.rotation.set(
+      ...[rotationX, rotationY, rotationZ].map(angle => angle / 180 * Math.PI)
+    )
+    this.instance.scale.set(scaleX, scaleY, scaleZ)
+  }
   componentWillReceiveProps (nextProps) {
     const {
       textureType, textureValue, type, positionX, positionY, positionZ,
@@ -64,11 +85,11 @@ export default class Object3D extends React.Component {
     ) {
       this.setTexture(textureType, textureValue)
     }
-    this.instance.position.set(positionX, positionY, positionZ)
-    this.instance.rotation.set(
-      ...[rotationX, rotationY, rotationZ].map(angle => angle / 180 * Math.PI)
+    this.setPositionRotationAndScale(
+      positionX, positionY, positionZ,
+      rotationX, rotationY, rotationZ,
+      scaleX, scaleY, scaleZ
     )
-    this.instance.scale.set(scaleX, scaleY, scaleZ)
   }
   render () {
     return null
