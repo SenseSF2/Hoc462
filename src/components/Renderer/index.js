@@ -7,6 +7,7 @@ import '../../vendor/TransformControls'
 import styles from './index.css'
 import Controls from './Controls'
 import Object3D from './Object3D'
+import onObject3DClick from './onObject3DClick'
 @observer
 export default class Renderer extends React.Component {
   itsTimeToStop = false
@@ -27,13 +28,7 @@ export default class Renderer extends React.Component {
     camera.lookAt(gridHelper.position)
     scene.add(camera)
     const boundingBox = new THREE.BoxHelper(undefined, 0xffffff)
-    // this plane is only used to insert object at the center of the renderer
-    // using raycasting
-    const raycastingPlane = new THREE.Mesh(
-      new THREE.PlaneGeometry(40, 40),
-      new THREE.MeshBasicMaterial({ color: 0xffff00, side: THREE.DoubleSide })
-    )
-    raycastingPlane.rotation.x = Math.PI / 2
+    this.onObject3DClick = onObject3DClick(camera, renderer.domElement)
     let oldWidth = 0
     let oldHeight = 0
     const animate = () => {
@@ -96,8 +91,9 @@ export default class Renderer extends React.Component {
           }}
           transformControlsMode={transformControlsMode}
         />
-        {objects.items.map(object =>
-          <Object3D
+        {objects.items.map(object => {
+          let clickHandler
+          return <Object3D
             key={object.id}
             textureType={object.texture.type}
             textureValue={object.texture.value}
@@ -111,10 +107,18 @@ export default class Renderer extends React.Component {
             scaleX={object.scale[0]}
             scaleY={object.scale[1]}
             scaleZ={object.scale[2]}
-            instance={instance => this.scene.add(instance)}
-            remove={instance => this.scene.remove(instance)}
+            instance={instance => {
+              this.scene.add(instance)
+              this.onObject3DClick.onClick(
+                instance, clickHandler = () => objects.select(object)
+              )
+            }}
+            remove={instance => {
+              this.scene.remove(instance)
+              this.onObject3DClick.removeClickHandler(instance, clickHandler)
+            }}
           />
-        )}
+        })}
       </React.Fragment>
     )
   }
