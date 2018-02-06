@@ -53,8 +53,25 @@ export default class Renderer extends React.Component {
     this.itsTimeToStop = true
   }
   render () {
-    const { objects, transformControlsMode } = this.props
+    const { objects, selectedSlide, uiState } = this.props
+    const { transformControlsMode } = uiState
     const isAnObjectSelected = objects.selected !== undefined
+    const defaultPositionRotationAndScale = {
+      position: [0, 0, 0], rotation: [0, 0, 0], scale: [1, 1, 1]
+    }
+    // For brevity, tPosition means transformControls position
+    // and cPosition means camera position.
+    const {
+      position: [tPositionX, tPositionY, tPositionZ],
+      rotation: [tRotationX, tRotationY, tRotationZ],
+      scale: [tScaleX, tScaleY, tScaleZ]
+    } = objects.selected !== undefined
+      ? objects.selected
+      : defaultPositionRotationAndScale
+    const {
+      viewPosition: [cPositionX, cPositionY, cPositionZ],
+      viewRotation: [cRotationX, cRotationY, cRotationZ]
+    } = selectedSlide !== undefined ? selectedSlide : uiState
     return (
       <React.Fragment>
         <div
@@ -66,15 +83,13 @@ export default class Renderer extends React.Component {
           orbitControlsEnabled
           transformControlsEnabled={objects.selected !== undefined}
           instance={() => {}}
-          positionX={isAnObjectSelected ? objects.selected.position[0] : 0}
-          positionY={isAnObjectSelected ? objects.selected.position[1] : 0}
-          positionZ={isAnObjectSelected ? objects.selected.position[2] : 0}
-          rotationX={isAnObjectSelected ? objects.selected.rotation[0] : 0}
-          rotationY={isAnObjectSelected ? objects.selected.rotation[1] : 0}
-          rotationZ={isAnObjectSelected ? objects.selected.rotation[2] : 0}
-          scaleX={isAnObjectSelected ? objects.selected.scale[0] : 0}
-          scaleY={isAnObjectSelected ? objects.selected.scale[1] : 0}
-          scaleZ={isAnObjectSelected ? objects.selected.scale[2] : 0}
+          {...{
+            tPositionX, tPositionY, tPositionZ,
+            tRotationX, tRotationY, tRotationZ,
+            tScaleX, tScaleY, tScaleZ,
+            cPositionX, cPositionY, cPositionZ,
+            cRotationX, cRotationY, cRotationZ
+          }}
           instance={
             ({ transformControls, transformControlsAttachedObject }) =>
               this.scene.add(transformControls, transformControlsAttachedObject)
@@ -88,6 +103,22 @@ export default class Renderer extends React.Component {
             objects.selected.setPosition([positionX, positionY, positionZ])
             objects.selected.setRotation([rotationX, rotationY, rotationZ])
             objects.selected.setScale([scaleX, scaleY, scaleZ])
+          }}
+          orbitControlsChange={(
+            positionX, positionY, positionZ,
+            rotationX, rotationY, rotationZ
+          ) => {
+            if (selectedSlide !== undefined) {
+              selectedSlide.setView(
+                [positionX, positionY, positionZ],
+                [rotationX, rotationY, rotationZ]
+              )
+            } else {
+              uiState.setView(
+                [positionX, positionY, positionZ],
+                [rotationX, rotationY, rotationZ]
+              )
+            }
           }}
           transformControlsMode={transformControlsMode}
         />

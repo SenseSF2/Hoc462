@@ -1,63 +1,52 @@
 import React from 'react'
 import * as THREE from 'three'
+import OrbitControls from './OrbitControls'
+import TransformControls from './TransformControls'
 import { TRANSLATE, ROTATE, SCALE } from '../../constants'
 export default class Controls extends React.Component {
   constructor (props) {
     super(props)
     const { camera, domElement, instance, transformControlsChange } = this.props
-    this.orbitControls = new THREE.OrbitControls(camera, domElement)
-    this.transformControls = new THREE.TransformControls(camera, domElement)
-    this.transformControls.addEventListener('change', () => {
-      transformControlsChange(
-        this.transformControlsAttachedObject.position.x,
-        this.transformControlsAttachedObject.position.y,
-        this.transformControlsAttachedObject.position.z,
-        this.transformControlsAttachedObject.rotation.x / Math.PI * 180,
-        this.transformControlsAttachedObject.rotation.y / Math.PI * 180,
-        this.transformControlsAttachedObject.rotation.z / Math.PI * 180,
-        this.transformControlsAttachedObject.scale.x,
-        this.transformControlsAttachedObject.scale.y,
-        this.transformControlsAttachedObject.scale.z
-      )
-      this.updateTransformControls()
-      this.transformControls.update()
-    })
-    this.transformControlsAttachedObject = new THREE.Mesh()
-    const {
-      orbitControls, transformControls, transformControlsAttachedObject
-    } = this
-    orbitControls.enableKeys = false
-    instance({
-      orbitControls, transformControls, transformControlsAttachedObject
-    })
-  }
-  updateTransformControls () {
-    const {
-      positionX, positionY, positionZ, rotationX, rotationY, rotationZ,
-      scaleX, scaleY, scaleZ
-    } = this.props
-    this.transformControlsAttachedObject.position.set(
-      positionX, positionY, positionZ
+    Promise.all([
+      new Promise(resolve => { this.orbitControlsInstanceCallback = resolve }),
+      new Promise(resolve => {
+        this.transformControlsInstanceCallback = resolve
+      })
+    ]).then(([
+      orbitControls, { transformControls, transformControlsAttachedObject }
+    ]) =>
+      instance({
+        orbitControls, transformControls, transformControlsAttachedObject
+      })
     )
-    this.transformControlsAttachedObject.rotation.set(
-      ...[rotationX, rotationY, rotationZ].map(angle => angle / 180 * Math.PI)
-    )
-    this.transformControlsAttachedObject.scale.set(scaleX, scaleY, scaleZ)
   }
   render () {
-    this.updateTransformControls()
     const {
-      selectedObject, orbitControlsEnabled, transformControlsEnabled,
-      transformControlsMode
+      orbitControlsEnabled, transformControlsEnabled, transformControlsMode,
+      cPositionX, cPositionY, cPositionZ, cRotationX, cRotationY, cRotationZ,
+      tPositionX, tPositionY, tPositionZ, tRotationX, tRotationY, tRotationZ,
+      tScaleX, tScaleY, tScaleZ, orbitControlsChange, transformControlsChange,
+      camera, domElement
     } = this.props
-    this.transformControls.attach(this.transformControlsAttachedObject)
-    this.orbitControls.enabled = orbitControlsEnabled
-    if (!transformControlsEnabled) {
-      this.transformControls.detach()
-    }
-    this.transformControls.setMode(({
-      [TRANSLATE]: 'translate', [ROTATE]: 'rotate', [SCALE]: 'scale'
-    })[transformControlsMode])
-    return null
+    return (
+      <React.Fragment>
+        <OrbitControls
+          positionX={cPositionX} positionY={cPositionY} positionZ={cPositionZ}
+          rotationX={cRotationX} rotationY={cRotationY} rotationZ={cRotationZ}
+          enabled={orbitControlsEnabled} onChange={orbitControlsChange}
+          instance={this.orbitControlsInstanceCallback}
+          camera={camera} domElement={domElement}
+        />
+        <TransformControls
+          positionX={tPositionX} positionY={tPositionY} positionZ={tPositionZ}
+          rotationX={tRotationX} rotationY={tRotationY} rotationZ={tRotationZ}
+          scaleX={tScaleX} scaleY={tScaleY} scaleZ={tScaleZ}
+          enabled={transformControlsEnabled} onChange={transformControlsChange}
+          mode={transformControlsMode}
+          instance={this.transformControlsInstanceCallback}
+          camera={camera} domElement={domElement}
+        />
+      </React.Fragment>
+    )
   }
 }

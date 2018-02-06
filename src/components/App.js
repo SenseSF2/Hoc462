@@ -15,13 +15,10 @@ const App = observer(() =>
     <Slides
       slides={store.slides} create={() => store.slides.add(new Slide())}
     />
-    <Renderer
-      objects={store.objects}
-      transformControlsMode={store.transformControlsModes.selected}
-    />
+    <Renderer objects={store.objects} uiState={store.uiState} />
     <Drawer
-      selectedTab={store.drawerTabs.selected}
-      select={tab => store.drawerTabs.select(tab)}
+      selectedTab={store.uiState.selectedDrawerTab}
+      select={tab => store.uiState.selectDrawerTab(tab)}
     >{[
       {
         id: SLIDE, name: 'Slide',
@@ -33,7 +30,7 @@ const App = observer(() =>
           objects={store.objects}
           add={type => store.objects.add(new Object3D(type))}
           changeTransformControlsMode={
-            mode => store.transformControlsModes.select(mode)
+            mode => store.uiState.setTransformControlsMode(mode)
           }
         />
       },
