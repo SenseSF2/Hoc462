@@ -4,7 +4,7 @@ import { TRANSLATE, ROTATE, SCALE } from '../../constants'
 export default class TransformControls extends React.Component {
   constructor (props) {
     super(props)
-    const { camera, domElement, onChange, instance } = this.props
+    const { camera, domElement, instance } = this.props
     this.instance = new THREE.TransformControls(camera, domElement)
     this.transformControlsAttachedObject = new THREE.Mesh()
     instance({
@@ -13,7 +13,7 @@ export default class TransformControls extends React.Component {
     })
     this.instance.addEventListener('change', () => {
       const { position, rotation, scale } = this.transformControlsAttachedObject
-      onChange(
+      this.props.onChange(
         position.x, position.y, position.z,
         ...[rotation.x, rotation.y, rotation.z].map(
           angle => angle / Math.PI * 180

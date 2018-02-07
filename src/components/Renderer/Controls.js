@@ -1,12 +1,10 @@
 import React from 'react'
-import * as THREE from 'three'
 import OrbitControls from './OrbitControls'
 import TransformControls from './TransformControls'
-import { TRANSLATE, ROTATE, SCALE } from '../../constants'
 export default class Controls extends React.Component {
   constructor (props) {
     super(props)
-    const { camera, domElement, instance, transformControlsChange } = this.props
+    const { instance } = this.props
     Promise.all([
       new Promise(resolve => { this.orbitControlsInstanceCallback = resolve }),
       new Promise(resolve => {

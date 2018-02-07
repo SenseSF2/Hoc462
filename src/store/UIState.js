@@ -5,12 +5,12 @@ class UIState {
   @observable transformControlsMode = TRANSLATE
   @observable isSettingView = false
   @observable isSettingAnimation = false
-  @observable viewPosition = [0, 0, 0]
+  @observable viewPosition = [0, 1, 0]
   @observable viewRotation = [0, 0, 0]
   @computed get orbitControlsEnabled () {
-    const { selectedDrawerTab, isSettingView, isEditingAnimation } = this
+    const { selectedDrawerTab, isSettingView, isSettingAnimation } = this
     return selectedDrawerTab === ROOM || (
-      selectedDrawerTab === SLIDE && (isSettingView || isEditingAnimation)
+      selectedDrawerTab === SLIDE && (isSettingView || isSettingAnimation)
     )
   }
   @computed get drawerTabLocked () {

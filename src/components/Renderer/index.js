@@ -8,6 +8,7 @@ import styles from './index.css'
 import Controls from './Controls'
 import Object3D from './Object3D'
 import onObject3DClick from './onObject3DClick'
+import { SLIDE } from '../../constants'
 @observer
 export default class Renderer extends React.Component {
   itsTimeToStop = false
@@ -68,10 +69,13 @@ export default class Renderer extends React.Component {
     } = objects.selected !== undefined
       ? objects.selected
       : defaultPositionRotationAndScale
+    const currentView =
+      (uiState.selectedDrawerTab === SLIDE && selectedSlide !== undefined)
+        ? selectedSlide : uiState
     const {
       viewPosition: [cPositionX, cPositionY, cPositionZ],
       viewRotation: [cRotationX, cRotationY, cRotationZ]
-    } = selectedSlide !== undefined ? selectedSlide : uiState
+    } = currentView
     return (
       <React.Fragment>
         <div
@@ -80,9 +84,8 @@ export default class Renderer extends React.Component {
         <Controls
           camera={this.camera}
           domElement={this.domElement}
-          orbitControlsEnabled
+          orbitControlsEnabled={uiState.orbitControlsEnabled}
           transformControlsEnabled={objects.selected !== undefined}
-          instance={() => {}}
           {...{
             tPositionX, tPositionY, tPositionZ,
             tRotationX, tRotationY, tRotationZ,
@@ -106,19 +109,12 @@ export default class Renderer extends React.Component {
           }}
           orbitControlsChange={(
             positionX, positionY, positionZ,
-            rotationX, rotationY, rotationZ
+            rotationX, rotationY, rotationZ,
           ) => {
-            if (selectedSlide !== undefined) {
-              selectedSlide.setView(
-                [positionX, positionY, positionZ],
-                [rotationX, rotationY, rotationZ]
-              )
-            } else {
-              uiState.setView(
-                [positionX, positionY, positionZ],
-                [rotationX, rotationY, rotationZ]
-              )
-            }
+            currentView.setView(
+              [positionX, positionY, positionZ],
+              [rotationX, rotationY, rotationZ]
+            )
           }}
           transformControlsMode={transformControlsMode}
         />

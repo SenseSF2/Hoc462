@@ -8,6 +8,7 @@ import Header from './Header'
 import Slides from './Slides'
 import Drawer from './Drawer'
 import RoomDrawer from './RoomDrawer'
+import SlideDrawer from './SlideDrawer'
 import Renderer from './Renderer'
 const App = observer(() =>
   <div>
@@ -15,14 +16,20 @@ const App = observer(() =>
     <Slides
       slides={store.slides} create={() => store.slides.add(new Slide())}
     />
-    <Renderer objects={store.objects} uiState={store.uiState} />
+    <Renderer
+      objects={store.objects}
+      selectedSlide={store.slides.selected}
+      uiState={store.uiState}
+    />
     <Drawer
       selectedTab={store.uiState.selectedDrawerTab}
       select={tab => store.uiState.selectDrawerTab(tab)}
     >{[
       {
         id: SLIDE, name: 'Slide',
-        component: () => <div>Not implemented</div>
+        component: () => <SlideDrawer
+          slide={store.slides.selected} uiState={store.uiState}
+        />
       },
       {
         id: ROOM, name: 'Room',
