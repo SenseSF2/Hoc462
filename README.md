@@ -6,7 +6,7 @@
 Set up:
 
 ```
-git clone https://github.com/khanh2003/Hoc462
+git clone https://github.com/learn-how-to-be-transparent/Hoc462
 cd Hoc462
 npm install
 npm run start

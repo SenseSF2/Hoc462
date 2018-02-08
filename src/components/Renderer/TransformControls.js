@@ -27,8 +27,7 @@ export default class TransformControls extends React.Component {
     const {
       positionX, positionY, positionZ,
       rotationX, rotationY, rotationZ,
-      scaleX, scaleY, scaleZ,
-      enabled, mode
+      scaleX, scaleY, scaleZ, enabled
     } = this.props
     if (enabled) {
       this.instance.attach(this.transformControlsAttachedObject)
