@@ -4,7 +4,7 @@ import List from './List'
 class Slide {
   id = uuidv4()
   @observable name = 'Untitled'
-  @observable viewPosition = [0, 1, 0]
+  @observable viewPosition = [0, 0, 1]
   @observable viewRotation = [0, 0, 0]
   animations = new List()
   @observable caption = ''
