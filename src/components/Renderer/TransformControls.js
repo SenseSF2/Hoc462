@@ -37,7 +37,9 @@ export default class TransformControls extends React.Component {
     }
     const { position, rotation, scale } = this.transformControlsAttachedObject
     position.set(positionX, positionY, positionZ)
-    rotation.set(rotationX, rotationY, rotationZ)
+    rotation.set(
+      ...[rotationX, rotationY, rotationZ].map(angle => angle / 180 * Math.PI)
+    )
     scale.set(scaleX, scaleY, scaleZ)
   }
   componentWillReceiveProps (nextProps) {
