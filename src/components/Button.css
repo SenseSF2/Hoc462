@@ -6,6 +6,7 @@
   font-size: 14px;
   color: white;
   cursor: pointer;
+  margin: 2px 2px 2px 2px;
 }
 :local .button:hover, :local .button[disabled] {
   opacity: 0.5;

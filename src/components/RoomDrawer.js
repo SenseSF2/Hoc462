@@ -24,19 +24,19 @@ const RoomDrawer = observer(({
         <option value='sphere'>Sphere</option>
         <option value='icosahedron'>Icosahedron</option>
         <option value='torus'>Torus</option>
-      </select>{' '}
+      </select>
       <button
         className={button}
         onClick={() => changeTransformControlsMode(TRANSLATE)}
       >
         Translate
-      </button>{' '}
+      </button>
       <button
         className={button}
         onClick={() => changeTransformControlsMode(ROTATE)}
       >
         Rotate
-      </button>{' '}
+      </button>
       <button
         className={button}
         onClick={() => changeTransformControlsMode(SCALE)}
@@ -46,11 +46,11 @@ const RoomDrawer = observer(({
     </div>
     <button className={button} onClick={() => objects.selected.turnIntoHole()}>
       Turn object into a hole
-    </button>{' '}
+    </button>
     <button className={button} onClick={() => objects.selected.turnIntoSolid()}>
       Turn object into a solid
-    </button>{' '}
-    <button className={button}>Group objects</button>{' '}
+    </button>
+    <button className={button}>Group objects</button>
     <button className={button}>
       Done grouping objects
     </button>

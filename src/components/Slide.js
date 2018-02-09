@@ -26,14 +26,14 @@ export default class Slide extends React.Component {
           isRenaming={isRenaming}
         />
         <span className='actions'>
-          <button className={button} onClick={remove}>Delete</button>{' '}
+          <button className={button} onClick={remove}>Delete</button>
           <button className={button} onClick={() => this.startRenaming()}>
             Rename
-          </button>{' '}
+          </button>
           {selected
           ? <span>
-            Move:{' '}
-            <button className={button} onClick={moveUp}>Up</button>{' '}
+            Move:
+            <button className={button} onClick={moveUp}>Up</button>
             <button className={button} onClick={moveDown}>Down</button>
           </span> : undefined}
         </span>

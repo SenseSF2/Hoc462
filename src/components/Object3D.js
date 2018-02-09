@@ -45,17 +45,17 @@ export default class Object3D extends React.Component {
           />
         </div>
         <div>
-          <button className={button} onClick={remove}>Delete</button>{' '}
-          <button className={button} onClick={clone}>Clone</button>{' '}
+          <button className={button} onClick={remove}>Delete</button>
+          <button className={button} onClick={clone}>Clone</button>
           <button className={button} onClick={() => this.startRenaming()}>
             Rename
-          </button>{' '}
+          </button>
           <button
             className={button}
             onClick={() => this.textureUploadInput.click()}
           >
             Set texture
-          </button>{' '}
+          </button>
           <input
             type='file'
             className='texture-upload-input'

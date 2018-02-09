@@ -6,7 +6,7 @@ import Slide from './Slide'
 import { TO_PREVIOUS_INDEX, TO_NEXT_INDEX } from '../constants'
 const Slides = observer(({ slides, create }) =>
   <div className={styles.slides}>
-    <span>Slides</span>{' '}
+    <span>Slides</span>
     <button className={`${button} create`} onClick={create}>Create new</button>
     <ul className='list'>
       {slides.items.map(item =>
