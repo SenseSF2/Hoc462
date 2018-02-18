@@ -7,15 +7,18 @@ import {
 const hexColorToDecimal = color => parseInt(color.match(/.(.*)/)[1], 16)
 @observer
 export default class Object3D extends React.Component {
+  itsTimeToStop = false
   constructor (props) {
     super(props)
     const {
+      selected,
       positionX, positionY, positionZ,
       rotationX, rotationY, rotationZ,
       scaleX, scaleY, scaleZ
     } = this.props
     this.instance = new THREE.Mesh()
-    this.props.instance(this.instance)
+    this.boundingBox = new THREE.BoxHelper(undefined, 0xffffff)
+    this.props.instance(this.instance, this.boundingBox)
     this.setType(this.props.type)
     this.setTexture(this.props.textureType, this.props.textureValue)
     this.setPositionRotationAndScale(
@@ -23,9 +26,15 @@ export default class Object3D extends React.Component {
       rotationX, rotationY, rotationZ,
       scaleX, scaleY, scaleZ
     )
+    this.showHideBoundingBox(selected)
+    const animate = () => {
+      this.boundingBox.update()
+      window.requestAnimationFrame(animate)
+    }
+    window.requestAnimationFrame(animate)
   }
   componentWillUnmount () {
-    this.props.remove(this.instance)
+    this.props.remove(this.instance, this.boundingBox)
   }
   setType (type) {
     if (type === CIRCLE) {
@@ -69,9 +78,17 @@ export default class Object3D extends React.Component {
     )
     this.instance.scale.set(scaleX, scaleY, scaleZ)
   }
+  showHideBoundingBox (selected) {
+    if (selected) {
+      this.boundingBox.setFromObject(this.instance)
+    } else {
+      this.boundingBox.setFromObject()
+    }
+  }
   componentWillReceiveProps (nextProps) {
     const {
-      textureType, textureValue, type, positionX, positionY, positionZ,
+      textureType, textureValue, type, selected,
+      positionX, positionY, positionZ,
       rotationX, rotationY, rotationZ,
       scaleX, scaleY, scaleZ
     } = nextProps
@@ -90,6 +107,7 @@ export default class Object3D extends React.Component {
       rotationX, rotationY, rotationZ,
       scaleX, scaleY, scaleZ
     )
+    this.showHideBoundingBox(selected)
   }
   render () {
     return null

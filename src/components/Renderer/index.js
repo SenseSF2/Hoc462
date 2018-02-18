@@ -31,7 +31,6 @@ export default class Renderer extends React.Component {
     camera.position.z = 5
     camera.lookAt(gridHelper.position)
     scene.add(camera)
-    const boundingBox = new THREE.BoxHelper(undefined, 0xffffff)
     this.onObject3DClick = onObject3DClick(camera, renderer.domElement)
     let oldWidth = 0
     let oldHeight = 0
@@ -44,6 +43,9 @@ export default class Renderer extends React.Component {
         camera.aspect = this.root.clientWidth / this.root.clientHeight
         camera.updateProjectionMatrix()
         renderer.setSize(this.root.clientWidth, this.root.clientHeight, false)
+      }
+      if (this.transformControls !== undefined) {
+        this.transformControls.update()
       }
       renderer.render(scene, camera)
       window.requestAnimationFrame(animate)
@@ -82,8 +84,10 @@ export default class Renderer extends React.Component {
           transformControlsEnabled={uiState.transformControlsEnabled}
           view={currentView} object={currentObject}
           instance={
-            ({ transformControls, transformControlsAttachedObject }) =>
+            ({ transformControls, transformControlsAttachedObject }) => {
               this.scene.add(transformControls, transformControlsAttachedObject)
+              this.transformControls = transformControls
+            }
           }
           transformControlsMode={transformControlsMode}
         />
@@ -107,16 +111,17 @@ export default class Renderer extends React.Component {
             scaleX={object.scale[0]}
             scaleY={object.scale[1]}
             scaleZ={object.scale[2]}
-            instance={instance => {
-              this.scene.add(instance)
+            instance={(instance, boundingBox) => {
+              this.scene.add(instance, boundingBox)
               this.onObject3DClick.onClick(
                 instance, clickHandler = () => this.selectObject(object)
               )
             }}
-            remove={instance => {
-              this.scene.remove(instance)
+            remove={(instance, boundingBox) => {
+              this.scene.remove(instance, boundingBox)
               this.onObject3DClick.removeClickHandler(instance, clickHandler)
             }}
+            selected={objects.selected === object}
           />
         })}
       </React.Fragment>
