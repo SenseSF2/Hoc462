@@ -32,7 +32,7 @@ class UIState {
     || (selectedDrawerTab === ADD_ANIMATION && isEditingAnimation)
   }
   @computed get transformControlsEnabled () {
-    const { selectedDrawerTab, isSettingView, isSettingAnimation, addAnimationStep } = this
+    const { selectedDrawerTab, isSettingView, addAnimationStep } = this
     return (
       selectedDrawerTab === ROOM
       || (
@@ -41,6 +41,13 @@ class UIState {
       )
     )
     && this.rootStore.objects.selected !== undefined
+  }
+  @computed get objectSelectionEnabled () {
+    const { addAnimationStep, selectedDrawerTab } = this
+    return !(
+      selectedDrawerTab === ADD_ANIMATION &&
+      addAnimationStep > CHOOSE_ANIMATION_TARGET
+    )
   }
   @computed get drawerTabLocked () {
     return this.isSettingView || this.isSettingAnimation

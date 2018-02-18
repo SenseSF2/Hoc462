@@ -56,6 +56,12 @@ export default class Renderer extends React.Component {
   componentWillUnmount () {
     this.itsTimeToStop = true
   }
+  selectObject (object) {
+    const { uiState, objects } = this.props
+    if (uiState.objectSelectionEnabled) {
+      objects.select(object)
+    }
+  }
   render () {
     const { objects, selectedSlide, uiState } = this.props
     const { transformControlsMode } = uiState
@@ -104,7 +110,7 @@ export default class Renderer extends React.Component {
             instance={instance => {
               this.scene.add(instance)
               this.onObject3DClick.onClick(
-                instance, clickHandler = () => objects.select(object)
+                instance, clickHandler = () => this.selectObject(object)
               )
             }}
             remove={instance => {
