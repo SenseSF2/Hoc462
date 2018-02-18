@@ -19,7 +19,7 @@ export default class Slide extends React.Component {
     const { slide, remove, select, selected, moveUp, moveDown } = this.props
     const { isRenaming } = this.state
     return (
-      <li className={selected ? 'selected': ''} onClick={select}>
+      <li className={selected ? 'selected' : ''} onClick={select}>
         <Renamable
           value={slide.name}
           onSubmit={name => this.handleRename(name)}

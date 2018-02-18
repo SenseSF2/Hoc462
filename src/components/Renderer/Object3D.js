@@ -79,9 +79,9 @@ export default class Object3D extends React.Component {
       this.setType(type)
     }
     if (
-      type !== this.props.type
-      || textureType !== this.props.textureType
-      || textureValue !== this.props.textureValue
+      type !== this.props.type ||
+      textureType !== this.props.textureType ||
+      textureValue !== this.props.textureValue
     ) {
       this.setTexture(textureType, textureValue)
     }

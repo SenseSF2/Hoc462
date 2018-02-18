@@ -6,6 +6,7 @@ export default class TransformControls extends React.Component {
     super(props)
     const { camera, domElement, instance } = this.props
     this.instance = new THREE.TransformControls(camera, domElement)
+    this.instance.setSpace('world')
     this.transformControlsAttachedObject = new THREE.Mesh()
     instance({
       transformControls: this.instance,

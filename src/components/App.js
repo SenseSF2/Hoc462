@@ -1,6 +1,6 @@
 import React from 'react'
 import { observer } from 'mobx-react'
-import { SLIDE, ROOM, CAPTION } from '../constants'
+import { SLIDE, ROOM, ADD_ANIMATION, CAPTION } from '../constants'
 import store from '../store'
 import Slide from '../store/Slide'
 import Object3D from '../store/Object3D'
@@ -9,6 +9,7 @@ import Slides from './Slides'
 import Drawer from './Drawer'
 import RoomDrawer from './RoomDrawer'
 import SlideDrawer from './SlideDrawer'
+import AddAnimationDrawer from './AddAnimationDrawer'
 import Renderer from './Renderer'
 const App = observer(() =>
   <div>
@@ -23,16 +24,19 @@ const App = observer(() =>
     />
     <Drawer
       selectedTab={store.uiState.selectedDrawerTab}
+      locked={store.uiState.drawerTabLocked}
       select={tab => store.uiState.selectDrawerTab(tab)}
     >{[
       {
-        id: SLIDE, name: 'Slide',
+        id: SLIDE,
+        name: 'Slide',
         component: () => <SlideDrawer
           slide={store.slides.selected} uiState={store.uiState}
         />
       },
       {
-        id: ROOM, name: 'Room',
+        id: ROOM,
+        name: 'Room',
         component: () => <RoomDrawer
           objects={store.objects}
           add={type => store.objects.add(new Object3D(type))}
@@ -42,7 +46,17 @@ const App = observer(() =>
         />
       },
       {
-        id: CAPTION, name: 'Caption',
+        id: ADD_ANIMATION,
+        name: 'Add animation',
+        hidden: true,
+        component: () => <AddAnimationDrawer
+          uiState={store.uiState} selectedObject={store.objects.selected}
+        />
+      },
+      {
+        id: CAPTION,
+        name: 'Caption',
+        hidden: true,
         component: () => <div>Not implemented</div>
       }
     ]}</Drawer>

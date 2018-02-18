@@ -12,8 +12,12 @@ const RoomDrawer = observer(({
     <div>
       <select className={button} value='__default__' onChange={event => {
         const objectType = ({
-          box: BOX, circle: CIRCLE, cylinder: CYLINDER, sphere: SPHERE,
-          icosahedron: ICOSAHEDRON, torus: TORUS
+          box: BOX,
+          circle: CIRCLE,
+          cylinder: CYLINDER,
+          sphere: SPHERE,
+          icosahedron: ICOSAHEDRON,
+          torus: TORUS
         })[event.target.value]
         add(objectType)
       }}>

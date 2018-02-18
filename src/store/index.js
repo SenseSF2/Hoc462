@@ -5,7 +5,7 @@ class RootStore {
   constructor () {
     this.objects = new List()
     this.slides = new List()
-    this.uiState = new UIState()
+    this.uiState = new UIState(this)
   }
 }
 const store = new RootStore()

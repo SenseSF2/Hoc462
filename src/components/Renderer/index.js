@@ -8,7 +8,10 @@ import styles from './index.css'
 import Controls from './Controls'
 import Object3D from './Object3D'
 import onObject3DClick from './onObject3DClick'
-import { SLIDE } from '../../constants'
+import {
+  SLIDE, COLOR, BOX, QUAD, CHOOSE_ANIMATION_TARGET
+} from '../../constants'
+import Animation from './Animation'
 @observer
 export default class Renderer extends React.Component {
   itsTimeToStop = false
@@ -56,26 +59,11 @@ export default class Renderer extends React.Component {
   render () {
     const { objects, selectedSlide, uiState } = this.props
     const { transformControlsMode } = uiState
-    const isAnObjectSelected = objects.selected !== undefined
-    const defaultPositionRotationAndScale = {
-      position: [0, 0, 0], rotation: [0, 0, 0], scale: [1, 1, 1]
-    }
-    // For brevity, tPosition means transformControls position
-    // and cPosition means camera position.
-    const {
-      position: [tPositionX, tPositionY, tPositionZ],
-      rotation: [tRotationX, tRotationY, tRotationZ],
-      scale: [tScaleX, tScaleY, tScaleZ]
-    } = objects.selected !== undefined
-      ? objects.selected
-      : defaultPositionRotationAndScale
     const currentView =
       (uiState.selectedDrawerTab === SLIDE && selectedSlide !== undefined)
         ? selectedSlide : uiState
-    const {
-      viewPosition: [cPositionX, cPositionY, cPositionZ],
-      viewRotation: [cRotationX, cRotationY, cRotationZ]
-    } = currentView
+    const currentObject = uiState.isSettingAnimation
+      ? uiState.clonedAnimationTarget : objects.selected
     return (
       <React.Fragment>
         <div
@@ -85,41 +73,20 @@ export default class Renderer extends React.Component {
           camera={this.camera}
           domElement={this.domElement}
           orbitControlsEnabled={uiState.orbitControlsEnabled}
-          transformControlsEnabled={objects.selected !== undefined}
-          {...{
-            tPositionX, tPositionY, tPositionZ,
-            tRotationX, tRotationY, tRotationZ,
-            tScaleX, tScaleY, tScaleZ,
-            cPositionX, cPositionY, cPositionZ,
-            cRotationX, cRotationY, cRotationZ
-          }}
+          transformControlsEnabled={uiState.transformControlsEnabled}
+          view={currentView} object={currentObject}
           instance={
             ({ transformControls, transformControlsAttachedObject }) =>
               this.scene.add(transformControls, transformControlsAttachedObject)
           }
-          transformControlsChange={(
-            positionX, positionY, positionZ,
-            rotationX, rotationY, rotationZ,
-            scaleX, scaleY, scaleZ
-          ) => {
-            if (objects.selected === undefined) return
-            objects.selected.setPosition([positionX, positionY, positionZ])
-            objects.selected.setRotation([rotationX, rotationY, rotationZ])
-            objects.selected.setScale([scaleX, scaleY, scaleZ])
-          }}
-          orbitControlsChange={(
-            positionX, positionY, positionZ,
-            rotationX, rotationY, rotationZ,
-          ) => {
-            currentView.setView(
-              [positionX, positionY, positionZ],
-              [rotationX, rotationY, rotationZ]
-            )
-          }}
           transformControlsMode={transformControlsMode}
         />
         {objects.items.map(object => {
           let clickHandler
+          if (
+            uiState.isSettingAnimation && objects.selected === object
+            && uiState.addAnimationStep > CHOOSE_ANIMATION_TARGET
+          ) object = uiState.clonedAnimationTarget
           return <Object3D
             key={object.id}
             textureType={object.texture.type}
