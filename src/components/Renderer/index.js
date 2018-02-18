@@ -43,7 +43,7 @@ export default class Renderer extends React.Component {
         [oldWidth, oldHeight] = [newWidth, newHeight]
         camera.aspect = this.root.clientWidth / this.root.clientHeight
         camera.updateProjectionMatrix()
-        renderer.setSize(this.root.clientWidth, this.root.clientHeight)
+        renderer.setSize(this.root.clientWidth, this.root.clientHeight, false)
       }
       renderer.render(scene, camera)
       window.requestAnimationFrame(animate)
