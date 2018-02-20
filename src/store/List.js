@@ -9,7 +9,14 @@ class List {
     }
   }
   @action add (item) {
-    this.items.push(item)
+    const index = this.items.indexOf(this.selected)
+    if (index === -1) {
+      this.items.push(item)
+    } else {
+      const left = this.items.slice(0, index + 1)
+      const right = this.items.slice(index + 1, this.items.length)
+      Object.assign(this.items, [...left, item, ...right])
+    }
     this.select(item)
   }
   @action addMultiple (items) {
