@@ -9,7 +9,7 @@ import {
   ROTATE,
   SCALE,
   CHOOSE_ANIMATION_TARGET,
-  SELECT_ATTRIBUTE,
+  SELECT_TYPE,
   CHOOSE_ANIMATION_DESTINATION
 } from '../constants'
 class UIState {
@@ -23,7 +23,7 @@ class UIState {
   @observable viewPosition = [0, 0, 1]
   @observable viewRotation = [0, 0, 0]
   @observable addAnimationStep = CHOOSE_ANIMATION_TARGET
-  @observable animationAttribute = TRANSLATE
+  @observable animationType = TRANSLATE
   @observable clonedAnimationTarget
   @computed get orbitControlsEnabled () {
     const { selectedDrawerTab, isSettingView, isEditingAnimation } = this
@@ -56,7 +56,7 @@ class UIState {
     if (this.clonedAnimationTarget !== undefined) {
       return this.clonedAnimationTarget[({
         [TRANSLATE]: 'position', [ROTATE]: 'rotation', [SCALE]: 'scale'
-      })[this.animationAttribute]]
+      })[this.animationType]]
     }
   }
   @action selectDrawerTab (tab) {
@@ -78,12 +78,12 @@ class UIState {
   @action finishEditingAnimation () {
     const animation = new Animation()
     animation.setTarget(this.rootStore.objects.selected)
-    animation.setAttribute(this.animationAttribute)
+    animation.setType(this.animationType)
     animation.setDestination(this.animationDestination.slice())
     this.rootStore.slides.selected.animations.add(animation)
     this.isSettingAnimation = false
     this.addAnimationStep = CHOOSE_ANIMATION_TARGET
-    this.animationAttribute = TRANSLATE
+    this.animationType = TRANSLATE
     this.clonedAnimationTarget = undefined
     this.selectDrawerTab(SLIDE)
   }
@@ -95,8 +95,8 @@ class UIState {
     if (this.addAnimationStep === CHOOSE_ANIMATION_TARGET) {
       this.clonedAnimationTarget = this.rootStore.objects.selected.clone()
     }
-    if (this.addAnimationStep === SELECT_ATTRIBUTE) {
-      this.setTransformControlsMode(this.animationAttribute)
+    if (this.addAnimationStep === SELECT_TYPE) {
+      this.setTransformControlsMode(this.animationType)
     }
     if (this.addAnimationStep === CHOOSE_ANIMATION_DESTINATION) {
       this.finishEditingAnimation()
@@ -104,8 +104,8 @@ class UIState {
       this.addAnimationStep++
     }
   }
-  @action setAnimationAttribute (attribute) {
-    this.animationAttribute = attribute
+  @action setAnimationType (type) {
+    this.animationType = type
   }
 }
 export default UIState
