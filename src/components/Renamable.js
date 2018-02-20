@@ -1,18 +1,26 @@
-import React from 'react'
+import React from "react";
 const Renamable = ({ isRenaming, onSubmit, value, ...props }) => {
-  let input
+  let input;
   return (
-    <form onSubmit={event => { event.preventDefault(); onSubmit(input.value) }}>
-      {isRenaming
-        ? <input {...props}
+    <form
+      onSubmit={event => {
+        event.preventDefault();
+        onSubmit(input.value);
+      }}
+    >
+      {isRenaming ? (
+        <input
+          {...props}
           ref={element => {
-            if (element !== null) element.select()
-            input = element
+            if (element !== null) element.select();
+            input = element;
           }}
           defaultValue={value}
         />
-        : value}
+      ) : (
+        value
+      )}
     </form>
-  )
-}
-export default Renamable
+  );
+};
+export default Renamable;
