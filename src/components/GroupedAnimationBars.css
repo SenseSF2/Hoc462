@@ -1,0 +1,4 @@
+:local .groupedAnimationBars {
+    display: inline-flex;
+    flex-direction: column;
+}

@@ -1,0 +1,19 @@
+:local .animationBar {
+  display: inline-block;
+  border: 2px solid black;
+  border-radius: 4px;
+  text-align: center;
+  line-height: 20px;
+  height: 20px;
+  font-family: Arial;
+}
+:local(.animationBar).quad {
+  background: linear-gradient(red, yellow);
+}
+:local(.animationBar).linear {
+  background: orange;
+}
+:local(.animationBar).highlighted {
+  font-weight: bold;
+  border-color: white;
+}

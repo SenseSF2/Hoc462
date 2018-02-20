@@ -1,4 +1,7 @@
 import React from 'react'
+import AnimationBar from './AnimationBar'
+import GroupedAnimationBars from './GroupedAnimationBars'
+import DetailedAnimationView from './DetailedAnimationView'
 import { observer } from 'mobx-react'
 import { button } from './Button.css'
 export default observer(({ slide, uiState }) => {
@@ -29,6 +32,16 @@ export default observer(({ slide, uiState }) => {
         </button>
         <button className={button}>Remove animation</button>
       </div>
+      <div>
+        {slide.animationGroups.map(group =>
+          <GroupedAnimationBars
+            animations={group} selected={slide.animations.selected}
+            select={animation => slide.animations.select(animation)}
+            key={group[0].id}
+          />)}
+      </div>
+      {slide.animations.selected !== undefined
+        && <DetailedAnimationView animation={slide.animations.selected} />}
     </div>
   )
 })
