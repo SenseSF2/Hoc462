@@ -60,7 +60,7 @@ export default observer(() =>
                   <ul>
                     <li>Target: {item.target.name}</li>
                     <li>Type: {item.type.toString()}</li>
-                    <li>Play when: {item.playWhen.toString()}</li>
+                    <li>Play when: {item.startTime.toString()}</li>
                     <li>Duration: {item.duration}</li>
                   </ul>
                 </li>)}

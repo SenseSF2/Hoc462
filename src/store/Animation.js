@@ -4,13 +4,14 @@ import { AFTER_PREVIOUS, LINEAR } from '../constants'
 class Animation {
   id = uuidv4()
   @observable target
-  @observable attribute
+  @observable type
   @observable destination = []
-  @observable playWhen = AFTER_PREVIOUS
+  @observable startTime = AFTER_PREVIOUS
   @observable duration = 1000
+  @observable delay = 0
   @observable easingFunction = LINEAR
   @action setTarget (target) { this.target = target }
-  @action setAttribute (attribute) { this.attribute = attribute }
+  @action setType (type) { this.type = type }
   @action setDestination (destination) {
     Object.assign(this.destination, destination)
   }
@@ -18,5 +19,7 @@ class Animation {
   @action setEasingFunction (easingFunction) {
     this.easingFunction = easingFunction
   }
+  @action setStartTime (startTime) { this.startTime = startTime }
+  @action setDelay (delay) { this.delay = delay }
 }
 export default Animation

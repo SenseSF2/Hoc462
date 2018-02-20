@@ -20,14 +20,14 @@ export default observer(({ uiState, selectedObject }) =>
     {
       component: observer(() =>
         <React.Fragment>
-          <h1>Step 2: Attribute to animate</h1>
+          <h1>Step 2: Animation type</h1>
           <select
-            onChange={event => uiState.setAnimationAttribute(({
+            onChange={event => uiState.setAnimationType(({
               translate: TRANSLATE, rotate: ROTATE, scale: SCALE
             })[event.target.value])}
             value={({
               [TRANSLATE]: 'translate', [ROTATE]: 'rotate', [SCALE]: 'scale'
-            })[uiState.animationAttribute]}
+            })[uiState.animationType]}
           >
             <option value='translate'>Translate</option>
             <option value='rotate'>Rotate</option>

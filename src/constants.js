@@ -25,7 +25,7 @@ export const LINEAR = Symbol('linear')
 export const QUAD = Symbol('quad')
 // Animation creation steps
 export const CHOOSE_ANIMATION_TARGET = 1
-export const SELECT_ATTRIBUTE = 2
+export const SELECT_TYPE = 2
 export const CHOOSE_ANIMATION_DESTINATION = 3
 // Animation start time
 export const AFTER_PREVIOUS = Symbol('after previous')
