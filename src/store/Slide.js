@@ -1,7 +1,7 @@
 import { observable, action, computed } from "mobx";
 import uuidv4 from "uuid/v4";
 import List from "./List";
-import { AFTER_PREVIOUS, WITH_PREVIOUS } from "../constants";
+import { AFTER_PREVIOUS } from "../constants";
 class Slide {
   id = uuidv4();
   @observable name = "Untitled";

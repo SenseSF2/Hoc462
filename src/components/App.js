@@ -32,7 +32,7 @@ const App = observer(() => (
         {
           id: SLIDE,
           name: "Slide",
-          component: () => (
+          component: (
             <SlideDrawer
               slide={store.slides.selected}
               uiState={store.uiState}
@@ -42,7 +42,7 @@ const App = observer(() => (
         {
           id: ROOM,
           name: "Room",
-          component: () => (
+          component: (
             <RoomDrawer
               objects={store.objects}
               add={type => store.objects.add(new Object3D(type))}
@@ -56,7 +56,7 @@ const App = observer(() => (
           id: ADD_ANIMATION,
           name: "Add animation",
           hidden: true,
-          component: () => (
+          component: (
             <AddAnimationDrawer
               uiState={store.uiState}
               selectedObject={store.objects.selected}
@@ -67,7 +67,7 @@ const App = observer(() => (
           id: CAPTION,
           name: "Caption",
           hidden: true,
-          component: () => <div>Not implemented</div>
+          component: <div>Not implemented</div>
         }
       ]}
     </Drawer>

@@ -8,14 +8,7 @@ import styles from "./index.css";
 import Controls from "./Controls";
 import Object3D from "./Object3D";
 import onObject3DClick from "./onObject3DClick";
-import {
-  SLIDE,
-  COLOR,
-  BOX,
-  QUAD,
-  CHOOSE_ANIMATION_TARGET
-} from "../../constants";
-import Animation from "./Animation";
+import { SLIDE, CHOOSE_ANIMATION_TARGET } from "../../constants";
 @observer
 export default class Renderer extends React.Component {
   itsTimeToStop = false;

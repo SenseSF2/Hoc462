@@ -6,7 +6,8 @@
   "private": false,
   "scripts": {
     "start": "webpack-dev-server --content-base static/",
-    "prettify": "prettier --write \"./src/**/*.js\" \"!./src/vendor/*.js\""
+    "prettify": "prettier --write \"./src/**/*.js\" \"!./src/vendor/*.js\"",
+    "lint": "eslint \"./src/**/*.js\" \"!./src/vendor/*.js\""
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
@@ -18,6 +19,14 @@
     "babel-preset-env": "^1.6.0",
     "babel-preset-react": "^6.24.1",
     "css-loader": "^0.28.7",
+    "eslint": "^4.18.0",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-config-standard": "^11.0.0",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-node": "^6.0.0",
+    "eslint-plugin-promise": "^3.6.0",
+    "eslint-plugin-react": "^7.6.1",
+    "eslint-plugin-standard": "^3.0.1",
     "prettier": "^1.10.2",
     "style-loader": "^0.19.0",
     "webpack": "^3.6.0",

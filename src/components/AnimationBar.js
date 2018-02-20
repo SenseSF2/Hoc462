@@ -2,7 +2,7 @@ import React from "react";
 import { observer } from "mobx-react";
 import styles from "./AnimationBar.css";
 import { LINEAR, QUAD } from "../constants";
-export default observer(({ animation, highlighted, select }) => (
+const AnimationBar = observer(({ animation, highlighted, select }) => (
   <div
     className={[
       styles.animationBar,
@@ -21,3 +21,5 @@ export default observer(({ animation, highlighted, select }) => (
     {((animation.duration / 1000 * 100) | 0) / 100}
   </div>
 ));
+AnimationBar.displayName = "AnimationBar";
+export default AnimationBar;

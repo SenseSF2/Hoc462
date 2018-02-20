@@ -1,5 +1,4 @@
 import React from "react";
-import { SLIDE, ROOM, CAPTION } from "../constants";
 import styles from "./Drawer.css";
 const Drawer = ({ selectedTab, select, children: tabs, locked }) => (
   <div className={styles.drawer}>
@@ -19,7 +18,7 @@ const Drawer = ({ selectedTab, select, children: tabs, locked }) => (
       )}
     </div>
     <div className="content">
-      {tabs.find(({ id }) => id === selectedTab).component()}
+      {tabs.find(({ id }) => id === selectedTab).component}
     </div>
   </div>
 );

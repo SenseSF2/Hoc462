@@ -10,7 +10,7 @@ import {
   WITH_PREVIOUS
 } from "../constants";
 import { button } from "./Button.css";
-export default observer(({ animation }) => (
+const DetailedAnimationView = observer(({ animation }) => (
   <div>
     <h1>
       <span style={{ fontWeight: "bold" }}>{animation.target.name}</span> [{
@@ -82,3 +82,5 @@ export default observer(({ animation }) => (
     </h2>
   </div>
 ));
+DetailedAnimationView.displayName = "DetailedAnimationView";
+export default DetailedAnimationView;

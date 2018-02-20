@@ -4,7 +4,7 @@ export default class Animation extends React.Component {
   state = { value: 0 };
   itsTimeToStop = false;
   componentDidMount() {
-    const t0 = performance.now();
+    const t0 = window.performance.now();
     const easingFunctions = {
       [LINEAR]: x => x,
       [QUAD]: x => x ** 2
@@ -12,7 +12,7 @@ export default class Animation extends React.Component {
     const animate = () => {
       if (this.itsTimeToStop) return;
       const {
-        timeElapsed = performance.now() - t0,
+        timeElapsed = window.performance.now() - t0,
         duration,
         easingFunction
       } = this.props;

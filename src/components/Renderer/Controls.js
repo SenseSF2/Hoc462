@@ -31,8 +31,6 @@ export default observer(
         orbitControlsEnabled,
         transformControlsEnabled,
         transformControlsMode,
-        orbitControlsChange,
-        transformControlsChange,
         camera,
         domElement,
         object,

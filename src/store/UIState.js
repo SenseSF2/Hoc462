@@ -36,7 +36,7 @@ class UIState {
   }
   @computed
   get transformControlsEnabled() {
-    const { selectedDrawerTab, isSettingView, addAnimationStep } = this;
+    const { selectedDrawerTab, addAnimationStep } = this;
     return (
       (selectedDrawerTab === ROOM ||
         (selectedDrawerTab === ADD_ANIMATION &&
@@ -59,13 +59,12 @@ class UIState {
   @computed
   get animationDestination() {
     if (this.clonedAnimationTarget !== undefined) {
-      return this.clonedAnimationTarget[
-        {
-          [TRANSLATE]: "position",
-          [ROTATE]: "rotation",
-          [SCALE]: "scale"
-        }[this.animationType]
-      ];
+      const property = {
+        [TRANSLATE]: "position",
+        [ROTATE]: "rotation",
+        [SCALE]: "scale"
+      }[this.animationType];
+      return this.clonedAnimationTarget[property];
     }
   }
   @action

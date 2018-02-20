@@ -1,11 +1,10 @@
 import React from "react";
-import AnimationBar from "./AnimationBar";
 import GroupedAnimationBars from "./GroupedAnimationBars";
 import DetailedAnimationView from "./DetailedAnimationView";
 import { observer } from "mobx-react";
 import { button } from "./Button.css";
-export default observer(({ slide, uiState }) => {
-  if (slide === undefined) return "No slides selected";
+const SlideDrawer = observer(({ slide, uiState }) => {
+  if (slide === undefined) return <div>No slides selected</div>;
   return (
     <div>
       <h2>
@@ -49,3 +48,5 @@ export default observer(({ slide, uiState }) => {
     </div>
   );
 });
+SlideDrawer.displayName = "SlideDrawer";
+export default SlideDrawer;

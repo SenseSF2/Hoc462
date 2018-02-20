@@ -1,6 +1,5 @@
 import List from "./List";
 import UIState from "./UIState";
-import { SLIDE, ROOM, CAPTION, TRANSLATE, ROTATE, SCALE } from "../constants";
 class RootStore {
   constructor() {
     this.objects = new List();

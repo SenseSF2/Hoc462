@@ -1,0 +1,8 @@
+{
+  "extends": ["plugin:react/recommended", "standard", "prettier"],
+  "plugins": ["react"],
+  "rules": {
+    "react/prop-types": "off"
+  },
+  "parser": "babel-eslint"
+}

@@ -1,7 +1,7 @@
 import React from "react";
 import AnimationBar from "./AnimationBar";
 import styles from "./GroupedAnimationBars.css";
-export default ({ animations, selected, select }) => (
+const GroupedAnimationBars = ({ animations, selected, select }) => (
   <div className={styles.groupedAnimationBars}>
     {animations.map(animation => (
       <AnimationBar
@@ -13,3 +13,4 @@ export default ({ animations, selected, select }) => (
     ))}
   </div>
 );
+export default GroupedAnimationBars;

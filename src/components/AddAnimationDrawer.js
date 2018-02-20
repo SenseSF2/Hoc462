@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import Wizard from "./Wizard";
 import { button } from "./Button.css";
 import { TRANSLATE, ROTATE, SCALE } from "../constants";
-export default observer(({ uiState, selectedObject }) => (
+const AddAnimationDrawer = observer(({ uiState, selectedObject }) => (
   <Wizard
     handleNext={() => uiState.incrementAddAnimationStep()}
     step={uiState.addAnimationStep}
@@ -40,6 +40,7 @@ export default observer(({ uiState, selectedObject }) => (
                   [SCALE]: "scale"
                 }[uiState.animationType]
               }
+              className={button}
             >
               <option value="translate">Translate</option>
               <option value="rotate">Rotate</option>
@@ -62,3 +63,5 @@ export default observer(({ uiState, selectedObject }) => (
     ]}
   </Wizard>
 ));
+AddAnimationDrawer.displayName = AddAnimationDrawer;
+export default AddAnimationDrawer;
