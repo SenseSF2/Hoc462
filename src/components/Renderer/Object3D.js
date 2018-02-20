@@ -18,6 +18,7 @@ export default class Object3D extends React.Component {
     } = this.props
     this.instance = new THREE.Mesh()
     this.boundingBox = new THREE.BoxHelper(undefined, 0xffffff)
+    this.boundingBox.setFromObject(this.instance)
     this.props.instance(this.instance, this.boundingBox)
     this.setType(this.props.type)
     this.setTexture(this.props.textureType, this.props.textureValue)
@@ -80,9 +81,9 @@ export default class Object3D extends React.Component {
   }
   showHideBoundingBox (selected) {
     if (selected) {
-      this.boundingBox.setFromObject(this.instance)
+      this.boundingBox.visible = true
     } else {
-      this.boundingBox.setFromObject()
+      this.boundingBox.visible = false
     }
   }
   componentWillReceiveProps (nextProps) {
