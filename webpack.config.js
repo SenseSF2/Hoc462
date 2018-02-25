@@ -23,7 +23,8 @@ module.exports = {
   devtool: "source-map",
   plugins: [
     new HtmlWebpackPlugin({
-      template: path.resolve("./static/index.html")
+      template: path.resolve("./static/index.html"),
+      inject: false
     })
   ]
 };
