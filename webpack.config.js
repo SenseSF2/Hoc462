@@ -5,7 +5,7 @@ module.exports = {
   output: {
     filename: "bundled.js",
     path: path.resolve(__dirname, "build"),
-    publicPath: "/assets/"
+    publicPath: "/"
   },
   module: {
     rules: [
