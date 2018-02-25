@@ -25,6 +25,7 @@ class UIState {
   @observable addAnimationStep = CHOOSE_ANIMATION_TARGET;
   @observable animationType = TRANSLATE;
   @observable clonedAnimationTarget;
+  @observable elapsedTime = 0;
   @computed
   get orbitControlsEnabled() {
     const { selectedDrawerTab, isSettingView, isEditingAnimation } = this;
@@ -66,6 +67,42 @@ class UIState {
       }[this.animationType];
       return this.clonedAnimationTarget[property];
     }
+  }
+  @computed
+  get currentObjectStates() {
+    const clones = this.rootStore.objects.items.map(object => ({
+      originalId: object.id,
+      clone: object.clone()
+    }));
+    const selectedSlide = this.rootStore.slides.selected;
+    const slides = this.rootStore.slides.items;
+    if (selectedSlide !== undefined && this.selectedDrawerTab === SLIDE) {
+      const slidesBeforeSelectedSlide = slides.slice(
+        0,
+        slides.indexOf(selectedSlide)
+      );
+      []
+        .concat(
+          ...slidesBeforeSelectedSlide.map(slide => slide.animations.items)
+        )
+        .forEach(animation =>
+          clones
+            .find(clone => clone.originalId === animation.target.id)
+            .clone.applyAnimation(animation)
+        );
+      selectedSlide
+        .getAnimationsToBeAppliedAtTime(this.elapsedTime)
+        .forEach(({ animation, elapsedTime }) =>
+          clones
+            .find(clone => clone.originalId === animation.target.id)
+            .clone.applyAnimation(animation, elapsedTime)
+        );
+    }
+    return clones;
+  }
+  @computed
+  get selectedSlideDuration() {
+    return this.rootStore.slides.selected.slideDuration;
   }
   @action
   selectDrawerTab(tab) {
@@ -127,6 +164,37 @@ class UIState {
   @action
   setAnimationType(type) {
     this.animationType = type;
+  }
+  @action
+  resetElapsedTime() {
+    this.elapsedTime = 0;
+  }
+  @action
+  setElapsedTime(time) {
+    this.elapsedTime = time;
+    if (this.elapsedTime > this.selectedSlideDuration) {
+      this.pause();
+    }
+  }
+  @action
+  increaseElapsedTime(time) {
+    this.elapsedTime += time;
+    if (this.elapsedTime > this.selectedSlideDuration) {
+      this.stop();
+    }
+  }
+  @action
+  play() {
+    this.isPlaying = true;
+  }
+  @action
+  pause() {
+    this.isPlaying = false;
+  }
+  @action
+  stop() {
+    this.pause();
+    this.resetElapsedTime();
   }
 }
 export default UIState;

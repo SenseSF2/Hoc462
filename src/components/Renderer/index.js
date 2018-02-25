@@ -98,14 +98,16 @@ export default class Renderer extends React.Component {
           }}
           transformControlsMode={transformControlsMode}
         />
-        {objects.items.map(object => {
-          let clickHandler;
+        {uiState.currentObjectStates.map(clone => {
+          let clickHandler, object;
           if (
             uiState.isSettingAnimation &&
-            objects.selected === object &&
+            objects.selected.id === clone.originalId &&
             uiState.addAnimationStep > CHOOSE_ANIMATION_TARGET
           )
             object = uiState.clonedAnimationTarget;
+          else if (uiState.selectedDrawerTab === SLIDE) object = clone.clone;
+          else object = objects.items.find(({ id }) => id === clone.originalId);
           return (
             <Object3D
               key={object.id}
@@ -132,7 +134,7 @@ export default class Renderer extends React.Component {
                 this.scene.remove(instance, boundingBox);
                 this.onObject3DClick.removeClickHandler(instance, clickHandler);
               }}
-              selected={objects.selected === object}
+              selected={objects.selected.id === clone.originalId}
             />
           );
         })}

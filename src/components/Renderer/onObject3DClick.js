@@ -42,6 +42,7 @@ export default (camera, domElement) => {
     },
     removeClickHandler: (object3D, callback) => {
       const callbacks = handlers.get(object3D);
+      if (callbacks === undefined) return;
       if (callbacks.includes(callback)) {
         callbacks.splice(callbacks.indexOf(callback), 1);
       }

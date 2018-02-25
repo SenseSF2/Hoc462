@@ -1,6 +1,15 @@
 import { observable, action } from "mobx";
 import uuidv4 from "uuid/v4";
-import { BOX, COLOR, IMAGE } from "../constants";
+import {
+  BOX,
+  COLOR,
+  IMAGE,
+  TRANSLATE,
+  ROTATE,
+  SCALE,
+  LINEAR,
+  QUAD
+} from "../constants";
 import Texture from "./Texture";
 class Object3D {
   id = uuidv4();
@@ -25,6 +34,28 @@ class Object3D {
   @action
   setScale(scale) {
     Object.assign(this.scale, scale);
+  }
+  @action
+  applyAnimation(animation, timeElapsed = animation.duration) {
+    let property;
+    if (animation.type === TRANSLATE) {
+      property = "position";
+    } else if (animation.type === ROTATE) {
+      property = "rotation";
+    } else if (animation.type === SCALE) {
+      property = "scale";
+    }
+    const from = this[property];
+    const to = animation.destination;
+    const easingFunction = {
+      [LINEAR]: x => x,
+      [QUAD]: x => x ** 2
+    }[animation.easingFunction];
+    const next = from.map(
+      (x, i) =>
+        x + (to[i] - x) * easingFunction(timeElapsed / animation.duration)
+    );
+    Object.assign(this[property], next);
   }
   constructor(type) {
     this.type = type;

@@ -1,6 +1,7 @@
 import React from "react";
 import GroupedAnimationBars from "./GroupedAnimationBars";
 import DetailedAnimationView from "./DetailedAnimationView";
+import AnimationPlaybackControls from "./AnimationPlaybackControls";
 import { observer } from "mobx-react";
 import { button } from "./Button.css";
 const SlideDrawer = observer(({ slide, uiState }) => {
@@ -22,6 +23,7 @@ const SlideDrawer = observer(({ slide, uiState }) => {
           </button>
         )}
       </h2>
+      <AnimationPlaybackControls uiState={uiState} />
       <h2>Animations:</h2>
       <div>
         <button

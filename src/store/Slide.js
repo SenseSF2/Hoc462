@@ -7,6 +7,7 @@ class Slide {
   @observable name = "Untitled";
   @observable viewPosition = [0, 0, 1];
   @observable viewRotation = [0, 0, 0];
+  @observable elapsedTime = 0;
   animations = new List();
   @computed
   get animationGroups() {
@@ -20,6 +21,65 @@ class Slide {
       result[resultIndex].push(animation);
     }
     return result;
+  }
+  getAnimationsToBeAppliedAtTime(time) {
+    let offset = 0;
+    const calculatedOffsets = this.animationGroups.map(group => {
+      offset += Math.max(
+        ...group.map(animation => animation.duration + animation.delay)
+      );
+      return { offset, group };
+    });
+    let leftOffset = 0;
+    let activeGroup, activeGroupOffset;
+    const groups = [];
+    for (let i = 0; i < calculatedOffsets.length; i++) {
+      const rightOffset = calculatedOffsets[i].offset;
+      const group = calculatedOffsets[i].group;
+      const offset = leftOffset;
+      if (leftOffset <= time && time <= rightOffset) {
+        activeGroup = group;
+        activeGroupOffset = offset;
+        break;
+      }
+      groups.push(
+        group.map(animation => ({
+          animation,
+          elapsedTime: Math.min(
+            time - offset - animation.delay,
+            animation.duration
+          )
+        }))
+      );
+      leftOffset = rightOffset;
+    }
+    const elapsedTimeRelativeToActiveGroup = time - activeGroupOffset;
+    if (activeGroup !== undefined) {
+      groups.push(
+        activeGroup
+          .filter(
+            animation =>
+              elapsedTimeRelativeToActiveGroup <= animation.duration &&
+              elapsedTimeRelativeToActiveGroup >= animation.delay
+          )
+          .map(animation => ({
+            animation,
+            elapsedTime: elapsedTimeRelativeToActiveGroup - animation.delay
+          }))
+      );
+    }
+    return [].concat(...groups);
+  }
+  @computed
+  get slideDuration() {
+    let duration = 0;
+    for (let i = 0; i < this.animationGroups.length; i++) {
+      const group = this.animationGroups[i];
+      duration += Math.max(
+        ...group.map(animation => animation.duration + animation.delay)
+      );
+    }
+    return duration;
   }
   @observable caption = "";
   @action
