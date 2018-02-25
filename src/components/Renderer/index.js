@@ -100,6 +100,9 @@ export default class Renderer extends React.Component {
         />
         {uiState.currentObjectStates.map(clone => {
           let clickHandler, object;
+          const originalObject = objects.items.find(
+            ({ id }) => id === clone.originalId
+          );
           if (
             uiState.isSettingAnimation &&
             objects.selected.id === clone.originalId &&
@@ -107,7 +110,7 @@ export default class Renderer extends React.Component {
           )
             object = uiState.clonedAnimationTarget;
           else if (uiState.selectedDrawerTab === SLIDE) object = clone.clone;
-          else object = objects.items.find(({ id }) => id === clone.originalId);
+          else object = originalObject;
           return (
             <Object3D
               key={object.id}
@@ -127,14 +130,14 @@ export default class Renderer extends React.Component {
                 this.scene.add(instance, boundingBox);
                 this.onObject3DClick.onClick(
                   instance,
-                  (clickHandler = () => this.selectObject(object))
+                  (clickHandler = () => this.selectObject(originalObject))
                 );
               }}
               remove={(instance, boundingBox) => {
                 this.scene.remove(instance, boundingBox);
                 this.onObject3DClick.removeClickHandler(instance, clickHandler);
               }}
-              selected={objects.selected.id === clone.originalId}
+              selected={objects.selected === originalObject}
             />
           );
         })}
