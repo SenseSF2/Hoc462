@@ -19,7 +19,7 @@ const mousePosition = (element, rawEvent) => {
 };
 export default (camera, domElement) => {
   const handlers = new Map();
-  domElement.addEventListener("click", event => {
+  const onClick = event => {
     const { webgl: { x, y } } = mousePosition(domElement, event);
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2(x, y);
@@ -31,7 +31,9 @@ export default (camera, domElement) => {
       const object = intersects[0].object;
       handlers.get(object).forEach(handler => handler(object));
     }
-  });
+  };
+  domElement.addEventListener("click", onClick);
+  domElement.addEventListener("touchstart", onClick);
   return {
     onClick: (object3D, callback) => {
       if (handlers.get(object3D) === undefined) {

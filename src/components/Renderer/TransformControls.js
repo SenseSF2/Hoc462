@@ -31,6 +31,8 @@ export default class TransformControls extends React.Component {
       );
       this.update();
     });
+    this.instance.addEventListener("mouseUp", () => this.props.onMouseUp());
+    this.instance.addEventListener("mouseDown", () => this.props.onMouseDown());
   }
   update() {
     const {

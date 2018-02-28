@@ -4,6 +4,7 @@ import OrbitControls from "./OrbitControls";
 import TransformControls from "./TransformControls";
 export default observer(
   class Controls extends React.Component {
+    state = { isUsingTransformControls: false };
     constructor(props) {
       super(props);
       const { instance } = this.props;
@@ -36,6 +37,7 @@ export default observer(
         object,
         view
       } = this.props;
+      const { isUsingTransformControls } = this.state;
       const defaultPositionRotationAndScale = {
         position: [0, 0, 0],
         rotation: [0, 0, 0],
@@ -62,7 +64,7 @@ export default observer(
             rotationX={cRotationX}
             rotationY={cRotationY}
             rotationZ={cRotationZ}
-            enabled={orbitControlsEnabled}
+            enabled={!isUsingTransformControls && orbitControlsEnabled}
             onChange={(
               positionX,
               positionY,
@@ -111,6 +113,12 @@ export default observer(
             instance={this.transformControlsInstanceCallback}
             camera={camera}
             domElement={domElement}
+            onMouseDown={() => {
+              this.setState({ isUsingTransformControls: true });
+            }}
+            onMouseUp={() => {
+              this.setState({ isUsingTransformControls: false });
+            }}
           />
         </React.Fragment>
       );
