@@ -17,6 +17,7 @@ const App = observer(() => (
     <Slides
       slides={store.slides}
       create={() => store.slides.add(new Slide())}
+      uiState={store.uiState}
     />
     <Renderer
       objects={store.objects}

@@ -4,13 +4,17 @@ import styles from "./Slides.css";
 import { button } from "./Button.css";
 import Slide from "./Slide";
 import { TO_PREVIOUS_INDEX, TO_NEXT_INDEX } from "../constants";
-const Slides = observer(({ slides, create }) => (
-  <div className={styles.slides}>
+const Slides = observer(({ slides, create, uiState }) => (
+  <div
+    className={[styles.slides, uiState.drawerTabLocked ? "disabled" : ""].join(
+      " "
+    )}
+  >
     <span>Slides</span>
     <button className={`${button} create`} onClick={create}>
       Create new
     </button>
-    <ul className="list">
+    <ul>
       {slides.items.map(item => (
         <Slide
           key={item.id}
