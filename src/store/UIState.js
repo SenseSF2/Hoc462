@@ -76,7 +76,10 @@ class UIState {
     }));
     const selectedSlide = this.rootStore.slides.selected;
     const slides = this.rootStore.slides.items;
-    if (selectedSlide !== undefined && this.selectedDrawerTab === SLIDE) {
+    if (
+      selectedSlide !== undefined &&
+      [SLIDE, ADD_ANIMATION].includes(this.selectedDrawerTab)
+    ) {
       const slidesBeforeSelectedSlide = slides.slice(
         0,
         slides.indexOf(selectedSlide)
@@ -90,13 +93,25 @@ class UIState {
             .find(clone => clone.originalId === animation.target.id)
             .clone.applyAnimation(animation)
         );
-      selectedSlide
-        .getAnimationsToBeAppliedAtTime(this.elapsedTime)
-        .forEach(({ animation, elapsedTime }) =>
-          clones
-            .find(clone => clone.originalId === animation.target.id)
-            .clone.applyAnimation(animation, elapsedTime)
-        );
+      if (this.selectedDrawerTab === SLIDE) {
+        selectedSlide
+          .getAnimationsToBeAppliedAtTime(this.elapsedTime)
+          .forEach(({ animation, elapsedTime }) =>
+            clones
+              .find(clone => clone.originalId === animation.target.id)
+              .clone.applyAnimation(animation, elapsedTime)
+          );
+      } else if (this.selectedDrawerTab === ADD_ANIMATION) {
+        const selectedAnimation = selectedSlide.animations.selected;
+        const animations = selectedSlide.animations.items;
+        animations
+          .slice(0, animations.indexOf(selectedAnimation) + 1)
+          .forEach(animation =>
+            clones
+              .find(clone => clone.originalId === animation.target.id)
+              .clone.applyAnimation(animation)
+          );
+      }
     }
     return clones;
   }
@@ -150,7 +165,11 @@ class UIState {
   @action
   incrementAddAnimationStep() {
     if (this.addAnimationStep === CHOOSE_ANIMATION_TARGET) {
-      this.clonedAnimationTarget = this.rootStore.objects.selected.clone();
+      this.clonedAnimationTarget = this.currentObjectStates
+        .find(
+          ({ originalId }) => this.rootStore.objects.selected.id === originalId
+        )
+        .clone.clone();
     }
     if (this.addAnimationStep === SELECT_TYPE) {
       this.setTransformControlsMode(this.animationType);

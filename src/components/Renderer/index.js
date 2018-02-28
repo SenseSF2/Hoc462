@@ -8,7 +8,7 @@ import styles from "./index.css";
 import Controls from "./Controls";
 import Object3D from "./Object3D";
 import onObject3DClick from "./onObject3DClick";
-import { SLIDE, CHOOSE_ANIMATION_TARGET } from "../../constants";
+import { SLIDE, CHOOSE_ANIMATION_TARGET, ADD_ANIMATION } from "../../constants";
 @observer
 export default class Renderer extends React.Component {
   itsTimeToStop = false;
@@ -109,11 +109,15 @@ export default class Renderer extends React.Component {
             uiState.addAnimationStep > CHOOSE_ANIMATION_TARGET
           )
             object = uiState.clonedAnimationTarget;
-          else if (uiState.selectedDrawerTab === SLIDE) object = clone.clone;
+          else if (
+            uiState.selectedDrawerTab === SLIDE ||
+            uiState.selectedDrawerTab === ADD_ANIMATION
+          )
+            object = clone.clone;
           else object = originalObject;
           return (
             <Object3D
-              key={object.id}
+              key={originalObject.id}
               textureType={object.texture.type}
               textureValue={object.texture.value}
               type={object.type}
