@@ -26,6 +26,7 @@ class UIState {
   @observable animationType = TRANSLATE;
   @observable clonedAnimationTarget;
   @observable elapsedTime = 0;
+  @observable isPlaying = false;
   @computed
   get orbitControlsEnabled() {
     const { selectedDrawerTab, isSettingView, isEditingAnimation } = this;
