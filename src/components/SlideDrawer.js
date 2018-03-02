@@ -32,7 +32,12 @@ const SlideDrawer = observer(({ slide, uiState }) => {
         >
           Add animation
         </button>
-        <button className={button}>Remove animation</button>
+        <button
+          className={button}
+          onClick={() => slide.animations.remove(slide.animations.selected)}
+        >
+          Remove animation
+        </button>
       </div>
       <div>
         {slide.animationGroups.map(group => (
