@@ -87,31 +87,42 @@ class UIState {
       );
       []
         .concat(
-          ...slidesBeforeSelectedSlide.map(slide => slide.animations.items)
+          ...slidesBeforeSelectedSlide.map(slide =>
+            slide.animations.items.slice()
+          )
         )
-        .forEach(animation =>
-          clones
-            .find(clone => clone.originalId === animation.target.id)
-            .clone.applyAnimation(animation)
-        );
+        .forEach(animation => {
+          const cloneObject = clones.find(
+            clone => clone.originalId === animation.target.id
+          );
+          if (cloneObject !== undefined) {
+            cloneObject.clone.applyAnimation(animation);
+          }
+        });
       if (this.selectedDrawerTab === SLIDE) {
         selectedSlide
           .getAnimationsToBeAppliedAtTime(this.elapsedTime)
-          .forEach(({ animation, elapsedTime }) =>
-            clones
-              .find(clone => clone.originalId === animation.target.id)
-              .clone.applyAnimation(animation, elapsedTime)
-          );
+          .forEach(({ animation, elapsedTime }) => {
+            const cloneObject = clones.find(
+              clone => clone.originalId === animation.target.id
+            );
+            if (cloneObject !== undefined) {
+              cloneObject.clone.applyAnimation(animation, elapsedTime);
+            }
+          });
       } else if (this.selectedDrawerTab === ADD_ANIMATION) {
         const selectedAnimation = selectedSlide.animations.selected;
         const animations = selectedSlide.animations.items;
         animations
           .slice(0, animations.indexOf(selectedAnimation) + 1)
-          .forEach(animation =>
-            clones
-              .find(clone => clone.originalId === animation.target.id)
-              .clone.applyAnimation(animation)
-          );
+          .forEach(animation => {
+            const cloneObject = clones.find(
+              clone => clone.originalId === animation.target.id
+            );
+            if (cloneObject !== undefined) {
+              cloneObject.clone.applyAnimation(animation);
+            }
+          });
       }
     }
     return clones;
