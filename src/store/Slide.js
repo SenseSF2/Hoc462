@@ -69,6 +69,17 @@ class Slide {
     }
     return [].concat(...groups);
   }
+  getFinishTimeOfAnimation(animation) {
+    let startTime = 0;
+    for (let group of this.animationGroups) {
+      if (group.includes(animation)) {
+        return startTime + animation.delay + animation.duration;
+      }
+      startTime += Math.max(
+        ...group.map(animation => animation.duration + animation.delay)
+      );
+    }
+  }
   @computed
   get slideDuration() {
     let duration = 0;

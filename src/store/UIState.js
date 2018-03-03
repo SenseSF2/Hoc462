@@ -1,4 +1,4 @@
-import { observable, action, computed } from "mobx";
+import { observable, action, computed, autorun } from "mobx";
 import Animation from "./Animation";
 import {
   SLIDE,
@@ -15,6 +15,27 @@ import {
 class UIState {
   constructor(rootStore) {
     this.rootStore = rootStore;
+    autorun(() => {
+      const selectedSlide = this.rootStore.slides.selected;
+      if (selectedSlide !== undefined && !this.isPlaying) {
+        this.setElapsedTime(
+          selectedSlide.getFinishTimeOfAnimation(
+            selectedSlide.animations.selected
+          )
+        );
+      }
+    });
+    autorun(() => {
+      const selectedSlide = this.rootStore.slides.selected;
+      if (selectedSlide !== undefined) {
+        const animation = (
+          [
+            ...selectedSlide.getAnimationsToBeAppliedAtTime(this.elapsedTime)
+          ].pop() || {}
+        ).animation;
+        selectedSlide.animations.select(animation);
+      }
+    });
   }
   @observable selectedDrawerTab = ROOM;
   @observable transformControlsMode = TRANSLATE;
