@@ -23,37 +23,36 @@ class Slide {
     return result;
   }
   getAnimationsToBeAppliedAtTime(time) {
-    let offset = 0;
-    const calculatedOffsets = this.animationGroups.map(group => {
-      offset += Math.max(
+    let finishTime = 0;
+    const calculatedFinishTimes = this.animationGroups.map(group => {
+      finishTime += Math.max(
         ...group.map(animation => animation.duration + animation.delay)
       );
-      return { offset, group };
+      return { finishTime, group };
     });
-    let leftOffset = 0;
-    let activeGroup, activeGroupOffset;
+    let leftFinishTime = 0;
+    let activeGroup, activeGroupStartTime;
     const groups = [];
-    for (let i = 0; i < calculatedOffsets.length; i++) {
-      const rightOffset = calculatedOffsets[i].offset;
-      const group = calculatedOffsets[i].group;
-      const offset = leftOffset;
-      if (leftOffset <= time && time <= rightOffset) {
+    for (let i = 0; i < calculatedFinishTimes.length; i++) {
+      const rightFinishTime = calculatedFinishTimes[i].finishTime;
+      const group = calculatedFinishTimes[i].group;
+      if (leftFinishTime <= time && time <= rightFinishTime) {
         activeGroup = group;
-        activeGroupOffset = offset;
+        activeGroupStartTime = leftFinishTime;
         break;
       }
       groups.push(
         group.map(animation => ({
           animation,
           elapsedTime: Math.min(
-            time - offset - animation.delay,
+            time - leftFinishTime - animation.delay,
             animation.duration
           )
         }))
       );
-      leftOffset = rightOffset;
+      leftFinishTime = rightFinishTime;
     }
-    const elapsedTimeRelativeToActiveGroup = time - activeGroupOffset;
+    const elapsedTimeRelativeToActiveGroup = time - activeGroupStartTime;
     if (activeGroup !== undefined) {
       groups.push(
         activeGroup
