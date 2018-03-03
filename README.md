@@ -11,4 +11,7 @@ cd Hoc462
 npm install
 npm run start
 ```
+
 Then go to http://localhost:8080
+
+Live application: http://hoc462.netlify.com/ (I haven't set up script minification yet).
