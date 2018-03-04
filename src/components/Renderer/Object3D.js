@@ -34,7 +34,15 @@ export default class Object3D extends React.Component {
     this.boundingBox.setFromObject(this.instance);
     this.props.instance(this.instance, this.boundingBox);
     this.setType(this.props.type);
-    this.setTexture(this.props.textureType, this.props.textureValue);
+    if (this.props.isHole) {
+      this.turnIntoHole();
+    } else {
+      this.setTexture(
+        this.props.type,
+        this.props.textureType,
+        this.props.textureValue
+      );
+    }
     this.setPositionRotationAndScale(
       positionX,
       positionY,
@@ -56,27 +64,31 @@ export default class Object3D extends React.Component {
   componentWillUnmount() {
     this.props.remove(this.instance, this.boundingBox);
   }
-  setType(type) {
+  setMaterial(type) {
     if (type === CIRCLE) {
-      this.instance.geometry = new THREE.CircleGeometry(1, 32);
       this.instance.material = new THREE.MeshBasicMaterial({
         side: THREE.DoubleSide
       });
     } else {
-      this.instance.geometry = {
-        [BOX]: new THREE.BoxGeometry(1, 1, 1),
-        [CYLINDER]: new THREE.CylinderGeometry(1, 1, 3, 32),
-        [SPHERE]: new THREE.SphereGeometry(1, 32, 32),
-        [ICOSAHEDRON]: new THREE.IcosahedronGeometry(1, 0),
-        [TORUS]: new THREE.TorusGeometry(1, 0.5, 16, 100)
-      }[type];
       this.instance.material = new THREE.MeshPhongMaterial({
         side: THREE.DoubleSide
       });
     }
   }
-  setTexture(textureType, textureValue) {
+  setType(type) {
+    this.instance.geometry = {
+      [CIRCLE]: new THREE.CircleGeometry(1, 32),
+      [BOX]: new THREE.BoxGeometry(1, 1, 1),
+      [CYLINDER]: new THREE.CylinderGeometry(1, 1, 3, 32),
+      [SPHERE]: new THREE.SphereGeometry(1, 32, 32),
+      [ICOSAHEDRON]: new THREE.IcosahedronGeometry(1, 0),
+      [TORUS]: new THREE.TorusGeometry(1, 0.5, 16, 100)
+    }[type];
+    this.setMaterial(type);
+  }
+  setTexture(type, textureType, textureValue) {
     if (textureType === COLOR) {
+      this.setMaterial(type);
       this.instance.material.color.setHex(hexColorToDecimal(textureValue));
     } else if (textureType === IMAGE) {
       this.instance.material = new THREE.MeshBasicMaterial({
@@ -86,6 +98,13 @@ export default class Object3D extends React.Component {
         alphaTest: 0.5
       });
     }
+  }
+  turnIntoHole() {
+    this.instance.material = new THREE.MeshBasicMaterial({
+      transparent: true,
+      opacity: 0.5,
+      color: 0x000000
+    });
   }
   setPositionRotationAndScale(
     positionX,
@@ -117,6 +136,7 @@ export default class Object3D extends React.Component {
       textureValue,
       type,
       selected,
+      isHole,
       positionX,
       positionY,
       positionZ,
@@ -131,11 +151,16 @@ export default class Object3D extends React.Component {
       this.setType(type);
     }
     if (
-      type !== this.props.type ||
-      textureType !== this.props.textureType ||
-      textureValue !== this.props.textureValue
+      (type !== this.props.type ||
+        textureType !== this.props.textureType ||
+        textureValue !== this.props.textureValue ||
+        isHole !== this.props.isHole) &&
+      !isHole
     ) {
-      this.setTexture(textureType, textureValue);
+      this.setTexture(type, textureType, textureValue);
+    }
+    if (isHole !== this.props.isHole && isHole) {
+      this.turnIntoHole();
     }
     this.setPositionRotationAndScale(
       positionX,

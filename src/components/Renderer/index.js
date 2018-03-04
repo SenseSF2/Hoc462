@@ -121,6 +121,7 @@ export default class Renderer extends React.Component {
               textureType={object.texture.type}
               textureValue={object.texture.value}
               type={object.type}
+              isHole={object.isHole}
               positionX={object.position[0]}
               positionY={object.position[1]}
               positionZ={object.position[2]}

@@ -19,6 +19,7 @@ class Object3D {
   @observable position = [0, 0, 0];
   @observable rotation = [0, 0, 0];
   @observable scale = [1, 1, 1];
+  @observable isHole = false;
   @action
   rename(name) {
     this.name = name;
@@ -57,6 +58,14 @@ class Object3D {
     );
     Object.assign(this[property], next);
   }
+  @action
+  turnIntoHole() {
+    this.isHole = true;
+  }
+  @action
+  turnIntoSolid() {
+    this.isHole = false;
+  }
   constructor(type) {
     this.type = type;
   }
@@ -67,6 +76,9 @@ class Object3D {
       clone.texture.setColor(this.texture.value);
     } else if (this.texture.type === IMAGE) {
       clone.texture.setImage(this.texture.value);
+    }
+    if (this.isHole) {
+      clone.turnIntoHole();
     }
     clone.setPosition(this.position.slice());
     clone.setRotation(this.rotation.slice());
