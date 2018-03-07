@@ -1,7 +1,8 @@
 import React from "react";
 import { observer } from "mobx-react";
 import Renamable from "./Renamable";
-import { button } from "./Button.css";
+import Button from "./Button";
+import Clickable from "./Clickable";
 @observer
 export default class Slide extends React.Component {
   state = {
@@ -19,34 +20,28 @@ export default class Slide extends React.Component {
     const { slide, remove, select, selected, moveUp, moveDown } = this.props;
     const { isRenaming } = this.state;
     return (
-      <li className={selected ? "selected" : ""} onClick={select}>
-        <Renamable
-          value={slide.name}
-          onSubmit={name => this.handleRename(name)}
-          isRenaming={isRenaming}
-        />
-        <span className="actions">
-          <button className={button} onClick={remove}>
-            Delete
-          </button>
-          <button className={button} onClick={() => this.startRenaming()}>
-            Rename
-          </button>
-          {selected ? (
-            <span>
-              Move:
-              <button className={button} onClick={moveUp}>
-                Up
-              </button>
-              <button className={button} onClick={moveDown}>
-                Down
-              </button>
-            </span>
-          ) : (
-            undefined
-          )}
-        </span>
-      </li>
+      <Clickable onClick={select}>
+        <li className={selected ? "selected" : ""}>
+          <Renamable
+            value={slide.name}
+            onSubmit={name => this.handleRename(name)}
+            isRenaming={isRenaming}
+          />
+          <span className="actions">
+            <Button onClick={remove}>Delete</Button>
+            <Button onClick={() => this.startRenaming()}>Rename</Button>
+            {selected ? (
+              <span>
+                Move:
+                <Button onClick={moveUp}>Up</Button>
+                <Button onClick={moveDown}>Down</Button>
+              </span>
+            ) : (
+              undefined
+            )}
+          </span>
+        </li>
+      </Clickable>
     );
   }
 }

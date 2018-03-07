@@ -9,6 +9,7 @@ import {
   AFTER_PREVIOUS,
   WITH_PREVIOUS
 } from "../constants";
+import Input from "./Input";
 import { button } from "./Button.css";
 const DetailedAnimationView = observer(({ animation }) => (
   <div>
@@ -23,7 +24,7 @@ const DetailedAnimationView = observer(({ animation }) => (
     </h1>
     <h2>
       Duration:
-      <input
+      <Input
         type="number"
         value={animation.duration / 1000}
         onChange={({ target: { value } }) =>
@@ -74,7 +75,7 @@ const DetailedAnimationView = observer(({ animation }) => (
     </h2>
     <h2>
       Delay:
-      <input
+      <Input
         type="number"
         value={animation.delay / 1000}
         onChange={event => animation.setDelay(event.target.value * 1000)}

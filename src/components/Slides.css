@@ -13,13 +13,6 @@
     height: calc(168px - 32px);
   }
 }
-:local(.slides).disabled > span,
-:local(.slides).disabled > button,
-:local(.slides).disabled > ul {
-  opacity: 0.5;
-  pointer-events: none;
-  user-select: none;
-}
 :local .slides > span {
   text-transform: uppercase;
   font-weight: bold;

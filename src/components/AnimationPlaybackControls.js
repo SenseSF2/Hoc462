@@ -1,6 +1,7 @@
 import React from "react";
 import { observer } from "mobx-react";
-import { button } from "./Button.css";
+import Button from "./Button";
+import Input from "./Input";
 @observer
 export default class AnimationPlaybackControls extends React.Component {
   itsTimeToStop = false;
@@ -26,7 +27,7 @@ export default class AnimationPlaybackControls extends React.Component {
     const { uiState } = this.props;
     return (
       <div>
-        <input
+        <Input
           type="range"
           value={uiState.elapsedTime}
           min={0}
@@ -34,19 +35,11 @@ export default class AnimationPlaybackControls extends React.Component {
           disabled={uiState.selectedSlideDuration === 0}
           onChange={event => uiState.setElapsedTime(+event.target.value)}
         />{" "}
-        <button
-          className={button}
-          disabled={uiState.isPlaying}
-          onClick={() => uiState.play()}
-        >
+        <Button disabled={uiState.isPlaying} onClick={() => uiState.play()}>
           Play
-        </button>{" "}
-        <button className={button} onClick={() => uiState.pause()}>
-          Pause
-        </button>{" "}
-        <button className={button} onClick={() => uiState.stop()}>
-          Stop
-        </button>
+        </Button>{" "}
+        <Button onClick={() => uiState.pause()}>Pause</Button>{" "}
+        <Button onClick={() => uiState.stop()}>Stop</Button>
       </div>
     );
   }

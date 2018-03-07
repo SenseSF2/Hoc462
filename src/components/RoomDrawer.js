@@ -1,5 +1,6 @@
 import React from "react";
 import { observer } from "mobx-react";
+import Button from "./Button";
 import { button } from "./Button.css";
 import Object3D from "./Object3D";
 import {
@@ -41,33 +42,22 @@ const RoomDrawer = observer(({ objects, add, changeTransformControlsMode }) => (
         <option value="icosahedron">Icosahedron</option>
         <option value="torus">Torus</option>
       </select>
-      <button
-        className={button}
-        onClick={() => changeTransformControlsMode(TRANSLATE)}
-      >
+      <Button onClick={() => changeTransformControlsMode(TRANSLATE)}>
         Translate
-      </button>
-      <button
-        className={button}
-        onClick={() => changeTransformControlsMode(ROTATE)}
-      >
+      </Button>
+      <Button onClick={() => changeTransformControlsMode(ROTATE)}>
         Rotate
-      </button>
-      <button
-        className={button}
-        onClick={() => changeTransformControlsMode(SCALE)}
-      >
-        Scale
-      </button>
+      </Button>
+      <Button onClick={() => changeTransformControlsMode(SCALE)}>Scale</Button>
     </div>
-    <button className={button} onClick={() => objects.selected.turnIntoHole()}>
+    <Button onClick={() => objects.selected.turnIntoHole()}>
       Turn object into a hole
-    </button>
-    <button className={button} onClick={() => objects.selected.turnIntoSolid()}>
+    </Button>
+    <Button onClick={() => objects.selected.turnIntoSolid()}>
       Turn object into a solid
-    </button>
-    <button className={button}>Group objects</button>
-    <button className={button}>Done grouping objects</button>
+    </Button>
+    <Button>Group objects</Button>
+    <Button>Done grouping objects</Button>
     <div>
       {objects.items.map(item => (
         <Object3D

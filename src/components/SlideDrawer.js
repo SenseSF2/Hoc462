@@ -3,7 +3,7 @@ import GroupedAnimationBars from "./GroupedAnimationBars";
 import DetailedAnimationView from "./DetailedAnimationView";
 import AnimationPlaybackControls from "./AnimationPlaybackControls";
 import { observer } from "mobx-react";
-import { button } from "./Button.css";
+import Button from "./Button";
 const SlideDrawer = observer(({ slide, uiState }) => {
   if (slide === undefined) return <div>No slides selected</div>;
   return (
@@ -11,33 +11,22 @@ const SlideDrawer = observer(({ slide, uiState }) => {
       <h2>
         View:
         {uiState.isSettingView ? (
-          <button
-            className={button}
-            onClick={() => uiState.finishSettingView()}
-          >
-            I am done
-          </button>
+          <Button onClick={() => uiState.finishSettingView()}>I am done</Button>
         ) : (
-          <button className={button} onClick={() => uiState.startSettingView()}>
-            Set view
-          </button>
+          <Button onClick={() => uiState.startSettingView()}>Set view</Button>
         )}
       </h2>
       <AnimationPlaybackControls uiState={uiState} />
       <h2>Animations:</h2>
       <div>
-        <button
-          className={button}
-          onClick={() => uiState.startEditingAnimation()}
-        >
+        <Button onClick={() => uiState.startEditingAnimation()}>
           Add animation
-        </button>
-        <button
-          className={button}
+        </Button>
+        <Button
           onClick={() => slide.animations.remove(slide.animations.selected)}
         >
           Remove animation
-        </button>
+        </Button>
       </div>
       <div>
         {slide.animationGroups.map(group => (

@@ -1,4 +1,5 @@
 import React from "react";
+import Input from "./Input";
 const Renamable = ({ isRenaming, onSubmit, value, ...props }) => {
   let input;
   return (
@@ -9,9 +10,9 @@ const Renamable = ({ isRenaming, onSubmit, value, ...props }) => {
       }}
     >
       {isRenaming ? (
-        <input
+        <Input
           {...props}
-          ref={element => {
+          innerRef={element => {
             if (element !== null) element.select();
             input = element;
           }}
