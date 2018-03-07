@@ -15,15 +15,21 @@ import {
 class UIState {
   constructor(rootStore) {
     this.rootStore = rootStore;
+    let previousPlayingState = this.isPlaying;
     autorun(() => {
       const selectedSlide = this.rootStore.slides.selected;
-      if (selectedSlide !== undefined && !this.isPlaying) {
+      if (
+        selectedSlide !== undefined &&
+        !this.isPlaying &&
+        !previousPlayingState
+      ) {
         this.setElapsedTime(
           selectedSlide.getFinishTimeOfAnimation(
             selectedSlide.animations.selected
           )
         );
       }
+      previousPlayingState = this.isPlaying;
     });
     autorun(() => {
       const selectedSlide = this.rootStore.slides.selected;
