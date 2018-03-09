@@ -57,7 +57,7 @@ export default class Object3D extends React.Component {
             <Input
               type="file"
               className="texture-upload-input"
-              ref={element => {
+              innerRef={element => {
                 this.textureUploadInput = element;
               }}
               onChange={event => this.handleTextureUpload(event)}

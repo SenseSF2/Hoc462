@@ -7,6 +7,7 @@ import "../../vendor/TransformControls";
 import styles from "./index.css";
 import Controls from "./Controls";
 import Object3D from "./Object3D";
+import ObjectGroup from "./ObjectGroup";
 import onObject3DClick from "./onObject3DClick";
 import { SLIDE, CHOOSE_ANIMATION_TARGET, ADD_ANIMATION } from "../../constants";
 @observer
@@ -98,54 +99,64 @@ export default class Renderer extends React.Component {
           }}
           transformControlsMode={transformControlsMode}
         />
-        {uiState.currentObjectStates.map(clone => {
-          let clickHandler, object;
-          const originalObject = objects.items.find(
-            ({ id }) => id === clone.originalId
-          );
-          if (
-            uiState.isSettingAnimation &&
-            objects.selected.id === clone.originalId &&
-            uiState.addAnimationStep > CHOOSE_ANIMATION_TARGET
-          )
-            object = uiState.clonedAnimationTarget;
-          else if (
-            uiState.selectedDrawerTab === SLIDE ||
-            uiState.selectedDrawerTab === ADD_ANIMATION
-          )
-            object = clone.clone;
-          else object = originalObject;
-          return (
-            <Object3D
-              key={originalObject.id}
-              textureType={object.texture.type}
-              textureValue={object.texture.value}
-              type={object.type}
-              isHole={object.isHole}
-              positionX={object.position[0]}
-              positionY={object.position[1]}
-              positionZ={object.position[2]}
-              rotationX={object.rotation[0]}
-              rotationY={object.rotation[1]}
-              rotationZ={object.rotation[2]}
-              scaleX={object.scale[0]}
-              scaleY={object.scale[1]}
-              scaleZ={object.scale[2]}
-              instance={(instance, boundingBox) => {
-                this.scene.add(instance, boundingBox);
-                this.onObject3DClick.onClick(
-                  instance,
-                  (clickHandler = () => this.selectObject(originalObject))
-                );
-              }}
-              remove={(instance, boundingBox) => {
-                this.scene.remove(instance, boundingBox);
-                this.onObject3DClick.removeClickHandler(instance, clickHandler);
-              }}
-              selected={objects.selected === originalObject}
-            />
-          );
-        })}
+        <ObjectGroup instance={instance => this.scene.add(instance)}>
+          {({ add, remove, select, update }) =>
+            uiState.currentObjectStates.map(clone => {
+              let clickHandler, object;
+              const originalObject = objects.items.find(
+                ({ id }) => id === clone.originalId
+              );
+              if (
+                uiState.isSettingAnimation &&
+                objects.selected.id === clone.originalId &&
+                uiState.addAnimationStep > CHOOSE_ANIMATION_TARGET
+              )
+                object = uiState.clonedAnimationTarget;
+              else if (
+                uiState.selectedDrawerTab === SLIDE ||
+                uiState.selectedDrawerTab === ADD_ANIMATION
+              )
+                object = clone.clone;
+              else object = originalObject;
+              return (
+                <Object3D
+                  key={originalObject.id}
+                  textureType={object.texture.type}
+                  textureValue={object.texture.value}
+                  type={object.type}
+                  isHole={object.isHole}
+                  positionX={object.position[0]}
+                  positionY={object.position[1]}
+                  positionZ={object.position[2]}
+                  rotationX={object.rotation[0]}
+                  rotationY={object.rotation[1]}
+                  rotationZ={object.rotation[2]}
+                  scaleX={object.scale[0]}
+                  scaleY={object.scale[1]}
+                  scaleZ={object.scale[2]}
+                  instance={(instance, boundingBox) => {
+                    this.scene.add(boundingBox);
+                    this.onObject3DClick.onClick(
+                      instance,
+                      (clickHandler = () => this.selectObject(originalObject))
+                    );
+                    add(instance, object.isHole);
+                  }}
+                  remove={(instance, boundingBox) => {
+                    this.scene.remove(boundingBox);
+                    this.onObject3DClick.removeClickHandler(
+                      instance,
+                      clickHandler
+                    );
+                    remove(instance);
+                  }}
+                  selected={objects.selected === originalObject}
+                  update={instance => update(instance, object.isHole)}
+                />
+              );
+            })
+          }
+        </ObjectGroup>
       </React.Fragment>
     );
   }

@@ -32,7 +32,6 @@ export default class Object3D extends React.Component {
     this.instance = new THREE.Mesh();
     this.boundingBox = new THREE.BoxHelper(undefined, 0xffffff);
     this.boundingBox.setFromObject(this.instance);
-    this.props.instance(this.instance, this.boundingBox);
     this.setType(this.props.type);
     if (this.props.isHole) {
       this.turnIntoHole();
@@ -55,6 +54,7 @@ export default class Object3D extends React.Component {
       scaleZ
     );
     this.showHideBoundingBox(selected);
+    this.props.instance(this.instance, this.boundingBox);
     const animate = () => {
       this.boundingBox.update();
       window.requestAnimationFrame(animate);
@@ -145,7 +145,8 @@ export default class Object3D extends React.Component {
       rotationZ,
       scaleX,
       scaleY,
-      scaleZ
+      scaleZ,
+      update
     } = nextProps;
     if (type !== this.props.type) {
       this.setType(type);
@@ -174,6 +175,7 @@ export default class Object3D extends React.Component {
       scaleZ
     );
     this.showHideBoundingBox(selected);
+    update(this.instance);
   }
   render() {
     return null;
