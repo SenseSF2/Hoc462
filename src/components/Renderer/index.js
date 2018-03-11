@@ -1,9 +1,10 @@
 import React from "react";
 import { observer } from "mobx-react";
-import * as THREE from "three";
-import "../../vendor/OrbitControls";
+// eslint-disable-next-line
+import "script-loader!three/build/three.js";
+import "three/examples/js/controls/OrbitControls";
+import "three/examples/js/controls/TransformControls";
 import "../../vendor/ThreeCSG";
-import "../../vendor/TransformControls";
 import styles from "./index.css";
 import Controls from "./Controls";
 import Object3D from "./Object3D";

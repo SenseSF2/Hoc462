@@ -1,4 +1,4 @@
-import * as THREE from "three";
+/* global THREE */
 const mousePosition = (element, rawEvent) => {
   let event;
   if (rawEvent.touches !== undefined) {

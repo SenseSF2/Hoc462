@@ -1,5 +1,5 @@
 import React from "react";
-import * as THREE from "three";
+/* global THREE */
 export default class OrbitControls extends React.Component {
   changeEventEmittedWithinComponent = false;
   constructor(props) {

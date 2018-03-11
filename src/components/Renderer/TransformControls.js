@@ -1,6 +1,6 @@
 import React from "react";
-import * as THREE from "three";
 import { TRANSLATE, ROTATE, SCALE } from "../../constants";
+/* global THREE */
 export default class TransformControls extends React.Component {
   constructor(props) {
     super(props);

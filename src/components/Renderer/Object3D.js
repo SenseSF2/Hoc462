@@ -1,6 +1,5 @@
 import React from "react";
 import { observer } from "mobx-react";
-import * as THREE from "three";
 import {
   BOX,
   CIRCLE,
@@ -11,6 +10,7 @@ import {
   COLOR,
   IMAGE
 } from "../../constants";
+/* global THREE */
 const hexColorToDecimal = color => parseInt(color.match(/.(.*)/)[1], 16);
 @observer
 export default class Object3D extends React.Component {

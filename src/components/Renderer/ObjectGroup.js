@@ -1,7 +1,7 @@
 import React from "react";
-import * as THREE from "three";
 import ThreeBSP from "../../vendor/ThreeCSG";
 import { observer } from "mobx-react";
+/* global THREE */
 @observer
 export default class ObjectGroup extends React.Component {
   group = new THREE.Group();
