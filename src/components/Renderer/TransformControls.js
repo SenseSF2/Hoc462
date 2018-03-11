@@ -69,6 +69,12 @@ export default class TransformControls extends React.Component {
           [SCALE]: "scale"
         }[mode]
       );
+      // When mode is set to "scale", space is AUTOMATICALLY set to "local".
+      // If I set it to "world" when mode is "scale", TransformControls won't work.
+      // So I am resetting mode to "world" when previous mode is SCALE and current mode is not SCALE.
+      if (mode !== SCALE && this.props.mode === SCALE) {
+        this.instance.setSpace("world");
+      }
     }
   }
   render() {
