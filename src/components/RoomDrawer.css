@@ -1,0 +1,4 @@
+:local(.roomDrawer) .objects {
+  display: flex;
+  flex-wrap: wrap;
+}

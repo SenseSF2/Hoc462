@@ -3,6 +3,8 @@ import { observer } from "mobx-react";
 import Button from "./Button";
 import { button } from "./Button.css";
 import Object3D from "./Object3D";
+import Object3DThumbnailView from "./Object3DThumbnailView";
+import styles from "./RoomDrawer.css";
 import {
   BOX,
   CIRCLE,
@@ -15,7 +17,7 @@ import {
   SCALE
 } from "../constants";
 const RoomDrawer = observer(({ objects, add, changeTransformControlsMode }) => (
-  <div>
+  <div className={styles.roomDrawer}>
     <div>
       <select
         className={button}
@@ -58,18 +60,26 @@ const RoomDrawer = observer(({ objects, add, changeTransformControlsMode }) => (
     </Button>
     <Button>Group objects</Button>
     <Button>Done grouping objects</Button>
-    <div>
+    <div className="objects">
       {objects.items.map(item => (
-        <Object3D
+        <Object3DThumbnailView
           object={item}
           remove={() => objects.remove(item)}
           key={item.id}
           select={() => objects.select(item)}
           selected={objects.selected === item}
-          clone={() => objects.add(item.clone())}
         />
       ))}
     </div>
+    {objects.selected !== undefined && (
+      <div>
+        <Object3D
+          object={objects.selected}
+          remove={() => objects.remove(objects.selected)}
+          clone={() => objects.add(objects.selected.clone())}
+        />
+      </div>
+    )}
   </div>
 ));
 RoomDrawer.displayName = "RoomDrawer";

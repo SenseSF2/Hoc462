@@ -9,7 +9,7 @@
   width: 100%;
   height: 100%;
 }
-:local @media (orientation: portrait) {
+@media (orientation: portrait) {
   :local .renderer {
     top: calc(32px + 168px);
     left: 0;

@@ -13,12 +13,6 @@
   text-overflow: ellipsis;
   display: block;
 }
-:local(.object).highlighted {
-  border: 2px solid orange;
-}
-:local(.object):not(.highlighted) .properties {
-  display: none;
-}
 :local(.object) .properties input {
   width: 50px;
 }

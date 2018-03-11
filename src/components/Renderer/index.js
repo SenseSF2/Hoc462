@@ -10,7 +10,9 @@ import Controls from "./Controls";
 import Object3D from "./Object3D";
 import ObjectGroup from "./ObjectGroup";
 import onObject3DClick from "./onObject3DClick";
+import resizeRendererFunctionMaker from "./resizeRenderer";
 import { SLIDE, CHOOSE_ANIMATION_TARGET, ADD_ANIMATION } from "../../constants";
+/* global THREE */
 @observer
 export default class Renderer extends React.Component {
   itsTimeToStop = false;
@@ -34,18 +36,10 @@ export default class Renderer extends React.Component {
     camera.lookAt(gridHelper.position);
     scene.add(camera);
     this.onObject3DClick = onObject3DClick(camera, renderer.domElement);
-    let oldWidth = 0;
-    let oldHeight = 0;
+    const resizeRenderer = resizeRendererFunctionMaker();
     const animate = () => {
       if (this.itsTimeToStop) return;
-      const newWidth = this.root.clientWidth;
-      const newHeight = this.root.clientHeight;
-      if (newWidth !== oldWidth || newHeight !== oldHeight) {
-        [oldWidth, oldHeight] = [newWidth, newHeight];
-        camera.aspect = this.root.clientWidth / this.root.clientHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(this.root.clientWidth, this.root.clientHeight, false);
-      }
+      resizeRenderer({ root: this.root, camera, renderer });
       if (this.transformControls !== undefined) {
         this.transformControls.update();
       }

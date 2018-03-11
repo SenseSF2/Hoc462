@@ -1,0 +1,11 @@
+:local(.object3DThumbnailView).highlighted {
+  border: 2px solid orange;
+}
+:local(.object3DThumbnailView) {
+  width: 120px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: space-around;
+  vertical-align: middle;
+}
