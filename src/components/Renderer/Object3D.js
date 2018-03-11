@@ -92,7 +92,7 @@ export default class Object3D extends React.Component {
       this.instance.material.color.setHex(hexColorToDecimal(textureValue));
     } else if (textureType === IMAGE) {
       this.instance.material = new THREE.MeshBasicMaterial({
-        map: new THREE.TextureLoader().load(textureValue),
+        map: new THREE.TextureLoader().load(textureValue, this.props.update),
         side: THREE.DoubleSide,
         transparent: true,
         alphaTest: 0.5
