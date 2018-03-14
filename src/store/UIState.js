@@ -180,6 +180,11 @@ class UIState {
   }
   @action
   startEditingAnimation() {
+    const selectedSlide = this.rootStore.slides.selected;
+    this.setView(
+      selectedSlide.viewPosition.slice(),
+      selectedSlide.viewRotation.slice()
+    );
     this.selectDrawerTab(ADD_ANIMATION);
     this.isSettingAnimation = true;
   }

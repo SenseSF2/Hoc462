@@ -5,7 +5,11 @@ class RootStore {
   constructor() {
     this.objects = new List();
     this.slides = new List({
-      add: original => () => {
+      add: original => slide => {
+        slide.setView(
+          this.uiState.viewPosition.slice(),
+          this.uiState.viewRotation.slice()
+        );
         original();
         this.uiState.selectDrawerTab(SLIDE);
       },
