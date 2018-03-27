@@ -2,6 +2,7 @@ import React from "react";
 import { observer } from "mobx-react";
 import Object3D from "./Object3D";
 import resizeRendererFunctionMaker from "./resizeRenderer";
+import { GROUP } from "../../constants";
 /* global THREE */
 @observer
 export default class ObjectPreview extends React.Component {
@@ -48,6 +49,15 @@ export default class ObjectPreview extends React.Component {
   }
   render() {
     const { object, width, height } = this.props;
+    if (object.type === GROUP)
+      return (
+        <div
+          ref={element => {
+            this.root = element;
+          }}
+          style={{ width: width + "px", height: height + "px" }}
+        />
+      );
     return (
       <React.Fragment>
         <div

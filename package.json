@@ -37,8 +37,8 @@
   "dependencies": {
     "@tweenjs/tween.js": "^17.1.1",
     "babel-polyfill": "^6.26.0",
-    "mobx": "^3.4.1",
-    "mobx-react": "^4.3.5",
+    "mobx": "^4.1.0",
+    "mobx-react": "^5.0.0",
     "react": "^16.3.0-alpha.1",
     "react-dom": "^16.3.0-alpha.1",
     "react-redux": "^5.0.6",

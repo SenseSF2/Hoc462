@@ -4,15 +4,35 @@ import { observer } from "mobx-react";
 /* global THREE */
 @observer
 export default class ObjectGroup extends React.Component {
+  itsTimeToStop = false;
   group = new THREE.Group();
+  boundingBox = new THREE.BoxHelper(undefined, 0xffffff);
   solids = [];
   holes = [];
   constructor(props) {
     super(props);
-    this.props.instance(this.group);
+    this.boundingBox.setFromObject(this.group);
+    this.props.instance(this.group, this.boundingBox);
+    const object = this.props.object;
+    const animate = () => {
+      if (this.itsTimeToStop) return;
+      this.boundingBox.update();
+      this.boundingBox.visible = this.props.selected;
+      this.group.position.set(...object.position.slice());
+      this.group.rotation.set(
+        ...object.rotation.slice().map(angle => angle / 180 * Math.PI)
+      );
+      this.group.scale.set(...object.scale.slice());
+      window.requestAnimationFrame(animate);
+    };
+    window.requestAnimationFrame(animate);
+  }
+  componentWillUnmount() {
+    this.props.remove(this.group, this.boundingBox);
+    this.itsTimeToStop = true;
   }
   recalculateGroup() {
-    [...this.group.children].forEach(child => this.group.remove(child));
+    this.group.remove(...this.group.children);
     const convertToBSP = object3D => {
       const geometry = object3D.geometry.clone();
       object3D.updateMatrix();

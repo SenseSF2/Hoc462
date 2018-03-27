@@ -56,6 +56,7 @@ export default class Object3D extends React.Component {
     this.showHideBoundingBox(selected);
     this.props.instance(this.instance, this.boundingBox);
     const animate = () => {
+      if (this.itsTimeToStop) return;
       this.boundingBox.update();
       window.requestAnimationFrame(animate);
     };
@@ -175,7 +176,7 @@ export default class Object3D extends React.Component {
       scaleZ
     );
     this.showHideBoundingBox(selected);
-    update(this.instance);
+    if (update !== undefined) update(this.instance);
   }
   render() {
     return null;

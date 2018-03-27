@@ -18,6 +18,7 @@ class RootStore {
         this.uiState.selectDrawerTab(SLIDE);
       }
     });
+    this.objectGroup = new List();
     this.uiState = new UIState(this);
   }
 }

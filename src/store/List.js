@@ -80,5 +80,9 @@ class List {
       }
     })(item, direction, times);
   }
+  @action
+  empty() {
+    this.items.length = 0;
+  }
 }
 export default List;

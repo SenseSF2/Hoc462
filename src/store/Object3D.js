@@ -11,6 +11,7 @@ import {
   QUAD
 } from "../constants";
 import Texture from "./Texture";
+import List from "./List";
 class Object3D {
   id = uuidv4();
   @observable name = "Untitled";
@@ -20,6 +21,7 @@ class Object3D {
   @observable rotation = [0, 0, 0];
   @observable scale = [1, 1, 1];
   @observable isHole = false;
+  children = new List();
   @action
   rename(name) {
     this.name = name;
@@ -69,6 +71,7 @@ class Object3D {
   constructor(type) {
     this.type = type;
   }
+  @action
   clone() {
     const clone = new Object3D(this.type);
     clone.rename(this.name);
@@ -83,7 +86,19 @@ class Object3D {
     clone.setPosition(this.position.slice());
     clone.setRotation(this.rotation.slice());
     clone.setScale(this.scale.slice());
+    this.children.items.slice().forEach(item => clone.children.add(item));
     return clone;
+  }
+  @action
+  ungroup() {
+    return this.children.items
+      .map(item => {
+        const clone = item.clone();
+        clone.setPosition(item.position.map((x, i) => x + this.position[i]));
+        clone.setRotation(item.rotation.map((x, i) => x + this.rotation[i]));
+        return clone;
+      })
+      .slice();
   }
 }
 export default Object3D;

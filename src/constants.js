@@ -5,6 +5,7 @@ export const CYLINDER = Symbol("cylinder");
 export const SPHERE = Symbol("sphere");
 export const ICOSAHEDRON = Symbol("icosahedron");
 export const TORUS = Symbol("torus");
+export const GROUP = Symbol("group");
 // Texture modes
 export const COLOR = Symbol("color");
 export const IMAGE = Symbol("image");

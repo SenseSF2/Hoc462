@@ -21,6 +21,7 @@ const App = observer(() => (
     />
     <Renderer
       objects={store.objects}
+      objectGroup={store.objectGroup}
       selectedSlide={store.slides.selected}
       uiState={store.uiState}
     />
@@ -50,6 +51,9 @@ const App = observer(() => (
               changeTransformControlsMode={mode =>
                 store.uiState.setTransformControlsMode(mode)
               }
+              startGrouping={() => store.uiState.startGroupingObjects()}
+              finishGrouping={() => store.uiState.finishGroupingObjects()}
+              isGroupingObjects={store.uiState.isGroupingObjects}
             />
           )
         },

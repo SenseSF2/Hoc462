@@ -1,5 +1,6 @@
 import { observable, action, computed, autorun } from "mobx";
 import Animation from "./Animation";
+import Object3D from "./Object3D";
 import {
   SLIDE,
   ROOM,
@@ -10,7 +11,8 @@ import {
   SCALE,
   CHOOSE_ANIMATION_TARGET,
   SELECT_TYPE,
-  CHOOSE_ANIMATION_DESTINATION
+  CHOOSE_ANIMATION_DESTINATION,
+  GROUP
 } from "../constants";
 class UIState {
   constructor(rootStore) {
@@ -42,6 +44,65 @@ class UIState {
         selectedSlide.animations.select(animation);
       }
     });
+    autorun(() => {
+      const clones = this.rootStore.objects.items.map(object => ({
+        originalId: object.id,
+        clone: object.clone()
+      }));
+      const selectedSlide = this.rootStore.slides.selected;
+      const slides = this.rootStore.slides.items;
+      if (
+        selectedSlide !== undefined &&
+        [SLIDE, ADD_ANIMATION].includes(this.selectedDrawerTab)
+      ) {
+        const slidesBeforeSelectedSlide = slides.slice(
+          0,
+          slides.indexOf(selectedSlide)
+        );
+        []
+          .concat(
+            ...slidesBeforeSelectedSlide.map(slide =>
+              slide.animations.items.slice()
+            )
+          )
+          .forEach(animation => {
+            const cloneObject = clones.find(
+              clone => clone.originalId === animation.target.id
+            );
+            if (cloneObject !== undefined) {
+              cloneObject.clone.applyAnimation(animation);
+            }
+          });
+        if (this.selectedDrawerTab === SLIDE) {
+          selectedSlide
+            .getAnimationsToBeAppliedAtTime(this.elapsedTime)
+            .forEach(({ animation, elapsedTime }) => {
+              const cloneObject = clones.find(
+                clone => clone.originalId === animation.target.id
+              );
+              if (cloneObject !== undefined) {
+                cloneObject.clone.applyAnimation(animation, elapsedTime);
+              }
+            });
+        } else if (this.selectedDrawerTab === ADD_ANIMATION) {
+          const selectedAnimation = selectedSlide.animations.selected;
+          const animations = selectedSlide.animations.items;
+          animations
+            .slice(0, animations.indexOf(selectedAnimation) + 1)
+            .forEach(animation => {
+              const cloneObject = clones.find(
+                clone => clone.originalId === animation.target.id
+              );
+              if (cloneObject !== undefined) {
+                cloneObject.clone.applyAnimation(animation);
+              }
+            });
+        }
+      }
+      action(() => {
+        this.currentObjectStates = clones;
+      })();
+    });
   }
   @observable selectedDrawerTab = ROOM;
   @observable transformControlsMode = TRANSLATE;
@@ -54,6 +115,7 @@ class UIState {
   @observable clonedAnimationTarget;
   @observable elapsedTime = 0;
   @observable isPlaying = false;
+  @observable isGroupingObjects = false;
   @computed
   get orbitControlsEnabled() {
     const { selectedDrawerTab, isSettingView, isEditingAnimation } = this;
@@ -65,9 +127,9 @@ class UIState {
   }
   @computed
   get transformControlsEnabled() {
-    const { selectedDrawerTab, addAnimationStep } = this;
+    const { selectedDrawerTab, addAnimationStep, isGroupingObjects } = this;
     return (
-      (selectedDrawerTab === ROOM ||
+      ((selectedDrawerTab === ROOM && !isGroupingObjects) ||
         (selectedDrawerTab === ADD_ANIMATION &&
           addAnimationStep === CHOOSE_ANIMATION_DESTINATION)) &&
       this.rootStore.objects.selected !== undefined
@@ -83,7 +145,9 @@ class UIState {
   }
   @computed
   get drawerTabLocked() {
-    return this.isSettingView || this.isSettingAnimation;
+    return (
+      this.isSettingView || this.isSettingAnimation || this.isGroupingObjects
+    );
   }
   @computed
   get animationDestination() {
@@ -96,64 +160,7 @@ class UIState {
       return this.clonedAnimationTarget[property];
     }
   }
-  @computed
-  get currentObjectStates() {
-    const clones = this.rootStore.objects.items.map(object => ({
-      originalId: object.id,
-      clone: object.clone()
-    }));
-    const selectedSlide = this.rootStore.slides.selected;
-    const slides = this.rootStore.slides.items;
-    if (
-      selectedSlide !== undefined &&
-      [SLIDE, ADD_ANIMATION].includes(this.selectedDrawerTab)
-    ) {
-      const slidesBeforeSelectedSlide = slides.slice(
-        0,
-        slides.indexOf(selectedSlide)
-      );
-      []
-        .concat(
-          ...slidesBeforeSelectedSlide.map(slide =>
-            slide.animations.items.slice()
-          )
-        )
-        .forEach(animation => {
-          const cloneObject = clones.find(
-            clone => clone.originalId === animation.target.id
-          );
-          if (cloneObject !== undefined) {
-            cloneObject.clone.applyAnimation(animation);
-          }
-        });
-      if (this.selectedDrawerTab === SLIDE) {
-        selectedSlide
-          .getAnimationsToBeAppliedAtTime(this.elapsedTime)
-          .forEach(({ animation, elapsedTime }) => {
-            const cloneObject = clones.find(
-              clone => clone.originalId === animation.target.id
-            );
-            if (cloneObject !== undefined) {
-              cloneObject.clone.applyAnimation(animation, elapsedTime);
-            }
-          });
-      } else if (this.selectedDrawerTab === ADD_ANIMATION) {
-        const selectedAnimation = selectedSlide.animations.selected;
-        const animations = selectedSlide.animations.items;
-        animations
-          .slice(0, animations.indexOf(selectedAnimation) + 1)
-          .forEach(animation => {
-            const cloneObject = clones.find(
-              clone => clone.originalId === animation.target.id
-            );
-            if (cloneObject !== undefined) {
-              cloneObject.clone.applyAnimation(animation);
-            }
-          });
-      }
-    }
-    return clones;
-  }
+  @observable currentObjectStates;
   @computed
   get selectedSlideDuration() {
     return this.rootStore.slides.selected.slideDuration;
@@ -245,6 +252,21 @@ class UIState {
     if (this.elapsedTime > this.selectedSlideDuration) {
       this.stop();
     }
+  }
+  @action
+  startGroupingObjects() {
+    this.isGroupingObjects = true;
+  }
+  @action
+  finishGroupingObjects() {
+    this.isGroupingObjects = false;
+    const group = new Object3D(GROUP);
+    this.rootStore.objectGroup.items.forEach(item => {
+      group.children.add(item);
+      this.rootStore.objects.remove(item);
+    });
+    this.rootStore.objectGroup.empty();
+    this.rootStore.objects.add(group);
   }
   @action
   play() {
