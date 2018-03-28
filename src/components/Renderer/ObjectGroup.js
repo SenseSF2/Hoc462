@@ -9,13 +9,14 @@ export default class ObjectGroup extends React.Component {
   boundingBox = new THREE.BoxHelper(undefined, 0xffffff);
   solids = [];
   holes = [];
+  clickHandlers = [];
   constructor(props) {
     super(props);
     this.boundingBox.setFromObject(this.group);
     this.props.instance(this.group, this.boundingBox);
-    const object = this.props.object;
     const animate = () => {
       if (this.itsTimeToStop) return;
+      const object = this.props.object;
       this.boundingBox.update();
       this.boundingBox.visible = this.props.selected;
       this.group.position.set(...object.position.slice());
@@ -33,6 +34,10 @@ export default class ObjectGroup extends React.Component {
   }
   recalculateGroup() {
     this.group.remove(...this.group.children);
+    this.clickHandlers.forEach(handler =>
+      this.props.onObject3DClick.removeClickHandler(handler)
+    );
+    this.clickHandlers.length = 0;
     const convertToBSP = object3D => {
       const geometry = object3D.geometry.clone();
       object3D.updateMatrix();
@@ -46,6 +51,11 @@ export default class ObjectGroup extends React.Component {
       });
       this.group.add(solidBSP.toMesh(this.solids[i].material));
     }
+    this.group.children.forEach(object => {
+      const handler = () => this.props.select();
+      this.clickHandlers.push(handler);
+      this.props.onObject3DClick.onClick(object, handler);
+    });
   }
   add = (object3D, isHole) => {
     if (isHole) {
@@ -81,7 +91,6 @@ export default class ObjectGroup extends React.Component {
   };
   render = () =>
     this.props.children({
-      select: this.props.select,
       add: this.add,
       update: this.update,
       remove: this.remove

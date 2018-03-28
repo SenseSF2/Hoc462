@@ -122,7 +122,6 @@ export default class Renderer extends React.Component {
           const createObjectElement = (
             object,
             originalObject,
-            select,
             add,
             update,
             remove
@@ -145,10 +144,6 @@ export default class Renderer extends React.Component {
               instance={(instance, boundingBox) => {
                 if (add !== undefined) {
                   add(instance);
-                  this.onObject3DClick.onClick(
-                    instance,
-                    (clickHandler = select)
-                  );
                   return;
                 }
                 this.scene.add(instance, boundingBox);
@@ -177,6 +172,7 @@ export default class Renderer extends React.Component {
           if (object.type === GROUP) {
             return (
               <ObjectGroup
+                onObject3DClick={this.onObject3DClick}
                 instance={(group, boundingBox) =>
                   this.scene.add(group, boundingBox)
                 }
@@ -185,13 +181,13 @@ export default class Renderer extends React.Component {
                 }
                 select={() => this.selectObject(object)}
                 object={object}
+                selected={originalObject === objects.selected}
               >
                 {({ select, add, update, remove }) =>
                   object.children.items.map(item =>
                     createObjectElement(
                       item,
                       item,
-                      select,
                       object3D => add(object3D, item.isHole),
                       object3D => update(object3D, item.isHole),
                       remove
