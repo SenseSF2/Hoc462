@@ -25,10 +25,16 @@ export default (camera, domElement) => {
     const mouse = new THREE.Vector2(x, y);
     raycaster.setFromCamera(mouse, camera);
     const intersects = raycaster.intersectObjects(
-      [...handlers].map(([object, callbacks]) => object)
+      [...handlers].map(([object, callbacks]) => object),
+      true
     );
     if (intersects.length > 0) {
       const object = intersects[0].object;
+      if (handlers.get(object) === undefined)
+        // The object is a group of objects
+        return handlers
+          .get(object.parent)
+          .forEach(handler => handler(object.parent));
       handlers.get(object).forEach(handler => handler(object));
     }
   };

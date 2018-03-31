@@ -170,15 +170,21 @@ export default class Renderer extends React.Component {
             />
           );
           if (object.type === GROUP) {
+            let clickHandler;
             return (
               <ObjectGroup
-                onObject3DClick={this.onObject3DClick}
-                instance={(group, boundingBox) =>
-                  this.scene.add(group, boundingBox)
-                }
-                remove={(group, boundingBox) =>
-                  this.scene.remove(group, boundingBox)
-                }
+                key={originalObject.id}
+                instance={(group, boundingBox) => {
+                  this.scene.add(group, boundingBox);
+                  this.onObject3DClick.onClick(
+                    group,
+                    (clickHandler = () => this.selectObject(originalObject))
+                  );
+                }}
+                remove={(group, boundingBox) => {
+                  this.scene.remove(group, boundingBox);
+                  this.onObject3DClick.removeClickHandler(group, clickHandler);
+                }}
                 select={() => this.selectObject(object)}
                 object={object}
                 selected={originalObject === objects.selected}
